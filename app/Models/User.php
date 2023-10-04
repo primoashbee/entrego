@@ -17,11 +17,8 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = [];
+    const APPLICANT = 'APPLICANT';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -42,4 +39,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function getFullNameAttribute(){
+        if(!$this->has_finished_profile){
+            return $this->email;
+        }
+        return "{$this->first_name} {$this->last_name}";
+    }
 }
