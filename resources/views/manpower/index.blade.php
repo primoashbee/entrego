@@ -157,9 +157,33 @@
           'method': 'DELETE',
           'content-type': 'application/json'
       })
-      // location.reload()
+      if(res.status === 200){
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+
+          Toast.fire({
+            icon: 'success',
+            title: 'Successfully deleted'
+          })
+        }
+      location.reload()
 
     }
+    const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+
+    Toast.fire({
+      icon: 'info',
+      title: 'Delete cancelled'
+    })
 
 
   }
