@@ -2,12 +2,15 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
 
 class UpdateProfileRequest extends FormRequest
 {
+    private $except = "";
+    private $hasPassword = true;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,7 +26,7 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'first_name'=>'required',
             'middle_name'=>'required',
             'last_name'=>'required',
@@ -31,20 +34,32 @@ class UpdateProfileRequest extends FormRequest
             'gender'=>['required', Rule::in(['Female','Male'])],
             'street'=>'required',
             'landmark'=>'required',
+            'contact_number'=>'required|unique:users,contact_number,'.$this->except,
             'city'=>'required',
+            'barangay'=>'required',
             'zip_code'=>'required',
-            'company_name.*'=>'sometimes|required',
-            'job_title.*'=>'sometimes|required',
-            'start_date.*'=>'sometimes|required|date',
-            'end_date.*'=>'sometimes|required|date|before:today',
-            'accomplishments.*'=>'sometimes|required',
+            'password'=>'sometimes|required|confirmed'
+            // 'company_name.*'=>'sometimes|required',
+            // 'job_title.*'=>'sometimes|required',
+            // 'start_date.*'=>'sometimes|required|date',
+            // 'end_date.*'=>'sometimes|required|date|before:today',
+            // 'accomplishments.*'=>'sometimes|required',
             // 'skills'=>'required',
             // 'languages'=>'required',
         ];
+
+        if($this->hasPassword){
+            unset($rules['password']);
+        }
+
+        return $rules;
     }
     
     protected function prepareForValidation()
     {
-        // dd(request()->all());
+        $this->except = request()->route('id') !== null ? request()->route('id') : auth()->user()->id;
+        if(request()->password !== null){
+            $this->hasPassword = false;
+        }
     }
 }

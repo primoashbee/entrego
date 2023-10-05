@@ -19,6 +19,8 @@ class User extends Authenticatable
      */
     protected $guarded = [];
     const APPLICANT = 'APPLICANT';
+    const ADMINSTRATOR = 'ADMINISTRATOR';
+    const SUB_HR = 'SUB_HR';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -40,10 +42,19 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function getFullNameAttribute(){
+    public function getFullNameAttribute() :string 
+    {
+        if($this->role == User::ADMINSTRATOR){
+            return "ADMINISTRATOR";
+        }
         if(!$this->has_finished_profile){
             return $this->email;
         }
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public static function hasAdminUser() : bool
+    {
+        return self::where('role', self::ADMINSTRATOR)->count() > 0;
     }
 }

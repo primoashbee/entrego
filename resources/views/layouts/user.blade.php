@@ -46,6 +46,7 @@
     </main>
 
     @include('components.fixed-plugins')
+    @include('components.modal-alert')
 
     <!--   Core JS Files   -->
     <script src="{{ asset('js/core/popper.min.js') }}"></script>
@@ -69,6 +70,8 @@
 
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
     <script src="{{asset('js/material-dashboard.min.js?v=3.1.0')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
 
         async function logout(){
@@ -84,7 +87,9 @@
             })
             location.reload()
         }
+
     </script>
+    @yield('scripts')
 </body>
 
 </html>

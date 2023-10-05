@@ -144,6 +144,9 @@ return [
         // 'store'  => 'redis',
     ],
 
+    'admin_email' => env('ADMIN_EMAIL', 'admin@thesis.com'),
+    'admin_password' => env('ADMIN_PASSWORD', 'th3$1$'),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

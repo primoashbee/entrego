@@ -1,15 +1,11 @@
 @extends('layouts.user')
 @section('content')
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+@include('components.errors')
+@if(request()->route('id'))
+<form action="{{route('users.update', request()->route('id'))}}" method="POST">
+@else
 <form action="{{route('profile.update')}}" method="POST">
+@endif
     @csrf
     <div class="container-fluid py-4">
         <div class="row">
@@ -48,13 +44,13 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="input-group input-group-static">
                                                 <label>Birthday</label>
                                                 <input type="date" class="form-control" name="birthday"  value="{{$user->birthday}}" onfocus="focused(this)" onfocusout="defocused(this)">
                                                 </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="input-group input-group-static">
                                                 <label for="gender" class="ms-0">Gender</label>
                                                 <select class="form-control" id="gender" name="gender" data-gtm-form-interact-field-id="0">
@@ -64,7 +60,13 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
+                                            <div class="input-group input-group-static">
+                                                <label class="">Contact Number</label>
+                                                <input type="text" name="contact_number" class="form-control"  value="{{$user->contact_number}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
                                             <div class="input-group input-group-static">
                                                 <label class="">E-mail</label>
                                                 <input type="text" name="email" class="form-control"  value="{{$user->email}}" readonly disabled>
@@ -78,7 +80,7 @@
                                                 <input type="text" class="form-control" name="street" value="{{$user->street}}">
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="input-group input-group-static my-3">
                                                 <label>Landmark</label>
                                                 <input type="text" class="form-control" name="landmark" value="{{$user->landmark}}">
@@ -90,7 +92,13 @@
                                                 <input type="text" class="form-control" name="city" value="{{$user->city}}">
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
+                                            <div class="input-group input-group-static my-3">
+                                                <label>Brgy</label>
+                                                <input type="text" class="form-control" name="barangay" value="{{$user->barangay}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
                                             <div class="input-group input-group-static my-3">
                                                 <label>Zip Code</label>
                                                 <input type="text" class="form-control" name="zip_code" value="{{$user->zip_code}}">
@@ -196,6 +204,49 @@
                     </div>
                 </div>
                 <!-- End Skills and Languages -->
+                <!-- Accounts Languages -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card mb-4 ">
+                            <div class="d-flex">
+                                <div
+                                    class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
+                                    <i class="material-icons opacity-10" aria-hidden="true">account_circle</i>
+                                </div>
+                                <h6 class="mt-3 mb-2 ms-3 ">Password</h6>
+
+                            </div>
+                            <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="input-group input-group-static">
+                                                <label class="">Role</label>
+                                                <select class="form-control" name="role" id="role">
+                                                    <option value="">Please select</option>
+                                                    <option value="ADMINISTRATOR">ADMINISTRATOR</option>
+                                                    <option value="SUB_HR">SUB HR</option>
+                                                    <option value="APPLICANT">APPLICANT</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="input-group input-group-static">
+                                                <label class="">Password</label>
+                                                <input type="password" name="password" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="input-group input-group-static">
+                                                <label class="">Password Confirmation</label>
+                                                <input type="password" name="password_confirmation" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Account -->
 
                 <button class="btn text-right btn-primary" type="submit">Update Profile</button>
             </div>
@@ -208,6 +259,11 @@
     (function () {
         gender = document.getElementById("gender")
         gender.value = '{{$user->gender}}'
+        role = document.getElementById("role")
+        role.value = '{{$user->role}}'
+        role.disabled = true
+        role.readonly = true
+
     })();
     function addRow(){
         document.getElementById('frmWorkSection').innerHTML += 

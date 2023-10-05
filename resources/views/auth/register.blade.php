@@ -86,7 +86,7 @@
                     </div>
                     <div class="input-group input-group-outline mb-3">
                       <label class="form-label">Password Confirmation</label>
-                      <input type="password_confirm" class="form-control" name="password_confirmation">
+                      <input type="password" class="form-control" name="password_confirmation">
                     </div>
                     {{-- <div class="form-check form-check-info text-start ps-0">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>

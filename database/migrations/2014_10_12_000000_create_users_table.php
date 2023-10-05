@@ -19,10 +19,12 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('middle_name')->nullable();
             $table->string('gender')->nullable();
+            $table->string('contact_number')->nullable();
             $table->date('birthday')->nullable();
             $table->text('street')->nullable();
             $table->text('landmark')->nullable();
             $table->text('city')->nullable();
+            $table->text('barangay')->nullable();
             $table->text('zip_code')->nullable();
             $table->text('country')->nullable();
             $table->string('role');

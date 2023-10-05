@@ -1,3 +1,6 @@
+@php
+    $user = auth()->user();
+@endphp
 <aside
 class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark"
 id="sidenav-main">
@@ -14,18 +17,9 @@ id="sidenav-main">
 
 
 <hr class="horizontal light mt-0 mb-2">
-
 <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
     <ul class="navbar-nav">
-
-
-
-
-
-
-
-
-
+        @if($user->role == "ADMINISTRATOR")
         <li class="nav-item">
             <a class="nav-link text-white " href="./dashboard.html">
 
@@ -36,8 +30,22 @@ id="sidenav-main">
                 <span class="nav-link-text ms-1">Dashboard</span>
             </a>
         </li>
+        @endif
 
+        @if($user->role == "ADMINISTRATOR" || $user->role =="SUB_HR")
+        <li class="nav-item">
+            <a class="nav-link text-white " href="{{route('manpower.index')}}">
 
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">table_view</i>
+                </div>
+
+                <span class="nav-link-text ms-1">Manpower Requests</span>
+            </a>
+        </li>
+        @endif
+
+        @if($user->role == "ADMINISTRATOR")
         <li class="nav-item">
             <a class="nav-link text-white " href="./tables.html">
 
@@ -45,12 +53,54 @@ id="sidenav-main">
                     <i class="material-icons opacity-10">table_view</i>
                 </div>
 
-                <span class="nav-link-text ms-1">Tables</span>
+                <span class="nav-link-text ms-1">SJT / CSA</span>
             </a>
         </li>
+        @endif
 
-
+        @if($user->role == "ADMINISTRATOR")
         <li class="nav-item">
+            <a class="nav-link text-white " href="./tables.html">
+
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">table_view</i>
+                </div>
+
+                <span class="nav-link-text ms-1">Personality Assesments</span>
+            </a>
+        </li>
+        @endif
+
+        @if($user->role == "ADMINISTRATOR")
+        <li class="nav-item">
+            <a class="nav-link text-white " href="{{ route('users.index') }}">
+
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">table_view</i>
+                </div>
+
+                <span class="nav-link-text ms-1">Users</span>
+            </a>
+        </li>
+        @endif
+
+        @if($user->role == "ADMINISTRATOR")
+        <li class="nav-item">
+            <a class="nav-link text-white " href="{{route('applicants.index')}}">
+
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">table_view</i>
+                </div>
+
+                <span class="nav-link-text ms-1">Applicants</span>
+            </a>
+        </li>
+        @endif
+
+   
+
+
+        {{-- <li class="nav-item">
             <a class="nav-link text-white " href="./billing.html">
 
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -96,7 +146,7 @@ id="sidenav-main">
                 <span class="nav-link-text ms-1">Notifications</span>
             </a>
         </li>
-
+ --}}
 
         <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages
