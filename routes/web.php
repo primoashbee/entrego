@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\ManPowerController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PersonalAssementController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserQuizController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use Illuminate\Support\Facades\Route;
 
@@ -45,8 +47,14 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class])->gro
 
         Route::get('/{id}', [ManPowerController::class, 'edit'])->name('manpower.edit');
         Route::put('/{id}', [ManPowerController::class, 'update'])->name('manpower.update');
-        
     });
+
+    Route::prefix('quiz')->group(function(){
+        Route::get('/', [QuizController::class, 'index'])->name('quiz.index');
+        Route::get('/create', [QuizController::class, 'create'])->name('quiz.create');
+
+    });
+    Route::get('/personal-assessments', [UserQuizController::class, 'index'])->name('personals.index');
 
     
 });
