@@ -65,6 +65,33 @@ class ManPower extends Model
             'label'=>'> 5 Years'
         ],
     ];
+
+    const VACANCIES = [
+        [
+            'value'=>'1',
+            'label'=>'1 Position'
+        ],
+        [
+            'value'=>'2',
+            'label'=>'2 Positions'
+        ],
+        [
+            'value'=>'2',
+            'label'=>'2 Positions'
+        ],
+        [
+            'value'=>'3',
+            'label'=>'3 Positions'
+        ],
+        [
+            'value'=>'4',
+            'label'=>'4 Positions'
+        ],
+        [
+            'value'=>'5',
+            'label'=>'5 Positions'
+        ],
+    ];
     
     protected $guarded = [];
 

@@ -39,9 +39,12 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class])->gro
         Route::get('/', [ManPowerController::class, 'index'])->name('manpower.index');
         Route::get('/create', [ManPowerController::class, 'create'])->name('manpower.create');
         Route::post('/create', [ManPowerController::class, 'store'])->name('manpower.store');
-        Route::get('/update{id}', [ManPowerController::class, 'edit'])->name('manpower.edit');
+
         Route::delete('/{id}', [ManPowerController::class, 'delete'])->name('manpower.delete');
         Route::patch('/{id}', [ManPowerController::class, 'patch'])->name('manpower.patch');
+
+        Route::get('/{id}', [ManPowerController::class, 'edit'])->name('manpower.edit');
+        Route::put('/{id}', [ManPowerController::class, 'update'])->name('manpower.update');
         
     });
 

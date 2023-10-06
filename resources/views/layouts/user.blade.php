@@ -46,7 +46,6 @@
     </main>
 
     @include('components.fixed-plugins')
-    @include('components.modal-alert')
 
     <!--   Core JS Files   -->
     <script src="{{ asset('js/core/popper.min.js') }}"></script>

@@ -2,7 +2,8 @@
 @section('content')
 @include('components.errors')
 
-<form action="{{route('manpower.store')}}" method="POST">
+<form action="{{route('manpower.update', $manpower->id)}}" method="POST">
+        @method('PUT')
         @csrf
         <div class="container-fluid py-4">
             <div class="row">
@@ -36,31 +37,31 @@
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Job Title</label>
-                                                    <input type="text" name="job_title" class="form-control" value="{{old('job_title')}}">
+                                                    <input type="text" name="job_title" class="form-control" value="{{$manpower->job_title}}">
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Job Description</label>
-                                                    <textarea  name="description" class="form-control" value=""> {{old('description')}} </textarea>
+                                                    <textarea  name="description" class="form-control" value=""> {{$manpower->description}} </textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Responsibilities</label>
-                                                    <textarea  name="responsibilities" class="form-control" value=""> {{old('responsibilities')}} </textarea>
+                                                    <textarea  name="responsibilities" class="form-control" value=""> {{$manpower->responsibilities}} </textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Qualifications</label>
-                                                    <textarea  name="qualifications" class="form-control" value=""> {{old('qualifications')}} </textarea>
+                                                    <textarea  name="qualifications" class="form-control" value=""> {{$manpower->qualifications}} </textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Benefits</label>
-                                                    <textarea  name="benefits" class="form-control" value=""> {{old('benefits')}} </textarea>
+                                                    <textarea  name="benefits" class="form-control" value=""> {{$manpower->benefits}} </textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -103,7 +104,7 @@
                                             <div class="col-md-6 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Deadline</label>
-                                                    <input type="date" name="expires_at" class="form-control" value="{{ old("expires_at") }}">
+                                                    <input type="date" name="expires_at" class="form-control" value="{{ $manpower->expires_at }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mb-3">
@@ -143,7 +144,7 @@
                         </div>
                     </div>
                     <!-- End Account -->
-                    <button class="btn text-right btn-primary" type="submit">Submit</button>
+                    <button class="btn text-right btn-primary" type="submit">UPDATE</button>
 
                 </div>
             </div>
@@ -151,22 +152,24 @@
 <script>
     (function(){
         job_group = document.getElementById('job_group')
-        job_group.value = "{{old('job_group')}}"
+        job_group.value = "{{$manpower->job_group}}"
 
         vacancies = document.getElementById('vacancies')
-        vacancies.value = "{{old('vacancies')}}"
+        vacancies.value = "{{$manpower->vacancies}}"
 
         job_nature = document.getElementById('job_nature')
-        job_nature.value = '{{old('job_nature')}}'
+        job_nature.value = '{{$manpower->job_nature}}'
 
         select_location = document.getElementById('location')
-        select_location.value = "{{old('location')}}"
+        select_location.value = "{{$manpower->location}}"
 
         required_experience = document.getElementById('required_experience')
-        required_experience.value = "{{old('required_experience')}}"
+        required_experience.value = "{{$manpower->required_experience}}"
 
         department = document.getElementById('department')
-        department.value = "{{old('department')}}"
+        department.value = "{{$manpower->department}}"
+
+        dd = {{session()->has('success')}} 
 
 
     })()

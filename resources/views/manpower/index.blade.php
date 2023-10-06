@@ -100,6 +100,7 @@
     switches.forEach(function(toggle) {
       toggle.addEventListener("change", async function() {
         const new_state = toggle.checked
+        const text = new_state ? 'ACTIVATED' : 'DISABLED'
         const payload = {
           active: new_state,
           _method: "PATCH"
@@ -127,12 +128,13 @@
 
           Toast.fire({
             icon: 'success',
-            title: 'Successfully updated'
+            title: `Manpower request status ${text}`
           })
         }
       });
     });
   })()
+  
   async function deleteRecord(item){
     const data = JSON.parse(item);
     const result = await Swal.fire({
@@ -150,7 +152,7 @@
     //   }
     // })
     if(result.isConfirmed){
-      await fetch(`/manpower/${data.id}`, {
+      const res = await fetch(`/manpower/${data.id}`, {
           'headers': {
               "X-CSRF-Token": '{{csrf_token()}}' 
           },
@@ -167,10 +169,9 @@
 
           Toast.fire({
             icon: 'success',
-            title: 'Successfully deleted'
+            title: 'Manpower request successfully DELETED'
           })
         }
-      location.reload()
 
     }
     const Toast = Swal.mixin({

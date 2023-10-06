@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreManPowerRequest;
+use App\Http\Requests\UpdateManPowerRequest;
 use App\Models\ManPower;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -25,7 +26,8 @@ class ManPowerController extends Controller
         $job_group = ManPower::JOB_GROUP;
         $experiences = ManPower::EXPERIENCES;
         $departments = ManPower::DEPARTMENT;
-        return view('manpower.create', compact('job_group', 'experiences', 'departments'));
+        $vacancies = ManPower::VACANCIES;
+        return view('manpower.create', compact('job_group', 'experiences', 'departments','vacancies'));
     }
 
     public function store(StoreManPowerRequest $request)
@@ -58,8 +60,33 @@ class ManPowerController extends Controller
         return response()->json([], $status = 200);
     }
 
-    public function patch(Request $request, $id){
-        ManPower::find($id)->update($request->all());
-        return response()->json([], $status = 200);
+    public function patch(Request $request, $id)
+    {
+        $res = ManPower::find($id)->update($request->all());
+        return response()->json(compact('res'), $status = 200);
+    }
+
+    public function edit($id)
+    {
+        $job_group = ManPower::JOB_GROUP;
+        $experiences = ManPower::EXPERIENCES;
+        $departments = ManPower::DEPARTMENT;
+        $vacancies = ManPower::VACANCIES;
+        $manpower = ManPower::findOrFail($id);
+
+        return view('manpower.edit', compact('manpower','job_group', 'experiences', 'departments','vacancies'));
+    }
+
+    public function update(UpdateManPowerRequest $request, $id)
+    {
+        $manpower = ManPower::findOrFail($id);
+        $manpower->update(
+            $request->all()
+        );
+
+        Session::flash("success", "Manpower has been updated.");
+
+        return redirect()->route('manpower.edit', $id);
+
     }
 }
