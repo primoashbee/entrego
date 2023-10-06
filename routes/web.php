@@ -55,6 +55,7 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class])->gro
 
     });
     Route::get('/personal-assessments', [UserQuizController::class, 'index'])->name('personals.index');
+    Route::get('/quiz-pa', [PersonalAssementController::class, 'view'])->name('personals.view');
 
     
 });

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\PersonalAssessment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -15,6 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $seeders = [];
         if(!User::hasAdminUser())
         {
             User::create([
@@ -23,6 +25,10 @@ class DatabaseSeeder extends Seeder
                 'role'=>User::ADMINSTRATOR
             ]);
         }
+        if(PersonalAssessment::count() == 0){
+            $seeders[] = PersonalAssessmentSeeder::class;
+        };
+        $this->call($seeders);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
