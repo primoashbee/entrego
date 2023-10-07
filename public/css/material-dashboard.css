@@ -27948,4 +27948,10 @@ pre[class*="language-"] {
   text-align: left;
   color: #525f7f;
 }
+
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
 /*# sourceMappingURL=dashboard-free.css.map */

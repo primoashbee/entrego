@@ -10,4 +10,6 @@ class PersonalAssessment extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+
 }

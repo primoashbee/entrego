@@ -6,7 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
+use Mockery\Matcher\Any;
 
 class User extends Authenticatable
 {
@@ -56,5 +58,35 @@ class User extends Authenticatable
     public static function hasAdminUser() : bool
     {
         return self::where('role', self::ADMINSTRATOR)->count() > 0;
+    }
+
+    public function assessments()
+    {
+        return $this->hasMany(UserPersonalAssessment::class);
+    }
+    public function hasFinishedAssessment()
+    {
+        $assessments = UserPersonalAssessment::with('user')
+            ->distinct()
+            ->select('batch_id','created_at')
+            ->where('user_id', $this->id)
+            ->get();
+;
+        if($assessments->count() > 0){
+            //meron
+            if($assessments->count() == 1){
+                return true;
+            }
+
+            // meron madami check if 6months passed sa last
+            return Carbon::parse($assessments->first()->created_at)->diffInDays(now(), true) >= 90;
+
+        }
+        return false;
+    }
+
+    public function isApplicant()
+    {
+        return $this->role == self::APPLICANT;
     }
 }

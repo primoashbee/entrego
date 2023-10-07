@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('position');
             $table->text('question');
             $table->boolean('reversed');
-            $table->timestamps();
+            $table->string('trait');
         });
     }
 

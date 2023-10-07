@@ -1,12 +1,17 @@
 <?php
 
-use App\Http\Controllers\ManPowerController;
-use App\Http\Controllers\PersonalAssementController;
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ManPowerController;
 use App\Http\Controllers\UserQuizController;
+use App\Http\Middleware\ApplicanTakenAssessment;
+use App\Http\Middleware\ApplicantTakenAssessment;
+use App\Http\Controllers\PersonalAssementController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserPersonalAssessmentController;
+use App\Models\UserPersonalAssessment;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,12 +24,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class])->group(function () {
+Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, ApplicantTakenAssessment::class])->group(function () {
     Route::get('/dashboard', function () {
+        if(auth()->user()->role == User::APPLICANT){
+            return redirect()->route('profile.edit');
+        }
         return view('test-master');
     })->middleware(['auth', 'verified'])->name('dashboard');
-    Route::get('/profile', [UserController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
+
 
     Route::prefix('users')->group(function(){
         Route::get('/', [UserController::class, 'index'])->name('users.index');
@@ -54,14 +61,21 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class])->gro
         Route::get('/create', [QuizController::class, 'create'])->name('quiz.create');
 
     });
-    Route::get('/personal-assessments', [UserQuizController::class, 'index'])->name('personals.index');
-    Route::get('/quiz-pa', [PersonalAssementController::class, 'view'])->name('personals.view');
 
-    
+    Route::prefix('/personal-assessments')->group(function(){
+        Route::get('/', [PersonalAssementController::class, 'index'])->name('personal-assessments.index');
+        Route::get('/{batch_id}', [PersonalAssementController::class, 'show'])->name('personal-assessments.show');
+
+    });
 });
-Route::get('/', function () {
-    return view('welcome');
-});
+
+
+// Open routes soon for auth
+Route::get('/personal-assessment/take', [UserPersonalAssessmentController::class, 'create'])->name('personal-assessments.create');
+Route::post('/personal-assessment/take', [UserPersonalAssessmentController::class, 'store'])->name("personal-assessments.store");
+Route::get('/personal-assessment/result/{batch_id}', [UserPersonalAssessmentController::class, 'view'])->name("personal-assessments.view");
+Route::get('/profile', [UserController::class, 'edit'])->name('profile.edit');
+Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

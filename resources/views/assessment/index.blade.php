@@ -1,11 +1,10 @@
 @extends('layouts.user')
 @section('content')
-
-<div class="container-fluid py-4" id="app">
+<div class="container-fluid py-4">
     <div class="row">
-        <div class="col-lg-2 col-lg-10 position-relative z-index-2">
+        <div class="col-lg-10 position-relative z-index-2">
             <div class="row mt-4">
-                <div class="col-10">
+                <div class="col-12">
                     <div class="card mb-4 ">
                         <div class="d-flex">
                             <div
@@ -13,110 +12,82 @@
                                 <i class="material-icons opacity-10" aria-hidden="true">group</i>
                             </div>
                                                     
-                                <h6 class="mt-3 mb-2 ms-3 ">Personal Assessment</h6>
+                            <h6 class="mt-3 mb-2 ms-3 ">Personal Assessments</h6>
                             
                         </div>
 
                         <div class="card-body">
-                            <div class="col-8 ">
-                                <div class="text-center">
-                                    <h4>Question #@{{question+1}}</h4>
-                                    <h5 class="px-5 mb-3">@{{ current_question.question }}</h5>
-                                    <div class="px-5">
-                                        <span> Accurate</span>
-                                        <input type="radio" name="radio" id="radio" value="1" style="margin-left:25px;transform:scale(2)" v-model="current_question.answer">
-                                        <input type="radio" name="radio" id="radio" value="2" style="margin-left:25px;transform:scale(2)" v-model="current_question.answer">
-                                        <input type="radio" name="radio" id="radio" value="3" style="margin-left:25px;transform:scale(2)" v-model="current_question.answer">
-                                        <input type="radio" name="radio" id="radio" value="4" style="margin-left:25px;transform:scale(2)" v-model="current_question.answer">
-                                        <input type="radio" name="radio" id="radio" value="5" style="margin-left:25px;transform:scale(2);margin-right:25px" v-model="current_question.answer">
-                                        <span> Inaccurate</span>
-
-                                    </div>
+                            <div class="card">
+                                <div class="table-responsive">
+                                  <table class="table align-items-center">
+                                    <thead>
+                                      <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">E-mail</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Extraversion</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Agreeableness</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Conscientiousness</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Neuroticism</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Openness</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Taken</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                        {{-- <th class="text-secondary opacity-7">Action</th> --}}
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($list as $item)
+                                        <tr>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0 mt-2">{{ $item->user->fullname }}</p>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0 mt-2">{{ $item->user->email }}</p>
+                                            </td>
+                                            <td>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-gradient-secondary" style="width: {{$item->extraversion_percentage}}%; height:20px">{{$item->extraversion_percentage}}%</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-gradient-success" style="width: {{$item->agreeableness_percentage}}%; height:20px">{{$item->agreeableness_percentage}}%</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-gradient-warning" style="width: {{$item->conscientiousness_percentage}}%; height:20px">{{$item->conscientiousness_percentage}}%</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-gradient-primary" style="width: {{$item->neuroticism_percentage}}%; height:20px">{{$item->neuroticism_percentage}}%</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-gradient-info" style="width: {{$item->openness_percentage}}%; height:20px">{{$item->openness_percentage}}%</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0 mt-2">{{ $item->user->created_at->diffForHumans() }}</p>
+                                            </td>
+                                            <td>
+                                                <a href="{{route('personal-assessments.show', $item->batch_id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
+                                                    <i class="material-icons">edit</i>
+                                                  </a>                                           
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                  </table>
                                 </div>
-                                <button class="btn btn-default btn-warning" style="float: left;" @click="question--" :disabled="canPrevious">Previous</button>
-                                <button class="btn btn-default btn-warning" style="float: right;" @click="question++" :disabled="canNext"  v-if="!showSubmitButton">Next</button>
-                                <button class="btn btn-default btn-success" style="float: right;" @click="submit" :disabled="canSubmit" v-if="showSubmitButton">Submit</button>
-                            </div>
+                              </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script type="module">
-    import { createApp, ref, watch, computed  } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
-  
-    createApp({
-      setup() {
-        const initial_questions = ref(@json($questions)) 
-        const questions = ref(initial_questions.value.map((item)=>{
-            return { ...item, answer: null}
-        }))
-        const question = ref(0)
-        const answer_selected = ref('')
-        const current_question = computed(()=>{
-            return questions.value[question.value]
-        })
-
-        const canPrevious = computed(()=>{
-            if(question.value == 0){
-                return true
-            }
-            return false
-        })
-        const canNext = computed(()=>{
-            if(question.value == questions.value.length -1){
-                return false
-            }
-
-            if(current_question.value.answer){
-                return false
-            }
-
-            return true
-        })
-
-        const showSubmitButton = computed(()=>{
-            console.log(question.value == questions.value.length-1)
-            if(question.value == questions.value.length-1){
-                return true;
-            }
-            return false;
-        })
-        const canSubmit = computed(()=>{
-           if(questions.value[question.value].answer){
-            return false
-           }
-           return true
-        })
-
-        const submit = () => {
-            console.log(questions)
-        }
-
-        
-        watch(answer_selected, (newVal, oldVal) => {
-            questions.value = {...questions.value, answer: newVal} 
-        })
-
-        return {
-            questions,
-            question,
-            current_question,
-            answer_selected,
-            canPrevious,
-            canNext,
-            canSubmit,
-            showSubmitButton,
-            submit
-        }
-      }
-    }).mount('#app')
-
-
-</script>
 @endsection
