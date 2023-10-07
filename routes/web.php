@@ -59,6 +59,7 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, Appli
     Route::prefix('quiz')->group(function(){
         Route::get('/', [QuizController::class, 'index'])->name('quiz.index');
         Route::get('/create', [QuizController::class, 'create'])->name('quiz.create');
+        Route::post('/create', [QuizController::class, 'store'])->name('quiz.store');
 
     });
 
@@ -71,12 +72,14 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, Appli
 
 
 // Open routes soon for auth
-Route::get('/personal-assessment/take', [UserPersonalAssessmentController::class, 'create'])->name('personal-assessments.create');
-Route::post('/personal-assessment/take', [UserPersonalAssessmentController::class, 'store'])->name("personal-assessments.store");
-Route::get('/personal-assessment/result/{batch_id}', [UserPersonalAssessmentController::class, 'view'])->name("personal-assessments.view");
-Route::get('/profile', [UserController::class, 'edit'])->name('profile.edit');
-Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
+Route::middleware(['auth'])->group(function () {
 
+    Route::get('/personal-assessment/take', [UserPersonalAssessmentController::class, 'create'])->name('personal-assessments.create');
+    Route::post('/personal-assessment/take', [UserPersonalAssessmentController::class, 'store'])->name("personal-assessments.store");
+    Route::get('/personal-assessment/result/{batch_id}', [UserPersonalAssessmentController::class, 'view'])->name("personal-assessments.view");
+    Route::get('/profile', [UserController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
+});
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
