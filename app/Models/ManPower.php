@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class ManPower extends Model
 {
     use HasFactory, SoftDeletes;
+
     const JOB_GROUP = [
         [
             'value'=>'IT',
@@ -108,5 +110,20 @@ class ManPower extends Model
     public function getDepartmentNameAttribute()
     {   
         return collect(self::DEPARTMENT)->firstWhere('value', $this->department)['label'];
+    }
+
+    public function scopeActive()
+    {
+        return self::where('active', true);
+    }
+
+    public function getRequiredExperienceNameAttribute()
+    {
+        return collect(self::EXPERIENCES)->where('value', $this->required_experience)->first()['label'];
+    }
+
+    public function getExpiresAtNameAttribute()
+    {
+        return Carbon::parse($this->expires_at)->format('F d, Y');
     }
 }

@@ -42,6 +42,17 @@
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
+                                                    <label class=""> SJT/ CSA </label>
+                                                    <select name="quiz_id" id="quiz_id" class="form-control">
+                                                        <option value=""> Please Select</option>
+                                                        @foreach($quizzes as $quiz)
+                                                        <option value="{{$quiz['id']}}"> {{ $quiz['name'] }} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <div class="input-group input-group-static">
                                                     <label class="">Job Description</label>
                                                     <textarea  name="description" class="form-control" value=""> {{$manpower->description}} </textarea>
                                                 </div>
@@ -115,10 +126,6 @@
                                                         @foreach($experiences as $experience)
                                                         <option value="{{$experience['value']}}"> {{ $experience['label'] }}</option>
                                                         @endforeach
-                                                        <option value="FRESH"> < 1 Year </option>
-                                                        <option value="JUNIOR"> 1-3 Years </option>
-                                                        <option value="MID"> 3-5 Years </option>
-                                                        <option value="SENIOR"> >5 Years </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -149,8 +156,10 @@
                 </div>
             </div>
         </div>
+@endsection
+@section('scripts')
 <script>
-    (function(){
+    (async function(){
         job_group = document.getElementById('job_group')
         job_group.value = "{{$manpower->job_group}}"
 
@@ -169,8 +178,16 @@
         department = document.getElementById('department')
         department.value = "{{$manpower->department}}"
 
-        dd = {{session()->has('success')}} 
+        quiz_id = document.getElementById('quiz_id')
+        quiz_id.value = "{{$manpower->quiz_id}}"
 
+        @if(session()->has('success'))
+            await Swal.fire(
+                'Success!',
+                'Manpower request updated',
+                'success'
+                )
+        @endif
 
     })()
 </script>

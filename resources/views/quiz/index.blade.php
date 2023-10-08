@@ -12,13 +12,7 @@
                                 class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
                                 <i class="material-icons opacity-10" aria-hidden="true">group</i>
                             </div>
-                                                    
-                            @if(request()->route()->getName() === "quiz.index")
                                 <h6 class="mt-3 mb-2 ms-3 ">Quizzes</h6>
-                            @else
-                                <h6 class="mt-3 mb-2 ms-3 ">Applicants</h6>
-                            @endif
-                            
                         </div>
 
                         <div class="card-body">
@@ -29,28 +23,51 @@
                                   <thead>
                                     <tr>
                                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Type</th>
-                                      {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">E-mail</th> --}}
                                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Job Group </th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> # of Questions </th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Has passing </th>
                                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Passing Rate </th>
-                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Created At </th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Created by </th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Created at </th>
                                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Action </th>
                                     </tr>
                                   </thead>
                                   <tbody>
-                                  @foreach($list as $user)
+                                  @foreach($list as $quiz)
                                     <tr>
+                                      <td class="align-middle text-sm">
+                                        <span class="text-secondary text-xs font-weight-normal"> {{ $quiz->name }}</span>
 
-                                      <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm badge-success"> {{$user->contact}} </span>
                                       </td>
                                       <td class="align-middle text-center">
-                                        <span class="text-secondary text-xs font-weight-normal"> {{ $user->created_at->diffForHumans() }}</span>
+                                        <span class="text-secondary text-xs font-weight-normal"> {{ $quiz->job_group }}</span>
+                                      </td>
+                                      <td class="align-middle text-center">
+                                        <span class="text-secondary text-xs font-weight-normal"> {{ $quiz->questions_count }}</span>
+                                      </td>
+                                      <td class="align-middle text-center">
+                                        <span class="text-secondary text-xs font-weight-normal"> {{ $quiz->has_passing_rate_name }}</span>
+                                      </td>
+                                      <td class="align-middle text-center">
+                                        <span class="text-secondary text-xs font-weight-normal"> {{ $quiz->passing_rate_name }}</span>
+                                      </td>
+                                      <td class="align-middle text-center">
+                                        <span class="text-secondary text-xs font-weight-normal"> {{ $quiz->createdBy->fullname }}</span>
+                                      </td>
+                                      <td class="align-middle text-center">
+                                        <span class="text-secondary text-xs font-weight-normal"> {{ $quiz->created_at->diffForHumans() }}</span>
                                       </td>
                                       <td class="align-middle">
-                                        <a href="{{route('users.edit', $user->id)}}" class="text-secondary font-weight-normal text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                          Edit
-                                        </a>
+                                        <a href="{{route('quiz.edit', $quiz->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
+                                            <i class="material-icons">edit</i>
+                                        </a>                                           
+                                        <a href="{{route('quiz.edit', $quiz->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
+                                            <i class="material-icons">remove_red_eye</i>
+                                        </a>                                           
+                                        <a href="{{route('quiz.edit', $quiz->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
+                                            <i class="material-icons">lightbulb_outline
+                                            </i>
+                                        </a>   
                                       </td>
                                     </tr>
                                   @endforeach

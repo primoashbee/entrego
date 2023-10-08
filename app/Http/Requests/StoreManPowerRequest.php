@@ -36,7 +36,16 @@ class StoreManPowerRequest extends FormRequest
             'location'=>'required',
             'expires_at'=>'required',
             'required_experience'=>'required',
-            'department'=>'required'
+            'department'=>'required',
+            'quiz_id'=>'required|exists:quizzes,id'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'quiz_id.required' => 'The SJT/CSA is required',
+            'quiz_id.exists' => 'The SJT/CSA is invalid',
         ];
     }
 }

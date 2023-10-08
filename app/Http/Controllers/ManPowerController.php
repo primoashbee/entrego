@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreManPowerRequest;
-use App\Http\Requests\UpdateManPowerRequest;
-use App\Models\ManPower;
+use App\Models\Quiz;
 use App\Models\User;
+use App\Models\ManPower;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use App\Http\Requests\StoreManPowerRequest;
+use App\Http\Requests\UpdateManPowerRequest;
 
 class ManPowerController extends Controller
 {
@@ -27,7 +28,8 @@ class ManPowerController extends Controller
         $experiences = ManPower::EXPERIENCES;
         $departments = ManPower::DEPARTMENT;
         $vacancies = ManPower::VACANCIES;
-        return view('manpower.create', compact('job_group', 'experiences', 'departments','vacancies'));
+        $quizzes = Quiz::select('id','name')->orderBy('id','desc')->get();
+        return view('manpower.create', compact('job_group', 'experiences', 'departments','vacancies', 'quizzes'));
     }
 
     public function store(StoreManPowerRequest $request)
@@ -46,7 +48,8 @@ class ManPowerController extends Controller
             'location'=> $request->location,
             'expires_at'=> $request->expires_at,
             'required_experience'=> $request->required_experience,
-            'department'=> $request->department
+            'department'=> $request->department,
+            'quiz_id'=> $request->quiz_id
         ]);
 
         Session::flash("success", "Manpower request has been submitted. Please wait for the approval");
@@ -73,8 +76,9 @@ class ManPowerController extends Controller
         $departments = ManPower::DEPARTMENT;
         $vacancies = ManPower::VACANCIES;
         $manpower = ManPower::findOrFail($id);
+        $quizzes = Quiz::select('id','name')->orderBy('id','desc')->get();
 
-        return view('manpower.edit', compact('manpower','job_group', 'experiences', 'departments','vacancies'));
+        return view('manpower.edit', compact('manpower','job_group', 'experiences', 'departments','vacancies','quizzes'));
     }
 
     public function update(UpdateManPowerRequest $request, $id)
@@ -83,7 +87,6 @@ class ManPowerController extends Controller
         $manpower->update(
             $request->all()
         );
-
         Session::flash("success", "Manpower has been updated.");
 
         return redirect()->route('manpower.edit', $id);

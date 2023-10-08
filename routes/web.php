@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JobApplicationController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuizController;
@@ -60,6 +62,8 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, Appli
         Route::get('/', [QuizController::class, 'index'])->name('quiz.index');
         Route::get('/create', [QuizController::class, 'create'])->name('quiz.create');
         Route::post('/create', [QuizController::class, 'store'])->name('quiz.store');
+        Route::get('/update/{id}', [QuizController::class, 'edit'])->name('quiz.edit');
+        Route::put('/update/{id}', [QuizController::class, 'update'])->name('quiz.update');
 
     });
 
@@ -80,11 +84,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [UserController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
 });
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
+
+Route::get('/view-jobs', [JobApplicationController::class, 'index'])->name('job.listing');
+Route::get('/job/apply/{id}', [JobApplicationController::class, 'create'])->name('job.create');
+Route::post('/job/apply/{id}', [JobApplicationController::class, 'store'])->name('job.store');
+
+
+Route::get('/', [HomeController::class, 'index'])->name('landing.page');
 Route::get('/full', function(){
     return view('test-master');
 });

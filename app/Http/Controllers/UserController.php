@@ -34,7 +34,7 @@ class UserController extends Controller
         return view('user.profile', compact('user'));
     }
 
-    public function update(UpdateProfileRequest $request, $id)
+    public function update(UpdateProfileRequest $request)
     {
        auth()->user()->update([
         'first_name'=>$request->first_name,

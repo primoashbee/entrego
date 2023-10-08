@@ -71,7 +71,9 @@
                                     </div>
                                     <div class="col-8">
                                         <div class=" mb-3" v-for="(question, index) in questions" :key="index">
+                                            <button class="btn btn-warning" style="float:right" @click="removeRow(index)" v-if="index > 0">X</button>
                                             <div class="input-group input-group-static">
+
                                                 <label class="">Question # @{{index + 1}}</label>
                                                 <input type="text" class="form-control" v-model="questions[index].question">
                                             </div>
@@ -184,6 +186,12 @@
             console.log(questions.value)
         }
 
+        function removeRow(index){
+          
+            // questions.value = delete questions.value[index]
+            questions.value.splice(index,1)
+        }
+
         function checked(index, choice_index){
             questions.value[index].choices.forEach((choice, c_index)=>{
                 choice.is_answer = "off"
@@ -200,8 +208,11 @@
                 job_type: job_type.value,
                 job_group: job_group.value,
                 description: description.value,
-                questions: questions.value
+                questions: questions.value,
+                has_passing: has_passing.value,
+                passing_rate: passing_rate.value
             }
+
             let alert = Swal.fire({
                 title: 'Processing',
                 timerProgressBar: true,
@@ -212,20 +223,24 @@
 
             const url = '/quiz/create'
             const res = await fetch(url, {
-            'method': 'POST',
-            'body': JSON.stringify(payload),
-            'headers': {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRF-Token": '{{csrf_token()}}',
-            },
-            'content-type': 'application/json'
+                'method': 'POST',
+                'body': JSON.stringify(payload),
+                'headers': {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-Token": '{{csrf_token()}}',
+                },
+                'content-type': 'application/json'
             })
-
-            const data = await res.json();
-            
             alert.close()
+
+            await Swal.fire(
+            'Success!',
+            'Quiz created',
+            'success'
+            )
+            location.href = '/quiz'
         }
 
         const addRowDisabled = computed(()=>{
@@ -267,7 +282,8 @@
           addRowDisabled,
           submitDisabled,
           has_passing,
-          passing_rate
+          passing_rate,
+          removeRow
         }
       }
     }).mount('#app')

@@ -3,12 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Mockery\Matcher\Any;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
-use Mockery\Matcher\Any;
+use App\Models\UserJobApplication;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -88,5 +89,14 @@ class User extends Authenticatable
     public function isApplicant()
     {
         return $this->role == self::APPLICANT;
+    }
+
+    public function jobApplications()
+    {
+        return $this->hasMany(UserJobApplication::class);
+    }
+    public function isAppliedToJob($id)
+    {
+        return $this->jobApplications()->where('man_power_id', $id)->count() > 0;
     }
 }

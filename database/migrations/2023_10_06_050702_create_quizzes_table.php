@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->string('type');
+            // $table->string('type');
             $table->string('job_group');
             $table->unsignedInteger('created_by');
             $table->boolean('has_passing_rate');

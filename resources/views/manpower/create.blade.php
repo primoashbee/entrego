@@ -35,6 +35,17 @@
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
+                                                    <label class=""> SJT/ CSA </label>
+                                                    <select name="quiz_id" id="quiz_id" class="form-control">
+                                                        <option value=""> Please Select</option>
+                                                        @foreach($quizzes as $quiz)
+                                                        <option value="{{$quiz['id']}}"> {{ $quiz['name'] }} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <div class="input-group input-group-static">
                                                     <label class="">Job Title</label>
                                                     <input type="text" name="job_title" class="form-control" value="{{old('job_title')}}">
                                                 </div>
@@ -114,10 +125,6 @@
                                                         @foreach($experiences as $experience)
                                                         <option value="{{$experience['value']}}"> {{ $experience['label'] }}</option>
                                                         @endforeach
-                                                        <option value="FRESH"> < 1 Year </option>
-                                                        <option value="JUNIOR"> 1-3 Years </option>
-                                                        <option value="MID"> 3-5 Years </option>
-                                                        <option value="SENIOR"> >5 Years </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -167,6 +174,10 @@
 
         department = document.getElementById('department')
         department.value = "{{old('department')}}"
+
+        quiz_id = document.getElementById('quiz_id')
+        quiz_id.value = "{{old('quiz_id')}}"
+
 
 
     })()

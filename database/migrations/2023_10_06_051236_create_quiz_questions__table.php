@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('quiz_questions', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('quiz_id');
-            $table->string('name');
+            $table->string('question');
             $table->string('choice_a');
             $table->string('choice_b');
             $table->string('choice_c');

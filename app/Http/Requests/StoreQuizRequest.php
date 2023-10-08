@@ -25,7 +25,8 @@ class StoreQuizRequest extends FormRequest
     {
         return [
             'name'=>'required',
-            'job_type'=>'required',
+            'has_passing'=>'required',
+            'passing_rate'=>'required',
             'description'=>'required',
             'questions.*.question'=>'required',
             'questions.*.choices.*.answer'=>'required',
