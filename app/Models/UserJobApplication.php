@@ -37,6 +37,11 @@ class UserJobApplication extends Model
     {
         return str_replace('_',' ', $this->status);
     }
+
+    public function userQuiz()
+    {
+        return $this->hasOne(UserQuiz::class,'application_id');
+    }
     
 
 }

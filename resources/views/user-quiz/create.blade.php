@@ -226,6 +226,8 @@
                 'Quiz Saved',
                 'success'
             )
+
+            location.href = `/user-quiz/result/${id}`
             // location.href = '/quiz'
         }
 

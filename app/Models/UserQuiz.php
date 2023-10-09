@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class UserQuiz extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+
+
+    public function answers()
+    {
+        return $this->hasMany(UserQuizAnswers::class);
+    }
 }

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_quizzes', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('application_id');
-            $table->unsignedInteger('score');
-            $table->unsignedInteger('percentage');
-            $table->timestamps();
+        Schema::table('user_quizzes', function (Blueprint $table) {
+            $table->boolean('is_passed')->after('percentage');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_quizzes');
+        Schema::table('user_quizzes', function (Blueprint $table) {
+            $table->dropColumn('is_passed');
+        });
     }
 };

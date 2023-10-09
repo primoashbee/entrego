@@ -116,7 +116,7 @@
                    that encourages growth and professional development. Your role in shaping our team 
                    is invaluable, and we're excited to see the incredible contributions you'll help us 
                    unlock through your endeavor!</p>
-                  <a href="jobs.html" class="btn-get-started scrollto">Browse Jobs</a>
+                  <a href="{{route('job.listing')}}" class="btn-get-started scrollto">Browse Jobs</a>
                 </div>
               </div>
             </div>
@@ -130,7 +130,7 @@
                    value unique perspectives, ambition, and the humility to never settle for the status quo. 
                    Together we work to empower Philippine business, giving clients a newfound competitive advantage 
                    in logistics that’s powered by technology. </p>
-                  <a href="https://entrego.com.ph/blog/" class="btn-get-started scrollto">Get Started</a>
+                  {{-- <a href="#" class="btn-get-started scrollto">Get Started</a> --}}
                 </div>
               </div>
             </div>
@@ -153,7 +153,7 @@
                           <br><p>Continuous learning is guaranteed here in Entrego.</p>
                       </li>
                   </ul>
-                  <a href="#featured-services" class="btn-get-started scrollto">View More</a>
+                  {{-- <a href="#featured-services" class="btn-get-started scrollto">View More</a> --}}
                 </div>
               </div>
             </div>
