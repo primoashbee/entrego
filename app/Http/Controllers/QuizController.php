@@ -32,7 +32,7 @@ class QuizController extends Controller
                     'name'=>$request->name,
                     'description'=>$request->description,
                     'job_group'=>$request->job_group,
-                    'has_passing_rate'=>$request->passing_rate == 'true' ? true : false,
+                    'has_passing_rate'=>$request->has_passing == 'true' ? true : false,
                     'passing_rate'=>$request->passing_rate,
                     'created_by'=>auth()->user()->id
                 ]);
@@ -77,13 +77,14 @@ class QuizController extends Controller
     {
         //Cannot update if the quiz has already taken
         $quiz = Quiz::with('questions')->findOrFail($id);
+        $request->request->add(['has_passing_rate', $request->has_passing]);
         try{
             DB::transaction(function () use ($request, &$quiz) {
                 $quiz->update([
                     'name'=>$request->name,
                     'description'=>$request->description,
                     'job_group'=>$request->job_group,
-                    'has_passing_rate'=>$request->passing_rate == 'true' ? true : false,
+                    'has_passing_rate'=>$request->has_passing == 'true' ? true : false,
                     'passing_rate'=>$request->passing_rate,
                     'created_by'=>auth()->user()->id
                 ]);

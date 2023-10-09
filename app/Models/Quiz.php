@@ -13,12 +13,12 @@ class Quiz extends Model
 
     public function getHasPassingRateNameAttribute()
     {
-        return $this->has_passing_rate === 0 ? 'Yes' : 'No';
+        return $this->has_passing_rate === 1 ? 'Yes' : 'No';
     }
     
     public function getPassingRateNameAttribute()
     {
-        return $this->has_passing_rate === 0 ? 'N/A' : $this->passing_rate;
+        return $this->passing_rate === 0 ? 'N/A' : $this->passing_rate;
     }   
 
     public function createdBy()

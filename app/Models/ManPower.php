@@ -126,4 +126,9 @@ class ManPower extends Model
     {
         return Carbon::parse($this->expires_at)->format('F d, Y');
     }
+
+    public function quiz()
+    {
+        return $this->hasOne(Quiz::class,'id','quiz_id');
+    }
 }

@@ -143,8 +143,7 @@
                 {{$job->benefits}}
             </p>
           </header>
-
-          @if(auth()->user()->isAppliedToJob($job->id))
+          @if(auth()->check() && auth()->user()->isAppliedToJob($job->id))
           <div class="text-center">
             <h3 href="#" class="text-warning weight-bold"> You've already applied for this job</h3>
           </div>
@@ -240,29 +239,37 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
-    (function(){
-        @if(session()->has('message'))
-          Swal.fire(
-            'Application Sent!',
-            '{{session()->get('message')}}',
-            'success'
-        )
-        @endif
+    (function (){
+      showMessage()
     })()
-
-      async function logout(){
-          await fetch('{{route('logout')}}', {
-              'headers': {
-                  "X-CSRF-Token": '{{csrf_token()}}' 
-              },
-              'method': 'POST',
-              'content-type': 'application/json',
-              'body': JSON.stringify({
-                  'csrf-token': '{{csrf_token()}}' 
-              })
-          })
-          location.reload()
-      }
+    async function showMessage()
+    {
+      @if(session()->has('message'))
+          const title = '{{session()->has('title') ? session()->get('title') : 'Success'}}';
+          const type = '{{session()->has('type') ? session()->get('type') : 'success'}}';
+          await Swal.fire(
+              title,
+              '{{session()->get('message')}}',
+              type
+          )
+          @if(session()->has('redirect'))
+            location.href = '{{session()->get('redirect')}}'
+          @endif
+        @endif
+    }
+    async function logout(){
+        await fetch('{{route('logout')}}', {
+            'headers': {
+                "X-CSRF-Token": '{{csrf_token()}}' 
+            },
+            'method': 'POST',
+            'content-type': 'application/json',
+            'body': JSON.stringify({
+                'csrf-token': '{{csrf_token()}}' 
+            })
+        })
+        location.reload()
+    }
   </script>
 </body>
 </html>

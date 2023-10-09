@@ -50,7 +50,9 @@ class UserController extends Controller
         'zip_code'=>$request->zip_code,
         'skills'=>$request->skills,
         'languages'=>$request->languages,
+        'has_finished_profile'=>true
        ]);
+
        return redirect()->route('profile.edit');
     }
 
@@ -70,7 +72,8 @@ class UserController extends Controller
         'zip_code'=>$request->zip_code,
         'skills'=>$request->skills,
         'languages'=>$request->languages,
-        'role'=>$request->role
+        'role'=>$request->role,
+        'has_finished_profile'=>true
        ]);
        return redirect()->route('users.index');
     }

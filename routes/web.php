@@ -13,6 +13,8 @@ use App\Http\Middleware\ApplicantTakenAssessment;
 use App\Http\Controllers\PersonalAssementController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Controllers\UserPersonalAssessmentController;
+use App\Models\JobApplication;
+use App\Models\UserJobApplication;
 use App\Models\UserPersonalAssessment;
 
 /*
@@ -83,6 +85,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/personal-assessment/result/{batch_id}', [UserPersonalAssessmentController::class, 'view'])->name("personal-assessments.view");
     Route::get('/profile', [UserController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
+
+    Route::get('/jobs', [JobApplicationController::class, 'viewApplicants'])->name('user-job.index');
+
+    Route::post('/job/send-interview/{id}', [JobApplicationController::class, 'sendInterview'])->name('user-job.send-interview');
+
+    Route::get('/user-quiz/take/{application_id}', [UserQuizController::class, 'create'])->name('user-quiz.take');
+    Route::post('/user-quiz/take', [UserQuizController::class, 'store'])->name('user-quiz.submit');
 });
 
 Route::get('/view-jobs', [JobApplicationController::class, 'index'])->name('job.listing');

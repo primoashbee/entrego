@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserQuizRequest;
+use App\Http\Requests\StoreUserRequest;
+use App\Models\ManPower;
+use App\Models\Quiz;
+use App\Models\UserJobApplication;
+use App\Models\UserQuiz;
 use Illuminate\Http\Request;
 
 class UserQuizController extends Controller
@@ -11,21 +17,21 @@ class UserQuizController extends Controller
         
     }
 
-    public function store(Request $request)
+    public function store(StoreUserQuizRequest $request)
     {
         $user_id = auth()->user()->id;
-        $answers = collect($request->answers)->map(function($answer) use ($user_id){
-            $answer['user_id'] = $user_id;
-            $answer['personal_question_id'] = $answer['id'];
-            unset($answer['id']);
-            unset($answer['question']);
-            unset($answer['reversed']);
-            unset($answer['trait']);
-            unset($answer['trait']);
-            return $answer;
-        });
-
-        dd($answers);
-
+        $application = UserJobApplication::find($request->application_id);
+        
     }
+
+    public function create(Request $request, $application_id)
+    {
+        $application = UserJobApplication::with('job.quiz','user')
+                                ->findOrFail($application_id);
+        $job_group = ManPower::JOB_GROUP;
+        $quiz = $application->job->quiz;
+        return view('user-quiz.create', compact('application','job_group', 'quiz'));
+    }
+
+  
 }
