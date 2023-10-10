@@ -38,7 +38,8 @@ class UserController extends Controller
 
     public function update(UpdateProfileRequest $request)
     {
-        auth()->user()->update([
+        $user  = auth()->user();
+        $user->update([
         'first_name'=>$request->first_name,
         'middle_name'=>$request->middle_name,
         'last_name'=>$request->last_name,
@@ -62,6 +63,10 @@ class UserController extends Controller
             Storage::putFileAs(
                 'resumes', $file, $filename
             );
+            $user->update([
+                'has_cv'=>true,
+                'cv_name'=>$filename
+            ]);
         }
        return redirect()->route('profile.edit');
     }
@@ -87,6 +92,7 @@ class UserController extends Controller
             'role'=>$request->role,
             'has_finished_profile'=>true
         ];
+
         if(auth()->user()->role !== User::ADMINSTRATOR){
             unset($fields['role']);
         }
@@ -118,5 +124,28 @@ class UserController extends Controller
         ->where('role', User::APPLICANT)
         ->paginate(15);
         return view('user.index', compact('users'));
+    }
+
+
+    public function downloadCV($id)
+    {
+        $logged_in = auth()->user();
+        $target_user = User::findOrFail($id);
+        if($logged_in->id == $id){
+            $saved_filename = $target_user->cv_name;
+            $ext = explode(".",$saved_filename)[count(explode(".",$saved_filename)) - 1];
+
+            
+           
+            $filename = $target_user->fullname . '.' . $ext;
+            if(Storage::disk('resumes')->exists("resumes/$saved_filename")){
+                return Storage::download("resumes/$saved_filename", $filename, []);
+            }
+
+        }
+
+        if($logged_in->role != User::APPLICANT){
+            return abort(403);
+        }
     }
 }
