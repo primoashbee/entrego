@@ -90,7 +90,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/download/{user_id}', [UserController::class, 'downloadCV'])->name('download.cv');
 
-    Route::get('/dashboard', function(){
+    Route::get('/user-dashboard', function(){
         return redirect()->route('profile.edit');
     })->name('user.dashboard');
 });
