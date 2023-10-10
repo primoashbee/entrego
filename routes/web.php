@@ -30,10 +30,11 @@ use App\Models\UserPersonalAssessment;
 
 Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, ApplicantTakenAssessment::class])->group(function () {
     Route::get('/dashboard', function () {
-        if(auth()->user()->role == User::APPLICANT){
-            return redirect()->route('profile.edit');
-        }
-        return view('test-master');
+        // if(auth()->user()->role == User::APPLICANT){
+        //     return redirect()->route('profile.edit');
+        // }
+        return redirect()->route('landing.page');
+        // return view('test-master');
     })->middleware(['auth', 'verified'])->name('dashboard');
 
 
