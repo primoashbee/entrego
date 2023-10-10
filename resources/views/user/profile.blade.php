@@ -217,6 +217,12 @@
 
                             </div>
                             <div class="card-body">
+                                @if($user->has_cv)
+                                    <a href="{{route('download.cv', $user->id)}}" target="_blank">
+                                        Download uploaded
+                                        <i class="material-icons">file_download</i>
+                                    </a>
+                                @endif
                                 <div class="form-group">
                                     <label for="cv">Resume / CV (.pdf, .doc, docx)</label><br>
                                     <input type="file" name="cv" id="cv" accept=".pdf, .doc, .docx">  

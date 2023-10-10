@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('uuid');
-            $table->string('cv_name');
+            $table->boolean('has_cv')->default(false);
         });
     }
 
@@ -23,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('uuid');
-            $table->dropColumn('cv_name');
+            $table->dropColumn('has_cv');
         });
     }
 };

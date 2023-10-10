@@ -68,16 +68,14 @@
           </li>
           @if(auth()->check())
           <li class="menu-has-children">
-          <a href="#">
-                Hello, {{auth()->user()->fullname}}
-          </a>
-            <ul>
-              <li><a href="https://entrego.com.ph/about">About Entrego</a></li>
-              <li><a href="https://entrego.com.ph/blog">Blog</a></li>
-              <li><a href="#contact">Contact Us</a></li>
-              <li><a href="#">Hirelogic Team</a></li>
-            </ul>
-          </li>
+            <a href="#">
+                  Hello, {{auth()->user()->fullname}}
+            </a>
+              <ul>
+                <li><a href="{{route('profile.edit')}}">Profile</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()">Logout</a></li>
+              </ul>
+            </li>
           @else 
           <li class="menu-has-children">
             <a href="#">

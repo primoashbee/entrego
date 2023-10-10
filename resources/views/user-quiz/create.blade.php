@@ -32,6 +32,9 @@
                                                 <label > @{{index + 1}} - <span class="font-weight-bold">@{{questions[index].question}} </span></label>
                                                 <hr>
                                             </div>
+                                            {{-- <pre> @{{question.choices}}</pre> --}}
+                                            <p> -------------</p>
+                                            {{-- <pre> @{{shuffledChoices(question.choices)}}</pre> --}}
                                             <div class="mt-2"v-for="(choices, choice_index) in question.choices" :key="choice_index">
                                                 <div class="form-check px-0">
                                                     <input type="radio" 
@@ -72,7 +75,9 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="module">
+    
     import { createApp, ref, watch, computed  } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
   
     createApp({
@@ -116,7 +121,7 @@
                 const formatted = {
                     id: item.id,
                     question: item.question,
-                    choices: [
+                    choices: _.shuffle([
                         {
                             answer: item.choice_a,
                             choice: 'choice_a',
@@ -141,7 +146,7 @@
                             is_answer: item.answer == 'choice_d' ? 'on' : 'off',
                             user_answer: 'off,'
                         }
-                    ]
+                    ])
                 }
 
                 return formatted
@@ -255,7 +260,7 @@
           submitDisabled,
           has_passing,
           passing_rate,
-          answerPayload
+          answerPayload,
         }
       }
     }).mount('#app')

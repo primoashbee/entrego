@@ -94,6 +94,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/user-quiz/take', [UserQuizController::class, 'store'])->name('user-quiz.submit');
     Route::get('/user-quiz/result/{application_id}', [UserQuizController::class, 'view'])->name('user-quiz.view-result');
 
+    Route::get('/download/{user_id}', [UserController::class, 'downloadCV'])->name('download.cv');
+
     Route::get('/dashboard', function(){
 
     })->name('user.dashboard');
