@@ -29,14 +29,6 @@ use App\Models\UserPersonalAssessment;
 */
 
 Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, ApplicantTakenAssessment::class])->group(function () {
-    Route::get('/dashboard', function () {
-        // if(auth()->user()->role == User::APPLICANT){
-        //     return redirect()->route('profile.edit');
-        // }
-        return redirect()->route('landing.page');
-        // return view('test-master');
-    })->middleware(['auth', 'verified'])->name('dashboard');
-
 
     Route::prefix('users')->group(function(){
         Route::get('/', [UserController::class, 'index'])->name('users.index');
@@ -105,6 +97,13 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/view-jobs', [JobApplicationController::class, 'index'])->name('job.listing');
 Route::get('/job/apply/{id}', [JobApplicationController::class, 'create'])->name('job.create');
 Route::post('/job/apply/{id}', [JobApplicationController::class, 'store'])->name('job.store');
+Route::get('/dashboard', function () {
+    // if(auth()->user()->role == User::APPLICANT){
+    //     return redirect()->route('profile.edit');
+    // }
+    return redirect()->route('landing.page');
+    // return view('test-master');
+})->name('dashboard');
 
 
 Route::get('/', [HomeController::class, 'index'])->name('landing.page');
