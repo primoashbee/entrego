@@ -38,7 +38,8 @@ class UpdateProfileRequest extends FormRequest
             'city'=>'required',
             'barangay'=>'required',
             'zip_code'=>'required',
-            'password'=>'sometimes|required|confirmed'
+            'password'=>'sometimes|required|confirmed',
+            'cv'=>'sometimes|mimes:pdf,doc,docx',
             // 'company_name.*'=>'sometimes|required',
             // 'job_title.*'=>'sometimes|required',
             // 'start_date.*'=>'sometimes|required|date',

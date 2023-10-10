@@ -50,8 +50,22 @@
                                                   </div>
                                                 </div>
                                             </td>
-                                            <td class="align-middle text-center">
-                                                <<< Exam percentage here >>>>
+                                            <td class=" text-center">
+                                                @if($applicant->userQuiz)
+
+                                                    <div class="progress" style="width:100%; margin-top:-8px">
+                                                        @if($applicant->userQuiz->percentage < 50)
+                                                            <div class="progress-bar bg-gradient-danger text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>
+                                                        @elseif($applicant->userQuiz->percentage >= 50 &&  $applicant->userQuiz->percentage <= 75)
+                                                            <div class="progress-bar bg-gradient-secondary text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>
+                                                        @else
+                                                            <div class="progress-bar bg-gradient-success text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>    
+                                                        @endif
+                                                    </div>
+
+                                                    @else
+                                                        N/A
+                                                    @endif
                                             </td>
                                             <td class="align-middle text-center">
                                                 @if($applicant->status == 'WAITING_FOR_EXAM_RESULT')
@@ -86,9 +100,16 @@
                                                 </a>
                                                 
                                                 @else
-                                                <a href="{{route('user-quiz.create', $applicant->id)}}" class="text-secondary font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
-                                                    <i class="material-icons">laptop</i>
-                                                </a>
+                                                    <!-- This means currently logged in is applicant !-->
+                                                    @if($applicant->userQuiz)
+                                                        <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="text-secondary font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                            <i class="material-icons">question_answer</i>
+                                                        </a>
+                                                    @else
+                                                    <a href="{{route('user-quiz.take', $applicant->id)}}" class="text-secondary font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                        <i class="material-icons">laptop</i>
+                                                    </a>
+                                                    @endif
                                                 @endif
 
                                            

@@ -93,6 +93,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user-quiz/take/{application_id}', [UserQuizController::class, 'create'])->name('user-quiz.take');
     Route::post('/user-quiz/take', [UserQuizController::class, 'store'])->name('user-quiz.submit');
     Route::get('/user-quiz/result/{application_id}', [UserQuizController::class, 'view'])->name('user-quiz.view-result');
+
+    Route::get('/dashboard', function(){
+
+    })->name('user.dashboard');
 });
 
 Route::get('/view-jobs', [JobApplicationController::class, 'index'])->name('job.listing');

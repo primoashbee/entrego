@@ -31,15 +31,25 @@
                                             @endif
                                         </h6>
 
-                                        <div class="progress">
-                                            @if($application->userQuiz->percentage < 50)
-                                                <div class="progress-bar bg-gradient-danger" style="width: {{$application->userQuiz->percentage}}%; height:20px">{{$application->userQuiz->percentage}}%</div>
-                                            @elseif($application->userQuiz->percentage >= 50 &&  $application->userQuiz->percentage <= 75)
-                                                <div class="progress-bar bg-gradient-secondary" style="width: {{$application->userQuiz->percentage}}%; height:20px">{{$application->userQuiz->percentage}}%</div>
-                                            @else
-                                                <div class="progress-bar bg-gradient-success" style="width: {{$application->userQuiz->percentage}}%; height:20px">{{$application->userQuiz->percentage}}%</div>    
-                                            @endif
+                                        <h6>Required: {{$application->job->quiz->passing_rate}} %</h6>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <h6> My Result:</h6>
+                                            </div>
+                                            <div class="col-8" style="margin-left:-30px">
+                                                <div class="progress">
+                                                    @if($application->userQuiz->percentage < 50)
+                                                        <div class="progress-bar bg-gradient-danger" style="width: {{$application->userQuiz->percentage}}%; height:20px">{{$application->userQuiz->percentage}}%</div>
+                                                    @elseif($application->userQuiz->percentage >= 50 &&  $application->userQuiz->percentage <= 75)
+                                                        <div class="progress-bar bg-gradient-secondary" style="width: {{$application->userQuiz->percentage}}%; height:20px">{{$application->userQuiz->percentage}}%</div>
+                                                    @else
+                                                        <div class="progress-bar bg-gradient-success" style="width: {{$application->userQuiz->percentage}}%; height:20px">{{$application->userQuiz->percentage}}%</div>    
+                                                    @endif
+                                                </div>
+                                            </div>
+
                                         </div>
+
 
                                     </div>
                                     <div class="col-8">
@@ -49,12 +59,13 @@
                                             </div>
                                             <div class="answers px-2 mt-2" v-for="(choices, choice_index) in question.choices" :key="choice_index">
                                                 <div class="form-check px-0">
-                                                    <input type="radio" 
+                                                    <input type="radio"
                                                         class="form-check-input"
                                                         :id="`questions-${index}-choices-${choice_index}-user_answer`" 
                                                         :checked="questions[index].choices[choice_index].user_answer =='on'" 
                                                         :name="`questions.${index}`" 
                                                         @change="checked(index,choice_index)" 
+                                                        disabled
                                                     />                                                   
                                                     <label class="custom-control-label" :for="`questions-${index}-choices-${choice_index}-user_answer`">
                                                         @{{questions[index].choices[choice_index].answer}} 
@@ -86,6 +97,7 @@
         const questions = ref(@json($questions))
 
         function checked(index, choice_index){
+            return false;
             questions.value[index].choices.forEach((choice, c_index)=>{
                 choice.is_answer = "off"
                 

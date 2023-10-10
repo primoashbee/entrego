@@ -16,15 +16,15 @@ data-scroll="true">
     </nav>
     <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
         <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-
+{{-- 
             <div class="input-group input-group-outline">
                 <label class="form-label">Type here...</label>
                 <input type="text" class="form-control">
-            </div>
+            </div> --}}
 
         </div>
         <ul class="navbar-nav  justify-content-end">
-            <li class="nav-item d-flex align-items-center">
+            {{-- <li class="nav-item d-flex align-items-center">
                 <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank"
                     href="https://www.creative-tim.com/builder?ref=navbar-material-dashboard">Online
                     Builder</a>
@@ -133,18 +133,31 @@ data-scroll="true">
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
             <li class="nav-item d-flex align-items-center">
                 <a href="{{route('profile.edit')}}" class="nav-link text-body font-weight-bold px-0">
                     @if(auth()->check())
-                    <span class="d-sm-inline d-none"> {{ auth()->user()->fullname}} </span>
+                    <div class="collapse navbar-collapse d-sm-inline d-none" id="navbarNavDarkDropdown">
+                        <ul class="navbar-nav">
+                          <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ auth()->user()->fullname}} &nbsp;&nbsp;<i class="fa fa-user me-sm-1"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                              <li><a class="dropdown-item" href="{{route('profile.edit')}}">Profile</a></li>
+                              <li><a class="dropdown-item"  href="javascript:void(0)" onclick="logout()">Sign out</a></li>
+                            </ul>
+                          </li>
+                        </ul>
+                    </div>
+                    {{-- <span class="d-sm-inline d-none">  </span> --}}
                     @else
                     <span class="d-sm-inline d-none">Sign In</span>
                     @endif
-                    <i class="fa fa-user me-sm-1"></i>
 
                 </a>
             </li>
+
         </ul>
     </div>
 </div>

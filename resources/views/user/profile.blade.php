@@ -2,9 +2,9 @@
 @section('content')
 @include('components.errors')
 @if(request()->route('id'))
-<form action="{{route('users.update', request()->route('id'))}}" method="POST">
+<form action="{{route('users.update', request()->route('id'))}}" method="POST" id="frmSubmit" enctype="multipart/form-data">
 @else
-<form action="{{route('profile.update')}}" method="POST">
+<form action="{{route('profile.update')}}" method="POST" id="frmSubmit" enctype="multipart/form-data">
 @endif
     @csrf
     <div class="container-fluid py-4">
@@ -25,10 +25,10 @@
                             <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-4">
-                                        <div class="input-group input-group-static my-3">
-                                            <label class="">First Name</label>
-                                            <input type="text" name="first_name" class="form-control" value="{{$user->first_name}}">
-                                        </div>
+                                            <div class="input-group input-group-static my-3">
+                                                <label class="">First Name</label>
+                                                <input type="text" name="first_name" class="form-control" value="{{$user->first_name}}">
+                                            </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="input-group input-group-static my-3">
@@ -213,6 +213,27 @@
                                     class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
                                     <i class="material-icons opacity-10" aria-hidden="true">account_circle</i>
                                 </div>
+                                <h6 class="mt-3 mb-2 ms-3 ">Attachments</h6>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="cv">Resume / CV (.pdf, .doc, docx)</label><br>
+                                    <input type="file" name="cv" id="cv" accept=".pdf, .doc, .docx">  
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card mb-4 ">
+                            <div class="d-flex">
+                                <div
+                                    class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
+                                    <i class="material-icons opacity-10" aria-hidden="true">account_circle</i>
+                                </div>
                                 <h6 class="mt-3 mb-2 ms-3 ">Password</h6>
 
                             </div>
@@ -261,10 +282,21 @@
         gender.value = '{{$user->gender}}'
         role = document.getElementById("role")
         role.value = '{{$user->role}}'
+        @if(auth()->user()->role !== 'ADMINISTRATOR')
         role.disabled = true
         role.readonly = true
+        @endif
 
+
+        const frm = document.getElementById('frmSubmit')
+        frm.addEventListener('submit', event => {
+            cv = document.getElementById('cv')
+            if(cv.value === ''){
+                cv.remove()
+            }   
+        })
     })();
+    
     function addRow(){
         document.getElementById('frmWorkSection').innerHTML += 
         `

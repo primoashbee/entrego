@@ -10,6 +10,7 @@ use App\Models\UserJobApplication;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\StoreUserQuizRequest;
+use App\Models\JobApplication;
 use App\Models\UserQuizAnswers;
 use Illuminate\Support\Facades\Session;
 
@@ -29,9 +30,11 @@ class UserQuizController extends Controller
 
             $application = UserJobApplication::with('job.quiz')
                 ->find($request->application_id);
+
             $max_score = $application->job->quiz->questions->count();
             $inserts = [];
 
+            //ready the inserts for quiz answers table
             $score = collect($request->answers)->filter(function($answer) use (&$inserts){
                 $inserts[] = [
                     'quiz_question_id'=>$answer['id'],
@@ -40,18 +43,33 @@ class UserQuizController extends Controller
                 ];
                 return $answer['correct'];
             })->count();
-            
+
+            $score_percentage = ($score / $max_score) * 100;
+            $required_percentage = $application->job->quiz->has_passing_rate ? $application->job->quiz->passing_rate : 0 ;
+            $passed = $score_percentage >= $required_percentage;
+
+            // create quiz
             $quiz = UserQuiz::create([
                 'application_id'=>$request->application_id,
                 'score'=>$score,
-                'percentage'=> ($score / $max_score) * 100
+                'percentage'=> ($score / $max_score) * 100,
+                'is_passed'=> $passed
             ]);
+
+            //add user_quiz id for each answers
             $inserts = collect($inserts)->map(function($insert) use ($quiz){
                 $insert['user_quiz_id'] = $quiz->id;
                 return $insert;
             })->toArray();
 
-            UserQuizAnswers::insert($inserts);
+            //create UserQuizAnswers, not insert because it does not respect the DB::transaction
+            foreach($inserts as $insert){
+                UserQuizAnswers::create($insert);
+            }
+
+            $application->update([
+                'status' => $passed ? UserJobApplication::EXAM_PASSED : UserJobApplication::EXAM_FAILED 
+            ]);
             DB::commit();
 
             Session::flash('redirect', route('user-quiz.view-result', $request->application_id));
@@ -72,8 +90,13 @@ class UserQuizController extends Controller
 
     public function view($application_id){
         $application =  UserJobApplication::with('userQuiz.answers','job.quiz.questions')->findOrFail($application_id);
+        if(!$application->userQuiz){
+            return abort(404);
+        }
         $quiz = $application->job->quiz;
         $questions = $quiz->questions;
+                    
+
         $questions = $application->userQuiz->answers->map(function($answer) use (&$questions){
             $current_question = $questions->where('id', $answer->quiz_question_id)->first();
             return [

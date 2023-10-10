@@ -188,4 +188,6 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'team-name'=>env('TEAM_NAME', 'EntregoHR')
+
 ];

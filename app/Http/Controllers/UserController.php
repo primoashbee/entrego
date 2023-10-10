@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreUserRequest;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UpdateProfileRequest;
 
 class UserController extends Controller
 {
@@ -36,7 +38,7 @@ class UserController extends Controller
 
     public function update(UpdateProfileRequest $request)
     {
-       auth()->user()->update([
+        auth()->user()->update([
         'first_name'=>$request->first_name,
         'middle_name'=>$request->middle_name,
         'last_name'=>$request->last_name,
@@ -51,31 +53,46 @@ class UserController extends Controller
         'skills'=>$request->skills,
         'languages'=>$request->languages,
         'has_finished_profile'=>true
-       ]);
+        ]);
 
+        if($request->hasFile('cv')){
+            $file = $request->file('cv');
+            $filename = auth()->user()->uuid . "." . $file->getClientOriginalExtension();
+    
+            Storage::putFileAs(
+                'resumes', $file, $filename
+            );
+        }
        return redirect()->route('profile.edit');
     }
 
     public function updateUser(UpdateProfileRequest $request, $id)
     {
-       User::findOrFail($id)->update([
-        'first_name'=>$request->first_name,
-        'middle_name'=>$request->middle_name,
-        'last_name'=>$request->last_name,
-        'gender'=>$request->gender,
-        'birthday'=>$request->birthday,
-        'street'=>$request->street,
-        'landmark'=>$request->landmark,
-        'contact_number'=>$request->contact_number,
-        'barangay'=>$request->barangay,
-        'city'=>$request->city,
-        'zip_code'=>$request->zip_code,
-        'skills'=>$request->skills,
-        'languages'=>$request->languages,
-        'role'=>$request->role,
-        'has_finished_profile'=>true
-       ]);
-       return redirect()->route('users.index');
+    
+        
+        $fields = [
+            'first_name'=>$request->first_name,
+            'middle_name'=>$request->middle_name,
+            'last_name'=>$request->last_name,
+            'gender'=>$request->gender,
+            'birthday'=>$request->birthday,
+            'street'=>$request->street,
+            'landmark'=>$request->landmark,
+            'contact_number'=>$request->contact_number,
+            'barangay'=>$request->barangay,
+            'city'=>$request->city,
+            'zip_code'=>$request->zip_code,
+            'skills'=>$request->skills,
+            'languages'=>$request->languages,
+            'role'=>$request->role,
+            'has_finished_profile'=>true
+        ];
+        if(auth()->user()->role !== User::ADMINSTRATOR){
+            unset($fields['role']);
+        }
+
+        User::findOrFail($id)->update($fields);
+        return redirect()->route('users.index');
     }
 
     public function createUser()
@@ -88,6 +105,7 @@ class UserController extends Controller
             'email'=>$request->email,
             'role'=>$request->role,
             'password'=>Hash::make($request->password),
+            'uuid'=>strtoupper(Str::uuid())
             // 'has_finished_profile'=> true,
         ]);
     }

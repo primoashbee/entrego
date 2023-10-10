@@ -4,9 +4,10 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\PersonalAssessment;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use App\Models\PersonalAssessment;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -22,7 +23,9 @@ class DatabaseSeeder extends Seeder
             User::create([
                 'email'=>config('app.admin_email'),
                 'password'=>Hash::make(config('app.admin_password')),
-                'role'=>User::ADMINSTRATOR
+                'role'=>User::ADMINSTRATOR,
+                'uuid'=>strtoupper(Str::uuid())
+
             ]);
         }
         if(PersonalAssessment::count() == 0){
