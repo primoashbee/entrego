@@ -129,7 +129,7 @@ class UserPersonalAssessmentController extends Controller
 
     public function create()
     {
-        $questions = PersonalAssessment::orderBy('position','asc')->limit(5)->get()->toArray();
+        $questions = PersonalAssessment::orderBy('position','asc')->get()->toArray();
         return view('assessment.create', compact('questions'));
     }
 
