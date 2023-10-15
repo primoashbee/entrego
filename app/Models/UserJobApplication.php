@@ -19,9 +19,14 @@ class UserJobApplication extends Model
     const EXAM_FAILED = "EXAM_FAILED";
     const FOR_SENDING_INTERVIEW = "FOR_SENDING_INTERVIEW";
     const INTERVIEW_SENT = "INTERVIEW_SENT";
+
     const REJECTED = "REJECTED";
     const APPROVED = "APPROVED";
+
+    const FOR_REQUIREMENTS = "FOR_REQUIREMENTS";
+    
     const HIRED = "HIRED";
+    const DEPLOYED = "DEPLOYED";
 
     public function user()
     {
@@ -43,5 +48,55 @@ class UserJobApplication extends Model
         return $this->hasOne(UserQuiz::class,'application_id');
     }
     
+    public function canBeDeployed()
+    {
+        return $this->user->requirementsFullfilled();
+    }
+
+    public function scopeActive()
+    {
+        return $this->whereNotIn('status', [self::APPLIED, self::REJECTED, self::DEPLOYED]);
+    }
+
+    public function scopeDeployed()
+    {
+        return $this->where('status', self::DEPLOYED);
+    }
+
+    public static function variation($date)
+    {   
+        $last = self::whereMonth('created_at', $date->copy()->subMonth()->month)->count() ;
+        $now = self::whereMonth('created_at', $date->month)->count();
+     
+        if($last == 0){
+            $variaton = 100;
+        }else{
+            $variaton = round(1 * abs(100 - (($now / $last) * 100)),2);
+
+            if($last > $now){
+                $variaton = round(-1 * abs(100 - (($now / $last) * 100)),2);
+            }
+        }
+
+       return $variaton;
+    }
+
+    public static function variationDeployed($date)
+    {   
+        $last = self::whereMonth('created_at', $date->copy()->subMonth()->month)->count() ;
+        $now =  self::whereMonth('created_at', $date->format('Y'))->deployed()->count();
+     
+        if($last == 0){
+            $variaton = 100;
+        }else{
+            $variaton = round(1 * abs(100 - (($now / $last) * 100)),2);
+
+            if($last > $now){
+                $variaton = round(-1 * abs(100 - (($now / $last) * 100)),2);
+            }
+        }
+
+       return $variaton;
+    }
 
 }

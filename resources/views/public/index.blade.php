@@ -171,7 +171,7 @@
       </div>
     </div>
   </section><!-- #intro -->
-  <main id="main">
+  {{-- <main id="main">
     <!--==========================
       Portfolio Section
     ============================-->
@@ -334,7 +334,7 @@
   
         </div>
       </section><!-- #portfolio -->
-  </main>
+  </main> --}}
 
   <!--==========================
     Footer
@@ -411,6 +411,22 @@
 
   <!-- Template Main Javascript File -->
   <script src="{{asset('landing-page/js/main.js')}}"></script>
+  <script>
 
+    async function logout(){
+        await fetch('{{route('logout')}}', {
+            'headers': {
+                "X-CSRF-Token": '{{csrf_token()}}' 
+            },
+            'method': 'POST',
+            'content-type': 'application/json',
+            'body': JSON.stringify({
+                'csrf-token': '{{csrf_token()}}' 
+            })
+        })
+        location.reload()
+    }
+
+</script>
 </body>
 </html>

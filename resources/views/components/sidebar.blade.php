@@ -37,7 +37,7 @@ id="sidenav-main">
             <a class="nav-link text-white " href="{{route('manpower.index')}}">
 
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">table_view</i>
+                    <i class="material-icons opacity-10">person_add</i>
                 </div>
 
                 <span class="nav-link-text ms-1">Manpower Requests</span>
@@ -50,7 +50,7 @@ id="sidenav-main">
             <a class="nav-link text-white " href="{{ route('quiz.index') }}">
 
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">table_view</i>
+                    <i class="material-icons opacity-10">attach_file</i>
                 </div>
 
                 <span class="nav-link-text ms-1">SJT / CSA</span>
@@ -62,7 +62,7 @@ id="sidenav-main">
             <a class="nav-link text-white " href="{{ route('personal-assessments.index') }}">
 
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">table_view</i>
+                    <i class="material-icons opacity-10">person_pin</i>
                 </div>
 
                 <span class="nav-link-text ms-1">Personality Assesments</span>
@@ -74,7 +74,7 @@ id="sidenav-main">
             <a class="nav-link text-white " href="{{ route('users.index') }}">
 
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">table_view</i>
+                    <i class="material-icons opacity-10">people</i>
                 </div>
 
                 <span class="nav-link-text ms-1">Users</span>
@@ -87,7 +87,7 @@ id="sidenav-main">
             <a class="nav-link text-white " href="{{route('applicants.index')}}">
 
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">table_view</i>
+                    <i class="material-icons opacity-10">group</i>
                 </div>
 
                 <span class="nav-link-text ms-1">Applicants</span>
@@ -98,7 +98,7 @@ id="sidenav-main">
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('user-job.index')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">table_view</i>
+                    <i class="material-icons opacity-10">work</i>
                 </div>
                 <span class="nav-link-text ms-1">Job Applications</span>
             </a>
@@ -108,73 +108,29 @@ id="sidenav-main">
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('job.listing')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">table_view</i>
+                    <i class="material-icons opacity-10">filter_none</i>
                 </div>
                 <span class="nav-link-text ms-1">Job Listings</span>
             </a>
         </li>
         @endif
 
-        {{-- <li class="nav-item">
-            <a class="nav-link text-white " href="./billing.html">
-
-                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">receipt_long</i>
-                </div>
-
-                <span class="nav-link-text ms-1">Billing</span>
-            </a>
-        </li>
-
-
+        @if(auth()->user()->role != 'APPLICANT')
         <li class="nav-item">
-            <a class="nav-link text-white " href="./virtual-reality.html">
-
+            <a class="nav-link text-white " href="{{route('requirements.index')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">view_in_ar</i>
+                    <i class="material-icons opacity-10">table_view</i>
                 </div>
-
-                <span class="nav-link-text ms-1">Virtual Reality</span>
+                <span class="nav-link-text ms-1">Requirements</span>
             </a>
         </li>
-
-
-        <li class="nav-item">
-            <a class="nav-link text-white " href="./rtl.html">
-
-                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
-                </div>
-
-                <span class="nav-link-text ms-1">RTL</span>
-            </a>
-        </li>
-
-
-        <li class="nav-item">
-            <a class="nav-link text-white " href="./notifications.html">
-
-                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons opacity-10">notifications</i>
-                </div>
-
-                <span class="nav-link-text ms-1">Notifications</span>
-            </a>
-        </li>
- --}}
-
-        <li class="nav-item mt-3">
-            <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages
-            </h6>
-        </li>
-
+        @endif
+        <hr class="horizontal light mt-0 mb-2">
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('profile.edit')}}">
-
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                     <i class="material-icons opacity-10">person</i>
                 </div>
-
                 <span class="nav-link-text ms-1">Profile</span>
             </a>
         </li>
@@ -216,6 +172,8 @@ id="sidenav-main">
             </a>
         </li>
         @endif
+
+        
     </ul>
 </div>
 

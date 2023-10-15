@@ -217,17 +217,18 @@
 
                             </div>
                             <div class="card-body">
-                                @if($user->has_cv)
-                                    <a href="{{route('download.cv', $user->id)}}" target="_blank">
-                                        Download uploaded
-                                        <i class="material-icons">file_download</i>
-                                    </a>
-                                @endif
+
                                 <div class="form-group">
                                     <label for="cv">Resume / CV (.pdf, .doc, docx)</label><br>
                                     <input type="file" name="cv" id="cv" accept=".pdf, .doc, .docx">  
 
                                 </div>
+                                @if($user->has_cv)
+                                <a href="{{route('download.cv', $user->id)}}" target="_blank">
+                                    Download uploaded
+                                    <i class="material-icons">file_download</i>
+                                </a>
+                            @endif
                             </div>
                         </div>
                     </div>
@@ -238,7 +239,7 @@
                             <div class="d-flex">
                                 <div
                                     class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
-                                    <i class="material-icons opacity-10" aria-hidden="true">account_circle</i>
+                                    <i class="material-icons opacity-10" aria-hidden="true">vpn_key</i>
                                 </div>
                                 <h6 class="mt-3 mb-2 ms-3 ">Password</h6>
 
@@ -273,6 +274,10 @@
                         </div>
                     </div>
                 </div>
+
+                @if($user->canUploadRequirements())
+                    @include('components.requirements')
+                @endif
                 <!-- End Account -->
 
                 <button class="btn text-right btn-primary" type="submit">Update Profile</button>
@@ -295,11 +300,17 @@
 
 
         const frm = document.getElementById('frmSubmit')
+        const requirements = document.getElementsByClassName('requirement-file')
         frm.addEventListener('submit', event => {
             cv = document.getElementById('cv')
             if(cv.value === ''){
                 cv.remove()
-            }   
+            }
+            Array.from(requirements).forEach((el)=>{
+                if(el.value === ''){
+                    el.remove()
+                }
+            })   
         })
     })();
     

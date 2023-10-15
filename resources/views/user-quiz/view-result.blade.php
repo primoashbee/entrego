@@ -32,6 +32,7 @@
                                         </h6>
 
                                         <h6>Required: {{$application->job->quiz->passing_rate}} %</h6>
+                                        <h6>Time Elapsed: {{$application->userQuiz->time_elapsed}}</h6>
                                         <div class="row">
                                             <div class="col-4">
                                                 <h6> My Result:</h6>
@@ -55,7 +56,7 @@
                                     <div class="col-8">
                                         <div class=" mb-3" v-for="(question, index) in questions" :key="index">
                                             <div class="input-group input-group-static">
-                                                <label > @{{index + 1}} - <span class="font-weight-bold">@{{questions[index].question}} </span></label>
+                                                <label > @{{index + 1}} - <span class="font-weight-bold">@{{questions[index].question}}</span> <span class="font-weight-bold text-danger" v-if="unAnswered(question.choices)">No Answer</span></label>
                                             </div>
                                             <div class="answers px-2 mt-2" v-for="(choices, choice_index) in question.choices" :key="choice_index">
                                                 <div class="form-check px-0">
@@ -106,10 +107,17 @@
                 }
             })
         }
+
+        function unAnswered(choices){
+            return choices.filter((choice, index)=>{
+                return choice.user_answer == 'on'
+            })?.length == 0
+        }
     
 
         return {
           questions,
+          unAnswered
         }
       }
     }).mount('#app')

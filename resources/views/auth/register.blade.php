@@ -38,15 +38,6 @@
   <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
   <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 <body class="">
   <main class="main-content  mt-0">
     <section>
@@ -64,6 +55,15 @@
                   <h4 class="font-weight-bolder">Sign Up</h4>
                   <p class="mb-0">Enter your email and password to register</p>
                 </div>
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div class="card-body">
                   <form role="form" action="{{route('register')}}" method="POST">
                     @csrf
@@ -72,7 +72,7 @@
                     @enderror
                     <div class="input-group input-group-outline mb-3 is-invalid">
                       <label class="form-label">Email</label>
-                      <input type="email" class="form-control" name="email">
+                      <input type="email" class="form-control" name="email" value="{{old('email')}}">
                       
                     </div>
 

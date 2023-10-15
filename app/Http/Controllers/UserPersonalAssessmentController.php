@@ -15,7 +15,8 @@ class UserPersonalAssessmentController extends Controller
     public function store(Request $request)
     {
         $uuid = strtoupper(Str::uuid());
-        $user_id = auth()->user()->id;
+        $user = auth()->user();
+        $user_id = $user->id;
         $date = now();
         $answers = collect($request->answers)->map(function($answer) use ($user_id, $date, $uuid){
             $answer['user_id'] = $user_id;
@@ -57,6 +58,9 @@ class UserPersonalAssessmentController extends Controller
         })->toArray();
 
         UserPersonalAssessment::insert($answers);
+        $user->update([
+            'has_finished_asessment'=>true
+        ]);
         return response()->json([
             'batch_id'=>$uuid
         ], 200);

@@ -55,6 +55,24 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-6 mb-3">
+                                                <div class="input-group input-group-static">
+                                                    <label class="">Is Timed</label>
+                                                    <select id="has_timer" name="has_timer" class="form-control" v-model="has_timer">
+                                                        <option value=""></option>
+                                                        <option value="true"> Yes</option>
+                                                        <option value="false">No</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 mb-3">
+                                                <div class="input-group input-group-static">
+                                                    <label class="">Timer (in seconds)</label>
+                                                    <input type="number"  step="1" class="form-control" v-model="time_in_seconds" :disabled="has_timer=='false'">
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div class=" mb-3">
                                             <div class="input-group input-group-static">
@@ -140,6 +158,9 @@
         const description = ref(@json($quiz->description))
         const has_passing = ref(@json($quiz->has_passing_rate === 1 ? 'true' :'false'))
         const passing_rate = ref(@json($quiz->passing_rate))
+        const has_timer = ref(@json($quiz->has_timer === 1 ? 'true' :'false'))
+        const time_in_seconds = ref(@json($quiz->time_in_seconds))
+
 
         function formatRecievedQuestions(q)
         {
@@ -229,7 +250,9 @@
                 description: description.value,
                 questions: questions.value,
                 has_passing: has_passing.value,
-                passing_rate: passing_rate.value
+                passing_rate: passing_rate.value,
+                has_timer : has_timer.value,
+                time_in_seconds: time_in_seconds.value
             }
 
             let alert = Swal.fire({
@@ -297,7 +320,9 @@
           submitDisabled,
           has_passing,
           passing_rate,
-          removeRow
+          removeRow,
+          has_timer,
+          time_in_seconds
         }
       }
     }).mount('#app')

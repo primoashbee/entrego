@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Mail\JobAppliedMail;
+use App\Mail\JobApprovedMail;
 use App\Models\User;
 use Twilio\Rest\Client;
 use App\Models\ManPower;
 use Illuminate\Http\Request;
 use App\Mail\JobInterviewMail;
+use App\Mail\JobRejectedMail;
 use App\Models\UserJobApplication;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
@@ -93,7 +95,7 @@ class JobApplicationController extends Controller
 
         $user = auth()->user();
         if($user->role === User::APPLICANT){
-            $applicants = UserJobApplication::with('user','job')
+            $applicants = UserJobApplication::with('user.requirements','job')
                             ->where('user_id', $user->id)
                             ->orderBy('id','desc')->get();
         }else{
@@ -130,6 +132,33 @@ class JobApplicationController extends Controller
                 'From'=> $twilio_number,
                 'body'=> $message
             ]);
+        
+    }
+
+    public function patch(Request $request, $id)
+    {
+        $job = UserJobApplication::findOrFail($id);
+        $status = $request->status;
+
+ 
+
+        if($request->status === UserJobApplication::REJECTED){
+            Mail::to($job->user->email)
+                ->send(
+                    new JobRejectedMail($job)
+                );
+        }elseif($request->status === UserJobApplication::APPROVED){
+            Mail::to($job->user->email)
+            ->send(
+                new JobApprovedMail($job)
+            );
+        }
+
+        if($status == UserJobApplication::APPROVED){
+            $status = UserJobApplication::FOR_REQUIREMENTS;
+            $request->replace(['status' => $status]);
+        }
+        $job->update($request->all());
         
     }
 }

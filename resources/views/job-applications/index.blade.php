@@ -82,31 +82,38 @@
                                                 <span class="badge bg-gradient-danger">{{ $applicant->status_name }}</span>
                                                 @elseif($applicant->status=='APPROVED')
                                                 <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='HIRED')
+                                                @elseif($applicant->status=='FOR_REQUIREMENTS')
+                                                <span class="badge bg-gradient-info">{{ $applicant->status_name }} {{$applicant->user->requirement_summary}} </span> <br> 
+                                                <a href="{{route('requirements.index',['ids'=>implode(',',$applicant->user->requirements->pluck('id')->toArray())])}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+                                                @elseif($applicant->status=='DEPLOYED')
                                                 <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
                                                 @endif
                                             </td>
                                             <td class="align-middle text-center">
                                                 @if(!auth()->user()->isApplicant())
 
-                                                <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}})" class="text-secondary font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
-                                                    <i class="material-icons">mail</i>
-                                                </a>
-                                                <a href="#" class="text-secondary font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
-                                                    <i class="material-icons">cancel</i>
-                                                </a>
-                                                <a href="#" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
-                                                    <i class="material-icons">check_circle</i>
-                                                </a>
-                                                
+                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}})" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                        <i class="material-icons">mail</i>
+                                                    </a>
+                                                    <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'REJECTED')" class="font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
+                                                        <i class="material-icons">cancel</i>
+                                                    </a>
+                                                    <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'APPROVED')" class="font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
+                                                        <i class="material-icons">check_circle</i>
+                                                    </a>
+                                                    @if($applicant->canBeDeployed())
+                                                    <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'DEPLOYED')" class="font-weight-normal text-xs text-warning" data-toggle="tooltip" data-original-title="Edit item">
+                                                        <i class="material-icons">work</i>
+                                                    </a>
+                                                    @endif
                                                 @else
                                                     <!-- This means currently logged in is applicant !-->
                                                     @if($applicant->userQuiz)
-                                                        <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="text-secondary font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                        <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
                                                             <i class="material-icons">question_answer</i>
                                                         </a>
                                                     @else
-                                                    <a href="{{route('user-quiz.take', $applicant->id)}}" class="text-secondary font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                    <a href="{{route('user-quiz.take', $applicant->id)}}" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
                                                         <i class="material-icons">laptop</i>
                                                     </a>
                                                     @endif
@@ -143,13 +150,13 @@
 
         if (url) {
             const response = await Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
+                title: 'Confirmation',
+                text: "Are you sure the zoom link is correct?",
+                icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes'
             })
 
             if(response.isConfirmed){
@@ -192,5 +199,51 @@
             })
 
     }
+
+    async function promptStatus(id, status){
+        const response = await Swal.fire({
+                title: 'Confirmation',
+                text: `Are you sure you want this application ${status}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            })
+
+        if(!response.isConfirmed){
+            return false;
+
+        }
+        let alert = Swal.fire({
+                    title: 'Processing',
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    },
+                });
+
+        const res = await fetch(`/job/${id}`, {
+          'method': 'PATCH',
+          'body': JSON.stringify({status:status}),
+          'headers': {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRF-Token": '{{csrf_token()}}',
+          },
+          'content-type': 'application/json'
+        })
+
+        alert.close()
+        
+        await Swal.fire(
+            'Success!',
+            'Job Application updated. An e-mail was sent to the applicant instructions',
+            'success'
+        )
+    }
+
+   
 </script>
 @endsection

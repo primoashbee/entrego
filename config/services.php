@@ -35,6 +35,15 @@ return [
         'account_sid'=>env('TWILIO_ACCOUNT_SID'),
         'auth_token'=>env('TWILIO_AUTH_TOKEN'),
         'twilio_number'=>env('TWILIO_NUMBER')
+    ],
+
+    'vonage'=> [
+        'master_key' => env('VONAGE_MASTER_KEY'),
+        'secret_key' => env('VONAGE_SECRET_KEY'),
+    ],
+
+    'semaphore'=>[
+        'api_key'=>env('SEMAPHORE_API_KEY')
     ]
 
 ];

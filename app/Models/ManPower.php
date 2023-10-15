@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ManPower extends Model
 {
@@ -130,5 +131,47 @@ class ManPower extends Model
     public function quiz()
     {
         return $this->hasOne(Quiz::class,'id','quiz_id');
+    }
+
+    public static function variation($date)
+    {   
+        $last = self::whereMonth('created_at', $date->copy()->subMonth()->month)->count() ;
+        $now = self::whereMonth('created_at', $date->month)->count();
+     
+        if($last == 0){
+            $variaton = 100;
+        }else{
+            $variaton = round(1 * abs(100 - (($now / $last) * 100)),2);
+
+            if($last > $now){
+                $variaton = round(-1 * abs(100 - (($now / $last) * 100)),2);
+            }
+
+
+            
+        }
+
+       return $variaton;
+    }
+
+    public static function overview($date)
+    {
+        // $last = self::whereMonth('created_at', $date->copy()->subMonth()->month)->count() ;
+        // $now = self::whereMonth('created_at', $date->month)->count();
+        
+        // get man_powers
+        return DB::table('man_powers')
+                        ->leftJoin('user_job_applications','man_powers.id','=','user_job_applications.man_power_id')
+                        ->select(DB::raw("
+                                man_powers.job_title as job_title,
+                                SUM(IF(user_job_applications.status ='REJECTED', 1, 0)) AS rejected,
+                                SUM(IF(user_job_applications.status ='APPROVED', 1, 0)) AS approved,
+                                SUM(IF(user_job_applications.status ='DEPLOYED', 1, 0)) AS deployed,
+                                COUNT(user_job_applications.id) AS total 
+                            "))
+                        ->whereMonth('user_job_applications.created_at', $date->month)
+                        ->groupBy('man_powers.id')
+                        ->get();
+        
     }
 }

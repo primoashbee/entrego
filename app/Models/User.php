@@ -4,7 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Mockery\Matcher\Any;
+use App\Models\Requirement;
 use Illuminate\Support\Carbon;
+use App\Models\UserRequirement;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\UserJobApplication;
 use Illuminate\Notifications\Notifiable;
@@ -24,6 +26,8 @@ class User extends Authenticatable
     const APPLICANT = 'APPLICANT';
     const ADMINSTRATOR = 'ADMINISTRATOR';
     const SUB_HR = 'SUB_HR';
+
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -98,5 +102,59 @@ class User extends Authenticatable
     public function isAppliedToJob($id)
     {
         return $this->jobApplications()->where('man_power_id', $id)->count() > 0;
+    }
+
+    public function canUploadRequirements()
+    {
+        return $this->jobApplications()->whereIn('status', [UserJobApplication::FOR_REQUIREMENTS, UserJobApplication::DEPLOYED])->count() > 0;
+    }
+  
+    public function requirements()
+    {
+        return $this->hasMany(UserRequirement::class);
+    }
+    public function getRequirementSummaryAttribute()
+    {
+        $reqs = $this->requirements();
+        return $reqs->clone()->where('status', UserRequirement::APPROVED)->count()."/".$reqs->count();
+    }
+
+    public function requirementsFullfilled()
+    {
+        $max_count = Requirement::count();
+        return $this->requirements()->where('status', UserRequirement::APPROVED)->count() == $max_count;
+    }
+
+    public function scopeApplicant()
+    {
+        return $this->where('role', self::APPLICANT);
+    }
+
+    public function scopeFinishedAssessment()
+    {
+        return $this->where('has_finished_asessment', true);
+    }
+
+    public function scopeFinishedProfile()
+    {
+        return $this->where('has_finished_profile', true);
+    }
+
+    public static function variation($date)
+    {   
+        $last = self::whereMonth('created_at', $date->copy()->subMonth()->month)->count() ;
+        $now = self::whereMonth('created_at', $date->month)->count();
+     
+        if($last == 0){
+            $variaton = 100;
+        }else{
+            $variaton = round(1 * abs(100 - (($now / $last) * 100)),2);
+
+            if($last > $now){
+                $variaton = round(-1 * abs(100 - (($now / $last) * 100)),2);
+            }
+        }
+
+       return $variaton;
     }
 }

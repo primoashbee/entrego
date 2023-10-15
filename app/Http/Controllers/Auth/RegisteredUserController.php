@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Auth\Events\Registered;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class RegisteredUserController extends Controller
 {
@@ -33,14 +34,20 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required','confirmed', Password::min(8)
+                                                            ->letters()
+                                                            ->mixedCase()
+                                                            ->numbers()
+                                                            ->symbols()
+                        ]
         ]);
 
         $user = User::create([
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role'=> User::APPLICANT,
-            'uuid'=>strtoupper(Str::uuid())
+            'uuid'=>strtoupper(Str::uuid()),
+            'cv_name'=>''
         ]);
 
         // event(new Registered($user));

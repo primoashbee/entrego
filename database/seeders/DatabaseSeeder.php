@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use App\Models\PersonalAssessment;
+use App\Models\Requirement;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -31,6 +32,11 @@ class DatabaseSeeder extends Seeder
         if(PersonalAssessment::count() == 0){
             $seeders[] = PersonalAssessmentSeeder::class;
         };
+
+        if(Requirement::count() == 0){
+            $seeders[] = RequirementSeeder::class;
+
+        }
         $this->call($seeders);
         // \App\Models\User::factory(10)->create();
 

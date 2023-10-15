@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Models\Requirement;
+use App\Models\UserRequirement;
 
 class UserController extends Controller
 {
@@ -26,7 +28,8 @@ class UserController extends Controller
     public function edit() : View
     {
         $user = auth()->user();
-        return view('user.profile', compact('user'));
+        $requirements = $this->syncRequirements();
+        return view('user.profile', compact('user','requirements'));
     }
 
     public function editUser($id) : View
@@ -40,25 +43,30 @@ class UserController extends Controller
     {
         $user  = auth()->user();
         $user->update([
-        'first_name'=>$request->first_name,
-        'middle_name'=>$request->middle_name,
-        'last_name'=>$request->last_name,
-        'gender'=>$request->gender,
-        'birthday'=>$request->birthday,
-        'street'=>$request->street,
-        'landmark'=>$request->landmark,
-        'contact_number'=>$request->contact_number,
-        'barangay'=>$request->barangay,
-        'city'=>$request->city,
-        'zip_code'=>$request->zip_code,
-        'skills'=>$request->skills,
-        'languages'=>$request->languages,
-        'has_finished_profile'=>true
+            'first_name'=>$request->first_name,
+            'middle_name'=>$request->middle_name,
+            'last_name'=>$request->last_name,
+            'gender'=>$request->gender,
+            'birthday'=>$request->birthday,
+            'street'=>$request->street,
+            'landmark'=>$request->landmark,
+            'contact_number'=>$request->contact_number,
+            'barangay'=>$request->barangay,
+            'city'=>$request->city,
+            'zip_code'=>$request->zip_code,
+            'skills'=>$request->skills,
+            'languages'=>$request->languages,
+            'has_finished_profile'=>true
         ]);
 
+        if($request->has('password')){
+            $user->update([
+                'password'=>Hash::make($request->password)
+            ]);
+        }
         if($request->hasFile('cv')){
             $file = $request->file('cv');
-            $filename = auth()->user()->uuid . "." . $file->getClientOriginalExtension();
+            $filename = $user->uuid . "." . $file->getClientOriginalExtension();
     
             Storage::putFileAs(
                 'resumes', $file, $filename
@@ -67,6 +75,27 @@ class UserController extends Controller
                 'has_cv'=>true,
                 'cv_name'=>$filename
             ]);
+        }
+
+        if($request->hasFile('requirement')){
+            foreach($request->file('requirement') as $id => $file){
+                $user_req = UserRequirement::find($id);
+
+                $req_name = $user_req->requirement->name;
+                $ext = $file->getClientOriginalExtension();
+                $filename = "$user->uuid-$req_name.$ext";
+                Storage::putFileAs(
+                    'requirements', $file, $filename
+                );
+
+                UserRequirement::find($id)
+                ->update([
+                    'status'=> UserRequirement::PENDING_FOR_APPROVAL,
+                    'file_name'=>$filename,
+                    'extension' => $ext
+                ]);
+            }
+
         }
        return redirect()->route('profile.edit');
     }
@@ -96,8 +125,14 @@ class UserController extends Controller
         if(auth()->user()->role !== User::ADMINSTRATOR){
             unset($fields['role']);
         }
-
-        User::findOrFail($id)->update($fields);
+        
+        $user = User::findOrFail($id); 
+        $user->update($fields);
+        if($request->has('password')){
+            $user->update([
+                'password'=>Hash::make($request->password)
+            ]);
+        }
         return redirect()->route('users.index');
     }
 
@@ -147,5 +182,29 @@ class UserController extends Controller
         if($logged_in->role != User::APPLICANT){
             return abort(403);
         }
+    }
+
+    public function syncRequirements()
+    {
+        $list = Requirement::select('id')->get();
+        $user = auth()->user();
+        $inserts = [];
+        foreach($list as $item){
+            if(!$user->requirements()->find($item->id))
+            {
+                $inserts[] = [
+                    'requirement_id' => $item->id,
+                    'user_id' => $user->id,
+                    'status'=> UserRequirement::MISSING
+                ];
+            }
+        }
+
+        if(count($inserts)){
+            UserRequirement::insert($inserts);
+            return $user->requirements->load('requirement');
+        }
+        return $user->requirements->load('requirement');
+
     }
 }

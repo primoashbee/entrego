@@ -34,7 +34,9 @@ class QuizController extends Controller
                     'job_group'=>$request->job_group,
                     'has_passing_rate'=>$request->has_passing == 'true' ? true : false,
                     'passing_rate'=>$request->passing_rate,
-                    'created_by'=>auth()->user()->id
+                    'created_by'=>auth()->user()->id,
+                    'has_timer' => $request->has_timer == 'true' ? true : false,
+                    'time_in_seconds' => $request->time_in_seconds,
                 ]);
                 $inserts = [];
                 foreach($request->questions as $question)
@@ -86,7 +88,9 @@ class QuizController extends Controller
                     'job_group'=>$request->job_group,
                     'has_passing_rate'=>$request->has_passing == 'true' ? true : false,
                     'passing_rate'=>$request->passing_rate,
-                    'created_by'=>auth()->user()->id
+                    'created_by'=>auth()->user()->id,
+                    'has_timer' => $request->has_timer == 'true' ? true : false,
+                    'time_in_seconds' => $request->time_in_seconds,
                 ]);
 
                 $inserts = [];

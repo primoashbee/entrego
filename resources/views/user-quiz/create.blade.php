@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container-fluid py-4" id="app">
+    <div class="sticky-top">...</div>
     <div class="row">
         <div class="col-lg-2 col-lg-10 position-relative z-index-2">
             <div class="row mt-4">
@@ -56,7 +57,8 @@
                                             
                                         </div>
                                         <div class="div" style="float: right;">
-                                            <button @click="submit" :disabled="submitDisabled" class="btn btn-success"> Submit</button>
+                                            {{-- <button @click="submit" :disabled="submitDisabled" class="btn btn-success"> Submit</button> --}}
+                                            <button @click="submit()"  class="btn btn-success"> Submit</button>
                                         </div>
 
                                     </div>
@@ -78,7 +80,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="module">
     
-    import { createApp, ref, watch, computed  } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+    import { createApp, ref, watch, computed, onMounted  } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
   
     createApp({
       setup() {
@@ -112,9 +114,87 @@
         const name = ref(@json($quiz->name))
         const job_group = ref(@json($quiz->job_group))
         const description = ref(@json($quiz->description))
+
         const has_passing = ref(@json($quiz->has_passing_rate === 1 ? 'true' :'false'))
         const passing_rate = ref(@json($quiz->passing_rate))
 
+        const has_timer = ref(@json($quiz->has_timer))
+        const time_in_seconds = ref(@json($quiz->time_in_seconds));
+        // const time_in_seconds = ref(5);
+        const time_left =  ref(@json($quiz->time_in_seconds));
+        // const time_left =  ref(5);
+        const time_elapsed =  ref(0);
+        let timer;
+        onMounted(async()=>{
+     
+            const accept = await Swal.fire({
+                title: 'Information?',
+                text: "This is a timed quiz. Start quiz now?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            })
+
+            if(!accept.isConfirmed) return;
+            
+
+            timer = startTimer()
+
+            window.onbeforeunload = function(evt) {
+            var message = 'Leaving this site will make you quiz fail';
+            if (typeof evt == 'undefined') {
+                evt = window.event;
+            }
+            if (evt) {
+                evt.returnValue = message;
+            }
+
+            return message;
+        }
+        })
+
+        function startTimer(){
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: time_left.value * 1000,
+                timerProgressBar: true,
+                // didOpen: (toast) => {
+                //     toast.addEventListener('mouseenter', Swal.stopTimer)
+                //     toast.addEventListener('mouseleave', Swal.resumeTimer)
+                // }
+            })
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Time Left',
+                html: `<span id="time-left-span">${timerFormatted.value}</span>`
+            })
+            const el = document.getElementById('time-left-span')
+            return setInterval(() => {
+                el.innerHTML = timerFormatted.value
+                time_left.value = time_left.value - 1
+            }, 1000);
+        }
+        
+        const timerFormatted = computed(()=>{
+
+            const total = time_left.value
+
+            const minutes = String(Math.floor(total / 60))
+            const seconds = String(total % 60);
+            return `${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`            
+        })
+
+        watch(time_left, async (newVal, oldVal)=>{
+            time_elapsed.value = time_in_seconds.value - time_left.value
+            if(time_left.value == 0){
+                await submit(true)
+            }
+        })
         function formatRecievedQuestions(q)
         {
             questions.value = q.map((item)=>{
@@ -175,7 +255,8 @@
             })
             return {
                 application_id: aplication_id.value,
-                answers: answers
+                answers: answers,
+                time_elapsed: time_elapsed.value
             }
         }
         function checked(index, choice_index){
@@ -188,21 +269,47 @@
             })
         }
         
-        async function submit(){
-
-            const accept = await Swal.fire({
-                title: 'Submit examination?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes'
-            })
-            if(!accept.isConfirmed){
-                return;
+        async function submit(forced=false){
+    
+            if(forced){
+                let timerInterval
+                await Swal.fire({
+                    title: `Time's up`,
+                    html: 'I will close in <b></b> seconds. Your answer will be submitted automatically',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                        b.textContent = Math.floor(Swal.getTimerLeft() / 1000)
+                        }, 100)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                })
+                time_elapsed.value = 0;
+            }else{
+                const accept = await Swal.fire({
+                    title: 'Submit examination?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes'
+                })
+                
+                if(!accept.isConfirmed){
+                    startTimer()
+                    return;
+                }
             }
+            
 
+            clearInterval(timer)
+            
 
             let alert = Swal.fire({
                 title: 'Processing',
@@ -261,6 +368,9 @@
           has_passing,
           passing_rate,
           answerPayload,
+          has_timer,
+          time_in_seconds,
+          time_left
         }
       }
     }).mount('#app')

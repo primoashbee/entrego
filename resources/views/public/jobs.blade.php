@@ -55,8 +55,8 @@
 
       <nav id="nav-menu-container">
         <ul class="nav-menu">
-          <li class="menu-active"><a href="/">Home</a></li>
-          <li><a href="{{route('job.listing')}}">Browse Jobs</a></li>
+          <li ><a href="/">Home</a></li>
+          <li class="menu-active"><a href="{{route('job.listing')}}">Browse Jobs</a></li>
           <li class="menu-has-children">
           <a href="#">Entrego</a>
             <ul>

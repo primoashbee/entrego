@@ -29,12 +29,6 @@
                                         </div>
                                         <div class=" mb-3">
                                             <div class="input-group input-group-static">
-                                                <label class="">Type</label>
-                                                <input type="text" name="type" id="type" class="form-control" v-model="job_type">
-                                            </div>
-                                        </div>
-                                        <div class=" mb-3">
-                                            <div class="input-group input-group-static">
                                                 <label class="">Job Group</label>
                                                 <select id="job_group" name="job_group" class="form-control" v-model="job_group">
                                                 @foreach($job_group as $job)
@@ -48,6 +42,23 @@
                                                 <div class="input-group input-group-static">
                                                     <label class="">Has passing</label>
                                                     <select id="has_passing" name="has_passing" class="form-control" v-model="has_passing">
+                                                        <option :value="true"> Yes</option>
+                                                        <option :value="false">No</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 mb-3">
+                                                <div class="input-group input-group-static">
+                                                    <label class="">Percentage (%) eg: 70</label>
+                                                    <input type="number"  class="form-control" v-model="passing_rate" :disabled="has_passing =='false'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6 mb-3">
+                                                <div class="input-group input-group-static">
+                                                    <label class="">Is Timed</label>
+                                                    <select id="has_timer" name="has_timer" class="form-control" v-model="has_timer">
                                                         <option value=""></option>
                                                         <option value="true"> Yes</option>
                                                         <option value="false">No</option>
@@ -56,8 +67,8 @@
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <div class="input-group input-group-static">
-                                                    <label class="">Percentage (%) eg: 70</label>
-                                                    <input type="number"  class="form-control" v-model="passing_rate" :disabled="!has_passing">
+                                                    <label class="">Timer (in seconds)</label>
+                                                    <input type="number"  step="1" class="form-control" v-model="time_in_seconds" :disabled="has_timer=='false'">
                                                 </div>
                                             </div>
                                         </div>
@@ -143,8 +154,10 @@
         const job_type = ref('')
         const job_group = ref('')
         const description = ref('')
-        const has_passing = ref('')
+        const has_passing = ref('false')
         const passing_rate = ref(0)
+        const has_timer = ref('false')
+        const time_in_seconds = ref(0)
 
         questions.value.push(schema)
 
@@ -210,7 +223,9 @@
                 description: description.value,
                 questions: questions.value,
                 has_passing: has_passing.value,
-                passing_rate: passing_rate.value
+                passing_rate: passing_rate.value,
+                time_in_seconds: time_in_seconds.value,
+                has_timer: has_timer.value
             }
 
             let alert = Swal.fire({
@@ -256,7 +271,7 @@
         })
 
         const submitDisabled = computed(()=>{
-            if(name.value == '' || job_type.value =='' || job_group.value == '' || description.value == '' || addRowDisabled.value || has_passing.value =='' ){
+            if(name.value == '' || job_group.value == '' || description.value == '' || addRowDisabled.value || has_passing.value =='' ){
                 return true
             }
             if(has_passing.value =='true'){
@@ -283,7 +298,9 @@
           submitDisabled,
           has_passing,
           passing_rate,
-          removeRow
+          removeRow,
+          has_timer,
+          time_in_seconds
         }
       }
     }).mount('#app')

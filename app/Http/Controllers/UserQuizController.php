@@ -38,7 +38,7 @@ class UserQuizController extends Controller
             $score = collect($request->answers)->filter(function($answer) use (&$inserts){
                 $inserts[] = [
                     'quiz_question_id'=>$answer['id'],
-                    'answer'=>$answer['answer'],
+                    'answer'=>isset($answer['answer']) ? $answer['answer'] : 'NONE',
                     'is_correct'=>$answer['correct']
                 ];
                 return $answer['correct'];
@@ -49,11 +49,15 @@ class UserQuizController extends Controller
             $passed = $score_percentage >= $required_percentage;
 
             // create quiz
+            $end_datetime = now();
+            $start_datetime = $end_datetime->copy()->subSeconds($request->time_elapsed);
             $quiz = UserQuiz::create([
                 'application_id'=>$request->application_id,
                 'score'=>$score,
                 'percentage'=> ($score / $max_score) * 100,
-                'is_passed'=> $passed
+                'is_passed'=> $passed,
+                'start_datetime'=>$start_datetime,
+                'end_datetime'=>$end_datetime,
             ]);
 
             //add user_quiz id for each answers
@@ -99,6 +103,7 @@ class UserQuizController extends Controller
 
         $questions = $application->userQuiz->answers->map(function($answer) use (&$questions){
             $current_question = $questions->where('id', $answer->quiz_question_id)->first();
+            $user_answer = ""; 
             return [
                 'id'=>$current_question->id,
                 'question'=>$current_question->question,

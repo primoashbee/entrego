@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobApplicationController;
 use App\Models\User;
@@ -13,9 +14,11 @@ use App\Http\Middleware\ApplicantTakenAssessment;
 use App\Http\Controllers\PersonalAssementController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Controllers\UserPersonalAssessmentController;
+use App\Http\Controllers\UserRequirementController;
 use App\Models\JobApplication;
 use App\Models\UserJobApplication;
 use App\Models\UserPersonalAssessment;
+use App\Services\Semaphore;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,24 +86,29 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/jobs', [JobApplicationController::class, 'viewApplicants'])->name('user-job.index');
 
     Route::post('/job/send-interview/{id}', [JobApplicationController::class, 'sendInterview'])->name('user-job.send-interview');
+    Route::patch('/job/{id}', [JobApplicationController::class, 'patch'])->name('user-job.patch'); // set status
 
     Route::get('/user-quiz/take/{application_id}', [UserQuizController::class, 'create'])->name('user-quiz.take');
     Route::post('/user-quiz/take', [UserQuizController::class, 'store'])->name('user-quiz.submit');
     Route::get('/user-quiz/result/{application_id}', [UserQuizController::class, 'view'])->name('user-quiz.view-result');
 
     Route::get('/download/{user_id}', [UserController::class, 'downloadCV'])->name('download.cv');
+    Route::get('/download/requirement/{user_id}', [UserRequirementController::class, 'download'])->name('requirement.download');
 
-    Route::get('/user-dashboard', function(){
-        return redirect()->route('profile.edit');
-    })->name('user.dashboard');
+    Route::prefix('/requirement')->group(function(){
+        Route::get("/", [UserRequirementController::class, 'index'])->name("requirements.index");
+        Route::patch("/{id}", [UserRequirementController::class, 'patch'])->name("requirements.patch");
+    });
+
+    Route::get('/user-dashboard', [DashboardController::class,'index'])->name('user.dashboard');
 });
 
 Route::get('/dashboard', function () {
-    // if(auth()->user()->role == User::APPLICANT){
-    //     return redirect()->route('profile.edit');
-    // }
-    return redirect()->route('landing.page');
-    // return view('test-master');
+    if(auth()->user()->role == User::APPLICANT){
+        return redirect()->route('profile.edit');
+    }
+    // return redirect()->route('landing.page');
+    return view('dashboard');
 })->name('dashboard');
 
 
@@ -112,6 +120,10 @@ Route::post('/job/apply/{id}', [JobApplicationController::class, 'store'])->name
 Route::get('/', [HomeController::class, 'index'])->name('landing.page');
 Route::get('/full', function(){
     return view('test-master');
+});
+
+Route::get('/test-sms', function(){
+    $client=  new Semaphore('1234');
 });
 Route::get('/test', function(){
     return view('test');
