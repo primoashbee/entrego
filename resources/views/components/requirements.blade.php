@@ -13,35 +13,25 @@
             <div class="card-body">
                     <div class="row">
                         <p class="text-center"> Accepts  (.pdf, .doc, docx) </p>
-                        @foreach($requirements as $item)
-                        <div class="col-md-4 mx-3">
+                        <div class="col-md-4 mx-3" v-for="(item, index) in requirements">
 
                             <div class="form-group">
 
-                                <label class="font-weight-bold" for="requirement[{{$item->id}}">
-                                    {{$item->requirement->name}}
+                                <label class="font-weight-bold" :for="`requirement-${index}`">
+                                    @{{item.requirement.name}}
                                 </label> 
                                 <br>
-                                <input type="file" @if($item->status=='APPROVED') disabled @endif name="requirement[{{$item->id}}]" id="requirement[{{$item->id}}" class="requirement-file" accept=".pdf, .doc, .docx">  
+                                <input type="file" :disabled ="item.status =='APPROVED'"id="`requirement-${index}`" class="requirement-file" accept=".pdf, .doc, .docx">  
                             </div>
-                            
-                            @if($item->status == "MISSING")
-                                <span class="badge badge-pill bg-gradient-secondary"> Missing </span>
-                            @elseif($item->status == "PENDING_FOR_APPROVAL")
-                                <span class="badge badge-pill bg-gradient-info"> Pending for Approval </span>
-                            @elseif($item->status == "REJECTED")
-                                <span class="badge badge-pill bg-gradient-danger"> Rejected </span>
-                            @elseif($item->status == "APPROVED")
-                                <span class="badge badge-pill bg-gradient-success"> Approved </span>
-                            @endif
-                            @if($item->isUploaded())
-                                <a href="{{route('requirement.download', $item->id)}}" target="_blank"  style="margin-bottom:-100px">
-                                    {{-- View --}}
-                                    <i class="material-icons">file_download</i>
-                                </a>
-                            @endif
-                        </div>
-                        @endforeach
+                            <span class="badge badge-pill bg-gradient-secondary" v-if="item.status=='MISSING'"> Missing </span>
+                            <span class="badge badge-pill bg-gradient-info"   v-if="item.status=='MISSING'"> Pending for Approval </span>
+                            <span class="badge badge-pill bg-gradient-danger" v-if="item.status=='REJECTED'"> Rejected </span>
+                            <span class="badge badge-pill bg-gradient-success" v-if="item.status=='APPROVED'"> Approved </span>
+                            <a :href="`/download/requirement/${item.id}`" target="_blank"  style="margin-bottom:-100px" v-if="item.status !='MISSING'">
+                                {{-- View --}}
+                                <i class="material-icons">file_download</i>
+                            </a>
+                    </div>
                     </div>
             </div>
         </div>

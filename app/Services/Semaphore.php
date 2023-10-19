@@ -15,13 +15,18 @@ class Semaphore {
     public function __construct($api_key)
     {
         $this->api_key = $api_key;
-        $response = Http::post(self::API_HOST['MESSAGING'],
-                [
-                    'apikey'=>config('services.semaphore.api_key'),
-                    'number'=>'09685794313',
-                    'message'=>'Why are you not sending?',
-                    'sendername'=>'SEMAPHORE'
-                ]);
-        dd($response->json());
+ 
+    }
+
+    public function sendSMS($number, $message, $sender = 'SEMAPHORE')
+    {
+        return Http::post(self::API_HOST['MESSAGING'],
+        [
+            'apikey'=>$this->api_key,
+            'number'=>$number,
+            'message'=>$message,
+            'sendername'=>$sender
+        ]);
+
     }
 }

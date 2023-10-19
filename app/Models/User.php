@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Mockery\Matcher\Any;
 use App\Models\Requirement;
+use App\Models\WorkHistory;
 use Illuminate\Support\Carbon;
 use App\Models\UserRequirement;
 use Laravel\Sanctum\HasApiTokens;
@@ -156,5 +157,10 @@ class User extends Authenticatable
         }
 
        return $variaton;
+    }
+
+    public function workHistory()
+    {
+        return $this->hasMany(WorkHistory::class);
     }
 }

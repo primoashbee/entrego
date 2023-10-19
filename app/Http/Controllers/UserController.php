@@ -27,7 +27,7 @@ class UserController extends Controller
 
     public function edit() : View
     {
-        $user = auth()->user();
+        $user = auth()->user()->load('workHistory');
         $requirements = $this->syncRequirements();
         return view('user.profile', compact('user','requirements'));
     }
@@ -42,6 +42,7 @@ class UserController extends Controller
     public function update(UpdateProfileRequest $request)
     {
         $user  = auth()->user();
+        
         $user->update([
             'first_name'=>$request->first_name,
             'middle_name'=>$request->middle_name,
@@ -58,6 +59,21 @@ class UserController extends Controller
             'languages'=>$request->languages,
             'has_finished_profile'=>true
         ]);
+
+        if($request->has('company_name')){
+            $user->workHistory()->delete();
+            foreach($request->company_name as $index=>$value){
+                $user->workHistory()->create([
+                    'company_name'=>$request->company_name[$index],
+                    'job_title'=>$request->job_title[$index],
+                    'start_date'=>$request->start_date[$index],
+                    'end_date'=>$request->end_date[$index],
+                    'accomplishments'=>$request->accomplishments[$index],
+                    'employment_type'=>'',
+                ]);
+
+            }
+        }
 
         if($request->has('password')){
             $user->update([
@@ -189,8 +205,9 @@ class UserController extends Controller
         $list = Requirement::select('id')->get();
         $user = auth()->user();
         $inserts = [];
+
         foreach($list as $item){
-            if(!$user->requirements()->find($item->id))
+            if($user->requirements()->where('requirement_id',$item->id)->count() == 0)
             {
                 $inserts[] = [
                     'requirement_id' => $item->id,

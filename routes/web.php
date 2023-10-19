@@ -15,6 +15,7 @@ use App\Http\Controllers\PersonalAssementController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Controllers\UserPersonalAssessmentController;
 use App\Http\Controllers\UserRequirementController;
+use App\Http\Middleware\IsAdminMiddleware;
 use App\Models\JobApplication;
 use App\Models\UserJobApplication;
 use App\Models\UserPersonalAssessment;
@@ -34,14 +35,14 @@ use App\Services\Semaphore;
 Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, ApplicantTakenAssessment::class])->group(function () {
 
 
-    Route::prefix('users')->group(function(){
+    Route::group(['prefix'=>'users', 'middleware' => [IsAdminMiddleware::class]], function(){
         Route::get('/', [UserController::class, 'index'])->name('users.index');
         Route::get('/create', [UserController::class, 'createUser'])->name('users.create');
         Route::post('/create', [UserController::class, 'storeUser'])->name('users.store');
         Route::get('/update/{id}', [UserController::class, 'editUser'])->name('users.edit');
         Route::post('/update/{id}', [UserController::class, 'updateUser'])->name('users.update');
     });
-    Route::prefix('applicants')->group(function(){
+       Route::prefix('applicants')->group(function(){
         Route::get('/', [UserController::class, 'applicants'])->name('applicants.index');
     });
 

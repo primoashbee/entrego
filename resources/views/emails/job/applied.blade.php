@@ -5,7 +5,7 @@ Subject: Your Exam Link - <b>{{$application->job->job_title}} Exam</b>
 
 Dear <b>{{$application->user->fullname}}</b>,
 
-I hope this message finds you well. It's time for your {{$application->id}} exam! To access the exam, simply click on the link below:
+I hope this message finds you well. It's time for your {{$application->job->job_title}} exam! To access the exam, simply click on the link below:
 
 <a href="{{route('user-quiz.take', $application->id)}}">{{route('user-quiz.take', $application->job->quiz_id)}}</a>
 

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Mail\JobInterviewMail;
 use App\Mail\JobRejectedMail;
 use App\Models\UserJobApplication;
+use App\Services\Semaphore;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
@@ -111,54 +112,67 @@ class JobApplicationController extends Controller
             'link'=>$request->link
         ]);
         tap($applicant);
-        // Mail::to($applicant->user->email)
-        //     ->send(
-        //         new JobInterviewMail(
-        //             $applicant
-        //         )
-        //     );
+        $email = $applicant->user->email;
+        Mail::to($email)
+            ->send(
+                new JobInterviewMail(
+                    $applicant
+                )
+            );
         $name = $applicant->user->fullname; 
         $position = $applicant->job->job_title; 
         $link = $request->link; 
 
-        $message = "Greetings, $name.\n\nYou're scheduled for an interview for applying $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email for more information.\nThank you.";
+        $message = "Greetings, $name.\n\nYou're scheduled for an interview for applying $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
 
-        $sid = config('services.twilio.account_sid');
-        $token = config('services.twilio.auth_token');
-        $twilio_number = config('services.twilio.twilio_number');
-        $client = new Client($sid, $token);
-        $client->messages->create('+639685794313',
-            [
-                'From'=> $twilio_number,
-                'body'=> $message
-            ]);
-        
+        // $sid = config('services.twilio.account_sid');
+        // $token = config('services.twilio.auth_token');
+        // $twilio_number = config('services.twilio.twilio_number');
+        // $client = new Client($sid, $token);
+        // $client->messages->create('+639685794313',
+        //     [
+        //         'From'=> $twilio_number,
+        //         'body'=> $message
+        //     ]);
+        $client = new Semaphore(config('services.semaphore.api_key'));
+        $res = $client->sendSMS($applicant->user->contact_number, $message);
+
+        dd($res->json());
     }
 
     public function patch(Request $request, $id)
     {
-        $job = UserJobApplication::findOrFail($id);
+        $user_job = UserJobApplication::with('user','job')->findOrFail($id);
         $status = $request->status;
-
- 
+        $name = $user_job->user->fullname;
+        $job = $user_job->job;
+        
+        
+        $client = new Semaphore(config('services.semaphore.api_key'));
 
         if($request->status === UserJobApplication::REJECTED){
-            Mail::to($job->user->email)
+            Mail::to($user_job->user->email)
                 ->send(
-                    new JobRejectedMail($job)
+                    new JobRejectedMail($user_job)
                 );
+            $message = "Hi, $name\n\nWe regret to inform you that we have chosen to move forward with another candidate for the position you applied for. We appreciate your interest in our company and wish you the best in your job search.\n\nThank you,\nEntregoHR";
+            $client->sendSMS($user_job->user->contact_number, $message);
         }elseif($request->status === UserJobApplication::APPROVED){
-            Mail::to($job->user->email)
+            Mail::to($user_job->user->email)
             ->send(
-                new JobApprovedMail($job)
+                new JobApprovedMail($user_job)
             );
+            $message = "Greetings, $name\n\nWe're excited to move forward with your application process.\n\nPlease upload the required documents on the Requirements Tab on your profile page.\nEach of your uploaded files will be checked and validated by our Team.\n\nWe will update you after those requirements are accepted..\n\nThank you,\nEntregoHR";
+            $client->sendSMS($user_job->user->contact_number, $message);
         }
 
-        if($status == UserJobApplication::APPROVED){
-            $status = UserJobApplication::FOR_REQUIREMENTS;
+        if($status == UserJobApplication::DEPLOYED){
+            $status = UserJobApplication::DEPLOYED;
             $request->replace(['status' => $status]);
+            $message = "Greetings, $name\n\nYou are now deployed as $job->job_title.\n\nThank you,\nEntregoHR" ;
+            $client->sendSMS($user_job->user->contact_number, $message);
         }
-        $job->update($request->all());
+        $user_job->update($request->all());
         
     }
 }
