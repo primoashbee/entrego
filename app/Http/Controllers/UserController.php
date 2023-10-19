@@ -22,6 +22,7 @@ class UserController extends Controller
             dd($query);
         })
         ->paginate(15);
+        
         return view('user.index', compact('users'));
     }
 
@@ -41,6 +42,7 @@ class UserController extends Controller
 
     public function update(UpdateProfileRequest $request)
     {
+        
         $user  = auth()->user();
         
         $user->update([
@@ -59,7 +61,6 @@ class UserController extends Controller
             'languages'=>$request->languages,
             'has_finished_profile'=>true
         ]);
-
         if($request->has('company_name')){
             $user->workHistory()->delete();
             foreach($request->company_name as $index=>$value){
@@ -162,9 +163,11 @@ class UserController extends Controller
             'email'=>$request->email,
             'role'=>$request->role,
             'password'=>Hash::make($request->password),
-            'uuid'=>strtoupper(Str::uuid())
+            'uuid'=>strtoupper(Str::uuid()),
+            'cv_name'=>''
             // 'has_finished_profile'=> true,
         ]);
+        return redirect()->back();
     }
 
     public function applicants(Request $request)

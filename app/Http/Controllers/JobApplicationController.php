@@ -137,7 +137,7 @@ class JobApplicationController extends Controller
         $client = new Semaphore(config('services.semaphore.api_key'));
         $res = $client->sendSMS($applicant->user->contact_number, $message);
 
-        dd($res->json());
+        return response()->json(['data'=>$res->json()], 200);
     }
 
     public function patch(Request $request, $id)

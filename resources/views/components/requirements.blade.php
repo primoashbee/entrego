@@ -21,10 +21,10 @@
                                     @{{item.requirement.name}}
                                 </label> 
                                 <br>
-                                <input type="file" :disabled ="item.status =='APPROVED'"id="`requirement-${index}`" class="requirement-file" accept=".pdf, .doc, .docx">  
+                                <input type="file" :name="`requirement[${item.id}]`" :disabled ="item.status =='APPROVED'" :id="`requirement-${index}`" class="requirement-file" accept=".pdf, .doc, .docx">  
                             </div>
                             <span class="badge badge-pill bg-gradient-secondary" v-if="item.status=='MISSING'"> Missing </span>
-                            <span class="badge badge-pill bg-gradient-info"   v-if="item.status=='MISSING'"> Pending for Approval </span>
+                            <span class="badge badge-pill bg-gradient-info"   v-if="item.status=='PENDING_FOR_APPROVAL'"> Pending for Approval </span>
                             <span class="badge badge-pill bg-gradient-danger" v-if="item.status=='REJECTED'"> Rejected </span>
                             <span class="badge badge-pill bg-gradient-success" v-if="item.status=='APPROVED'"> Approved </span>
                             <a :href="`/download/requirement/${item.id}`" target="_blank"  style="margin-bottom:-100px" v-if="item.status !='MISSING'">
