@@ -31,7 +31,7 @@
                                             <input type="radio" name="radio" id="radio" value="3" style="margin-left:25px;transform:scale(2)" v-model="current_question.answer">
                                             <input type="radio" name="radio" id="radio" value="2" style="margin-left:25px;transform:scale(2)" v-model="current_question.answer">
                                             <input type="radio" name="radio" id="radio" value="1" style="margin-left:25px;transform:scale(2);margin-right:25px" v-model="current_question.answer">
-                                            <span> Inaccurate</span>    
+                                            <span> Accurate</span>    
                                         </template>
                                         <template v-if="!current_question.reversed">
                                             <span> Inaccurate</span>
