@@ -65,7 +65,7 @@ id="sidenav-main">
                     <i class="material-icons opacity-10">person_pin</i>
                 </div>
 
-                <span class="nav-link-text ms-1">Personality Assesments</span>
+                <span class="nav-link-text ms-1">Personality Assessments</span>
             </a>
         </li>
 

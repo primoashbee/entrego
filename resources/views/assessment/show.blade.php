@@ -34,7 +34,7 @@
                                       <h6 style="margin-left: 30px">{{$item->question->question}}</h6>
 
                                       <div class="px-5">
-                                        @if($item->reversed)
+                                        @if($item->question->reversed)
                                             <span> Accurate</span>
                                             <input type="radio"  value="5" style="margin-left:25px;transform:scale(2)" {{$item->answer == "5" ? 'checked' : ''}}>
                                             <input type="radio"  value="4" style="margin-left:25px;transform:scale(2)" {{$item->answer == "4" ? 'checked' : ''}}>

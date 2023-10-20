@@ -22,7 +22,6 @@ class UserController extends Controller
             dd($query);
         })
         ->paginate(15);
-        
         return view('user.index', compact('users'));
     }
 
@@ -35,14 +34,14 @@ class UserController extends Controller
 
     public function editUser($id) : View
     {
-        $user = User::findOrFail($id);
+        $user = User::with('requirements')->findOrFail($id);
+        $requirements = $user->requirements;
         // dd($user);
-        return view('user.profile', compact('user'));
+        return view('user.profile', compact('user','requirements'));
     }
 
     public function update(UpdateProfileRequest $request)
     {
-        
         $user  = auth()->user();
         
         $user->update([
@@ -61,6 +60,7 @@ class UserController extends Controller
             'languages'=>$request->languages,
             'has_finished_profile'=>true
         ]);
+        
         if($request->has('company_name')){
             $user->workHistory()->delete();
             foreach($request->company_name as $index=>$value){

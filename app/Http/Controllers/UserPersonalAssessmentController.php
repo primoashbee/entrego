@@ -30,7 +30,7 @@ class UserPersonalAssessmentController extends Controller
             return $answer;
         });
         $result = $this->compute($answers);
-
+        
         // Attach the scores
         $answers = $answers->map(function($answer) use ($result){
             $answer['extraversion_score'] = $result['extraversion']['score'];
@@ -73,28 +73,47 @@ class UserPersonalAssessmentController extends Controller
         $conscientiousness = 0;
         $neuroticism = 0;
         $openness = 0;
-        // dd($collection);
+
         $maxE = $collection->where('trait', 'E')->count() * 5;
         $maxA = $collection->where('trait', 'A')->count() * 5;
         $maxC = $collection->where('trait', 'C')->count() * 5;
         $maxN = $collection->where('trait', 'N')->count() * 5;
         $maxO = $collection->where('trait', 'O')->count() * 5;
 
-        $collection->each(function($answer) use (&$extraversion, &$agreeableness, &$conscientiousness, &$neuroticism, &$openness){
-            $trait = $answer['trait'];
-            switch ($trait) {
-                case 'E':
-                    $extraversion++;
-                case 'A':
-                    $agreeableness++;
-                case 'C':
-                    $conscientiousness++;
-                case 'N':
-                    $neuroticism++;
-                case 'O':
-                    $openness++;
+        $extraversion = $collection->reduce(function($acc, $answer){
+            if($answer['trait'] == 'E'){
+                return $acc + intval($answer['answer']);
             }
-        });
+            return $acc;
+        }, 0);
+
+        $agreeableness = $collection->reduce(function($acc, $answer){
+            if($answer['trait'] == 'A'){
+                return $acc + intval($answer['answer']);
+            }
+            return $acc;
+        }, 0);
+
+        $conscientiousness = $collection->reduce(function($acc, $answer){
+            if($answer['trait'] == 'C'){
+                return $acc + intval($answer['answer']);
+            }
+            return $acc;
+        }, 0);
+
+        $neuroticism = $collection->reduce(function($acc, $answer){
+            if($answer['trait'] == 'N'){
+                return $acc + intval($answer['answer']);
+            }
+            return $acc;
+        }, 0);
+
+        $openness = $collection->reduce(function($acc, $answer){
+            if($answer['trait'] == 'O'){
+                return $acc + intval($answer['answer']);
+            }
+            return $acc;
+        }, 0);
 
         $result = [
             'extraversion' => 
@@ -133,6 +152,7 @@ class UserPersonalAssessmentController extends Controller
 
     public function create()
     {
+
         $questions = PersonalAssessment::orderBy('position','asc')->get()->toArray();
         return view('assessment.create', compact('questions'));
     }
@@ -140,6 +160,7 @@ class UserPersonalAssessmentController extends Controller
     public function view($batch_id)
     {
         $data = UserPersonalAssessment::where('batch_id',$batch_id)->first();
+       
         return view('assessment.result', compact('data'));
     }
 }
