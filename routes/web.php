@@ -129,4 +129,9 @@ Route::get('/test-sms', function(){
 Route::get('/test', function(){
     return view('test');
 });
+
+Route::get('/itest', function(){
+    $j = UserJobApplication::first();
+    return new \App\Mail\JobInterviewMail($j);
+});
 require __DIR__.'/auth.php';

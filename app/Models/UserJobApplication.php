@@ -28,6 +28,45 @@ class UserJobApplication extends Model
     const HIRED = "HIRED";
     const DEPLOYED = "DEPLOYED";
 
+    const STATUSES = [
+        [
+            "value"=> self::APPLIED,
+            "label"=> "APPLIED"
+        ],
+        [
+            "value"=> self::EXAM_PASSED,
+            "label"=> "EXAM PASSED"
+        ],
+        [
+            "value"=> self::EXAM_FAILED,
+            "label"=> "EXAM FAILED"
+        ],
+        [
+            "value"=> self::INTERVIEW_SENT,
+            "label"=> "INTERVIEW SENT"
+        ],
+        [
+            "value"=> self::REJECTED,
+            "label"=> "REJECTED"
+        ],
+        [
+            "value"=> self::APPROVED,
+            "label"=> "APPROVED"
+        ],
+        [
+            "value"=> self::FOR_REQUIREMENTS,
+            "label"=> "FOR REQUIREMENTS"
+        ],
+        [
+            "value"=> self::HIRED,
+            "label"=> "HIRED"
+        ],
+        [
+            "value"=> self::DEPLOYED,
+            "label"=> "DEPLOYED"
+        ],
+    ];
+    
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -12,6 +12,7 @@ use App\Mail\JobInterviewMail;
 use App\Mail\JobRejectedMail;
 use App\Models\UserJobApplication;
 use App\Services\Semaphore;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
@@ -91,26 +92,37 @@ class JobApplicationController extends Controller
         return redirect()->route('job.create', $id);
     }
 
-    public function viewApplicants()
+    public function viewApplicants(Request $request)
     {
 
         $user = auth()->user();
+        $statuses = UserJobApplication::STATUSES;
+        $departments = ManPower::DEPARTMENT;
         if($user->role === User::APPLICANT){
             $applicants = UserJobApplication::with('user.requirements','job')
                             ->where('user_id', $user->id)
                             ->orderBy('id','desc')->get();
         }else{
-            $applicants = UserJobApplication::with('user','job')->orderBy('id','desc')->get();
+            $applicants = UserJobApplication::with('user','job')
+                                            ->when($request->q, function($q, $value){
+                                                $q
+                                                    ->whereRelation('user','email', 'LIKE' , "%$value%")
+                                                    ->orWhereRelation('user','first_name', 'LIKE' , "%$value%")
+                                                    ->orWhereRelation('user','last_name', 'LIKE' , "%$value%");
+                                            })
+                                            ->orderBy('id','desc')->get();
         }
-        return view('job-applications.index',compact('applicants'));
+        return view('job-applications.index',compact('applicants', 'statuses','departments'));
     }
 
     public function sendInterview(Request $request, $id)
     {
         $applicant = UserJobApplication::with('user','job')->findOrFail($id);
         $applicant->update([
-            'link'=>$request->link
+            'link'=>$request->link,
+            'interview_date'=>Carbon::parse($request->datetime)
         ]);
+
         tap($applicant);
         $email = $applicant->user->email;
         Mail::to($email)

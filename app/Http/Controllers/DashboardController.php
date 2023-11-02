@@ -18,18 +18,18 @@ class DashboardController extends Controller
         $now = now();
 
         $manpower = new stdClass;
-        $manpower->total = ManPower::whereMonth('created_at', $now->format('m'))->count();
+        $manpower->total = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
         $manpower->active = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
         $manpower->variation = ManPower::variation($now);
         $manpower->overview = ManPower::overview($now);
 
         $applicant = new stdClass;
         $applicant->total  = User::applicant()
-                                    ->whereMonth('created_at', $now->format('m'))
+                                    // ->whereMonth('created_at', $now->format('m'))
                                     ->count();
 
         $applicant->active = User::applicant()
-                                    ->whereMonth('created_at', $now->format('m'))
+                                    // ->whereMonth('created_at', $now->format('m'))
                                     ->finishedAssessment()
                                     ->finishedProfile()
                                     ->count();
@@ -37,13 +37,19 @@ class DashboardController extends Controller
         $applicant->variation = User::variation($now);
 
         $processing = new stdClass;
-        $processing->total = UserJobApplication::whereMonth('created_at', $now->format('m'))->count();
-        $processing->active = UserJobApplication::whereMonth('created_at', $now->format('m'))->active()->count();
+        $processing->total = UserJobApplication::
+                            // whereMonth('created_at', $now->format('m'))->
+                            count();
+        $processing->active = UserJobApplication::
+                                    // whereMonth('created_at', $now->format('m'))->
+                                    active()->count();
         $processing->variation = UserJobApplication::variation($now);
 
         $deployed = new stdClass;
         $deployed->total = $processing->total;
-        $deployed->active = UserJobApplication::whereMonth('created_at', $now->format('m'))->deployed()->count();
+        $deployed->active = UserJobApplication::
+                                // whereMonth('created_at', $now->format('m'))->
+                                deployed()->count();
         $deployed->variation = UserJobApplication::variationDeployed($now);
         
         return view('user.dashboard', compact('manpower', 'applicant','processing', 'deployed'));

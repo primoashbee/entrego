@@ -19,6 +19,49 @@
                         <div class="card-body">
                             <a href="{{route('job.listing')}}" class="btn btn-success" style="float: right; margin-bottom: 0%">View Job Listing</a>
                             <div class="float-right">&nbsp;</div><br>
+                            
+                            {{-- <div class="input-group input-group-outline my-3" style="max-width: 300px">
+                                <label class="form-label">Search</label>
+                                <input type="text" class="form-control"  style="float: right; margin-bottom: 0%">
+                                <button class="btn-primary">Search</button>
+                            </div> --}}
+                            <form action="{{url()->current()}}" method="GET" id="frmFilter" onsubmit="submitFilter">
+                                <div class="row"> 
+                                    <div class="col-2">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <select name="status" id="status" class="form-control form-filter" placeholder="Status">
+                                                <option value="">Select Status</option>
+                                                @foreach($statuses as $status)
+                                                    <option value="{{$status['value']}}">{{$status['label']}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>                                        
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <select name="department" id="department" class="form-control form-filter" placeholder="department">
+                                                <option value="">Select Department</option>
+                                                @foreach($departments as $dept)
+                                                    <option value="{{$dept['value']}}">{{$dept['label']}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>                                        
+                                    </div>
+                                    <div class="col-4"></div>
+                                    <div class="col-3">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" value="{{request()->q}}">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                              
+
+                              
                             <div class="card">
                                 <div class="table-responsive">
                                   <table class="table align-items-center mb-0">
@@ -147,8 +190,33 @@
                                     inputLabel: 'Enter zoom URL',
                                     inputPlaceholder: 'Enter the URL'
                                 })
+        if(!url){
+            return;
+        }
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if(month < 10)
+            month = '0' + month.toString();
+        if(day < 10)
+        day = '0' + day.toString();
+        var maxDate = year + '-' + month + '-' + day +'T00:00'  ;
+        const { value: datetime } = await Swal.fire({
+            title: 'Date & Time',
+            html: `<input class="swal2-input" type="datetime-local" id="datetime" name="datetime" min='${maxDate}'>`,
+            focusConfirm: false,
+            preConfirm: () => {
+                const datepicked = new Date(document.getElementById('datetime').value)
+                const maxDate = new Date(new Date())
+                if (datepicked < maxDate) {
+                    Swal.showValidationMessage(`The interview date can't be in the past`)
+                }
+                return datepicked
+            }
+        })
 
-        if (url) {
+        if (url && datetime) {
             const response = await Swal.fire({
                 title: 'Confirmation',
                 text: "Are you sure the zoom link is correct?",
@@ -168,8 +236,7 @@
                     },
                 });
 
-                await sendInterview(id, url)
-
+                await sendInterview(id, url, datetime)
                 alert.close()
 
                 await Swal.fire(
@@ -182,9 +249,10 @@
         }
 
     }
-    async function sendInterview(id, link){
+    async function sendInterview(id, link,datetime){
         const payload = {
-            link: link
+            link: link,
+            datetime: datetime
         }
         const res = await fetch(`/job/send-interview/${id}`, {
             'method': 'POST',
@@ -242,6 +310,19 @@
             'Job Application updated. An e-mail was sent to the applicant instructions',
             'success'
         )
+    }
+
+    (function () {
+        document.getElementById('status').value = '{{request()->status}}'
+        document.getElementById('department').value = '{{request()->department}}'
+    })();
+
+    document.getElementById('frmFilter').onsubmit = (e) => {
+        Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
+            if(element.value == ""){
+                element.remove()
+            }
+        });
     }
 
    
