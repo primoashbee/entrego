@@ -82,7 +82,7 @@ class JobApplicationController extends Controller
                 'user_id'=>$user->id,
                 'status'=> UserJobApplication::FOR_SENDING_INTERVIEW,
                 'applied_at'=>now()
-            ]);    
+            ])->id;    
 
             $application = UserJobApplication::find($application_id);
 
@@ -110,6 +110,13 @@ class JobApplicationController extends Controller
                                                     ->orWhereRelation('user','first_name', 'LIKE' , "%$value%")
                                                     ->orWhereRelation('user','last_name', 'LIKE' , "%$value%");
                                             })
+                                            ->when($request->status,function($q, $value){
+                                                $q->where('status', $value);
+                                            })
+                                            ->when($request->department,function($q, $value){
+                                                $q
+                                                ->whereRelation('job','department', $value);
+                                            })
                                             ->orderBy('id','desc')->get();
         }
         return view('job-applications.index',compact('applicants', 'statuses','departments'));
@@ -120,7 +127,8 @@ class JobApplicationController extends Controller
         $applicant = UserJobApplication::with('user','job')->findOrFail($id);
         $applicant->update([
             'link'=>$request->link,
-            'interview_date'=>Carbon::parse($request->datetime)
+            'interview_date'=>Carbon::parse($request->datetime),
+            'status'=>UserJobApplication::INTERVIEW_SENT
         ]);
 
         tap($applicant);
@@ -146,7 +154,9 @@ class JobApplicationController extends Controller
         //         'From'=> $twilio_number,
         //         'body'=> $message
         //     ]);
-        $client = new Semaphore(config('services.semaphore.api_key'));
+        if(env('APP_ENV') != 'local'){
+            $client = new Semaphore(config('services.semaphore.api_key'));
+        }
         $res = $client->sendSMS($applicant->user->contact_number, $message);
 
         return response()->json(['data'=>$res->json()], 200);

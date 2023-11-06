@@ -1,5 +1,29 @@
 <?php
-
+if(env('APP_ENV') == "local"){
+    $smtp = [
+        'transport' => 'smtp',
+        'url' => env('MAIL_URL'),
+        'host' => env('MAILTRAP_MAIL_HOST', 'smtp.mailgun.org'),
+        'port' => env('MAILTRAP_MAIL_PORT', 587),
+        'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+        'username' => env('MAILTRAP_MAIL_USERNAME'),
+        'password' => env('MAILTRAP_MAIL_PASSWORD'),
+        'timeout' => null,
+        'local_domain' => env('MAIL_EHLO_DOMAIN'),
+    ];
+}else{
+    $smtp = [
+        'transport' => 'smtp',
+        'url' => env('MAIL_URL'),
+        'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+        'port' => env('MAIL_PORT', 587),
+        'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+        'username' => env('MAIL_USERNAME'),
+        'password' => env('MAIL_PASSWORD'),
+        'timeout' => null,
+        'local_domain' => env('MAIL_EHLO_DOMAIN'),
+    ];
+}
 return [
 
     /*
@@ -34,17 +58,7 @@ return [
     */
 
     'mailers' => [
-        'smtp' => [
-            'transport' => 'smtp',
-            'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
-            'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN'),
-        ],
+        'smtp' => $smtp,
 
         'ses' => [
             'transport' => 'ses',

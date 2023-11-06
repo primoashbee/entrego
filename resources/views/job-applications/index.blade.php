@@ -89,7 +89,7 @@
                                                 <div class="d-flex px-2 py-1">
                                                   <div class="d-flex flex-column justify-content-center">
                                                     <h6 class="mb-0 text-xs">{{ $applicant->job->job_title }}</h6>
-                                                    <p class="text-xs text-secondary mb-0"> {{$applicant->job->job_group}} </p>
+                                                    <p class="text-xs text-secondary mb-0"> {{$applicant->job->job_group}} | {{$applicant->job->department_name}}</p>
                                                   </div>
                                                 </div>
                                             </td>
@@ -269,6 +269,7 @@
     }
 
     async function promptStatus(id, status){
+
         const response = await Swal.fire({
                 title: 'Confirmation',
                 text: `Are you sure you want this application ${status}?`,
@@ -278,7 +279,9 @@
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes'
             })
-
+        if(status=='APPROVED'){
+            status = 'FOR_REQUIREMENTS'
+        }
         if(!response.isConfirmed){
             return false;
 
@@ -320,7 +323,7 @@
     document.getElementById('frmFilter').onsubmit = (e) => {
         Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
             if(element.value == ""){
-                element.remove()
+                element.disabled=true
             }
         });
     }

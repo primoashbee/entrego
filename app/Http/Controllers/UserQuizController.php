@@ -86,9 +86,12 @@ class UserQuizController extends Controller
     {
         $application = UserJobApplication::with('job.quiz','user')
                                 ->findOrFail($application_id);
+
+        
         $job_group = ManPower::JOB_GROUP;
         $quiz = $application->job->quiz;
-        return view('user-quiz.create', compact('application','job_group', 'quiz'));
+        $taken = $application->userQuiz != null ? true : false; 
+        return view('user-quiz.create', compact('application','job_group', 'quiz', 'taken'));
     }
 
 

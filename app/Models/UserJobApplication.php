@@ -46,6 +46,10 @@ class UserJobApplication extends Model
             "label"=> "INTERVIEW SENT"
         ],
         [
+            "value"=> self::FOR_SENDING_INTERVIEW,
+            "label"=> "FOR SENDING INTERVIEW"
+        ],
+        [
             "value"=> self::REJECTED,
             "label"=> "REJECTED"
         ],
@@ -57,10 +61,10 @@ class UserJobApplication extends Model
             "value"=> self::FOR_REQUIREMENTS,
             "label"=> "FOR REQUIREMENTS"
         ],
-        [
-            "value"=> self::HIRED,
-            "label"=> "HIRED"
-        ],
+        // [
+        //     "value"=> self::HIRED,
+        //     "label"=> "HIRED"
+        // ],
         [
             "value"=> self::DEPLOYED,
             "label"=> "DEPLOYED"

@@ -269,7 +269,7 @@
                                             name="cv" 
                                             id="cv" 
                                             accept=".pdf, .doc, .docx" 
-                                            v-model="profile.cv"
+                                            
                                             @change="uploadFile('cv')" ref="cv"
                                             >
 

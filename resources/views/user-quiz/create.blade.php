@@ -126,7 +126,21 @@
         const time_elapsed =  ref(0);
         let timer;
         onMounted(async()=>{
-     
+            if(@json($taken)){
+                const accept = await Swal.fire({
+                    title: 'Information',
+                    text: "You've already finished this examination. Redirecting you to the result",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes'
+                })
+
+                location.href = `/user-quiz/result/${@json($application->id)}`
+                return;
+
+            }
             const accept = await Swal.fire({
                 title: 'Information?',
                 text: "This is a timed quiz. Start quiz now?",
@@ -137,7 +151,10 @@
                 confirmButtonText: 'Yes'
             })
 
-            if(!accept.isConfirmed) return;
+            if(!accept.isConfirmed){
+                location.reload();
+                return;
+            };
             
 
             timer = startTimer()
@@ -190,6 +207,7 @@
         })
 
         watch(time_left, async (newVal, oldVal)=>{
+            console.log(time_elapsed.value)
             time_elapsed.value = time_in_seconds.value - time_left.value
             if(time_left.value == 0){
                 await submit(true)
@@ -273,6 +291,8 @@
     
             if(forced){
                 let timerInterval
+                clearInterval(timer)
+
                 await Swal.fire({
                     title: `Time's up`,
                     html: 'I will close in <b></b> seconds. Your answer will be submitted automatically',
@@ -289,7 +309,6 @@
                         clearInterval(timerInterval)
                     }
                 })
-                time_elapsed.value = 0;
             }else{
                 const accept = await Swal.fire({
                     title: 'Submit examination?',
@@ -305,10 +324,11 @@
                     startTimer()
                     return;
                 }
+                clearInterval(timer)
+
             }
             
 
-            clearInterval(timer)
             
 
             let alert = Swal.fire({
@@ -318,7 +338,7 @@
                     Swal.showLoading()
                 },
             });
-            const id = @json($quiz->id);
+            const id = @json($application->id);
             const url = `/user-quiz/take`
             const res = await fetch(url, {
                 'method': 'POST',
