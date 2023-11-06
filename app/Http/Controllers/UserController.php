@@ -19,11 +19,25 @@ class UserController extends Controller
 
     public function index(Request $request) : View
     {   
-        $users = User::when(request('query', false), function($q, $query){    
+        $active_users = User::query()
+        ->when(request('query', false), function($q, $query){    
             dd($query);
         })
+        ->where('is_archived', false)
+        ->where('role', User::APPLICANT)
         ->paginate(15);
-        return view('user.index', compact('users'));
+
+        
+        $archived_users = User::query()
+        ->when(request('query', false), function($q, $query){    
+            dd($query);
+        })
+        ->where('is_archived', true)
+        ->where('role', User::APPLICANT)
+        ->paginate(15);
+        
+        return view('user.index', compact('active_users','archived_users'));
+        return view('user.index', compact('active_users','archived_users'));
     }
 
     public function edit() : View
@@ -190,6 +204,7 @@ class UserController extends Controller
         ->where('is_archived', true)
         ->where('role', User::APPLICANT)
         ->paginate(15);
+        
         return view('user.index', compact('active_users','archived_users'));
     }
 
