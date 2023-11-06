@@ -37,7 +37,6 @@ class UserController extends Controller
         ->paginate(15);
         
         return view('user.index', compact('active_users','archived_users'));
-        return view('user.index', compact('active_users','archived_users'));
     }
 
     public function edit() : View
