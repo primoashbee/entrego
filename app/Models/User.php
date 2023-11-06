@@ -47,6 +47,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'archived_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -126,6 +127,16 @@ class User extends Authenticatable
         return $this->requirements()->where('status', UserRequirement::APPROVED)->count() == $max_count;
     }
 
+    public function scopeActive()
+    {
+        return $this->where('is_archived', false);
+    }
+
+    public function scopeArchived()
+    {
+        return $this->where('is_archived', true);
+    }
+
     public function scopeApplicant()
     {
         return $this->where('role', self::APPLICANT);
@@ -162,5 +173,24 @@ class User extends Authenticatable
     public function workHistory()
     {
         return $this->hasMany(WorkHistory::class);
+    }
+
+    public function lastActivity()
+    {
+        $query = $this->jobApplications()->orderBy('id','desc');
+        if($query->count() > 0){
+            return $query->first()->updated_at;
+        }
+        return $this->updated_at;
+    }
+
+    public function toArchive()
+    {
+        return Carbon::now()->diffInDays($this->lastActivity(), true) >= 180;
+    }
+
+    public function archive()
+    {
+        return $this->update(['is_archived'=> true, 'archived_at'=> now()]);
     }
 }

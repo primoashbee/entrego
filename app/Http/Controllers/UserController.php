@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\View\View;
+use App\Models\Requirement;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\UserRequirement;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateProfileRequest;
-use App\Models\Requirement;
-use App\Models\UserRequirement;
 
 class UserController extends Controller
 {
@@ -172,12 +173,24 @@ class UserController extends Controller
 
     public function applicants(Request $request)
     {
-        $users = User::when(request('query', false), function($q, $query){    
+
+        $active_users = User::query()
+        ->when(request('query', false), function($q, $query){    
             dd($query);
         })
+        ->where('is_archived', false)
         ->where('role', User::APPLICANT)
         ->paginate(15);
-        return view('user.index', compact('users'));
+
+
+        $archived_users = User::query()
+        ->when(request('query', false), function($q, $query){    
+            dd($query);
+        })
+        ->where('is_archived', true)
+        ->where('role', User::APPLICANT)
+        ->paginate(15);
+        return view('user.index', compact('active_users','archived_users'));
     }
 
 
