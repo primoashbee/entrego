@@ -61,6 +61,8 @@ class UserPersonalAssessmentController extends Controller
         $user->update([
             'has_finished_asessment'=>true
         ]);
+
+        auditLog($user_id, "Personality Assessment Taken");
         return response()->json([
             'batch_id'=>$uuid
         ], 200);

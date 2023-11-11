@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\AuditLog;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,7 @@ class LoginRequest extends FormRequest
     
         //Valid
         if (Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            auditLog(auth()->user()->id, 'Logged In');
             if(auth()->user()->is_archived==1){
                 Auth::logout();
                 throw ValidationException::withMessages([

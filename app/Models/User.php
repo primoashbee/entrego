@@ -51,6 +51,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public static function admin()
+    {
+        return self::where('role', self::ADMINSTRATOR)->first();
+    }
     public function getFullNameAttribute() :string 
     {
         if($this->role == User::ADMINSTRATOR){

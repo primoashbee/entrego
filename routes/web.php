@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobApplicationController;
@@ -102,6 +103,10 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/user-dashboard', [DashboardController::class,'index'])->name('user.dashboard');
+
+    Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
+
+
 });
 
 Route::get('/dashboard', function () {
@@ -121,7 +126,7 @@ Route::post('/job/apply/{id}', [JobApplicationController::class, 'store'])->name
 Route::get('/', [HomeController::class, 'index'])->name('landing.page');
 Route::get('/full', function(){
     return view('test-master');
-});
+}); 
 
 Route::get('/test-sms', function(){
     $client=  new Semaphore('1234');

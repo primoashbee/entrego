@@ -132,8 +132,9 @@
                                     <div class="card card-frame">
                                         <div class="card-body">
                                             <h6 class="text-center"><em>Extraversion</em></h6>
-                                            <div class="row">
-                                                <div class="col-6" >
+                                            <div class="row" >
+                                                @if($data->extraversion_percentage >= 50)
+                                                <div class="col-12" >
                                                     <ul class="list-group">
                                                         <li class="list-group-item text-center font-weight-bold">High</li>
                                                         <li class="list-group-item">Enjoys being the center of attention</li>
@@ -145,7 +146,8 @@
                                                         <li class="list-group-item">Say things before thinking about them</li>
                                                         </ul>
                                                 </div>
-                                                <div class="col-6">
+                                                @else
+                                                <div class="col-12">
                                                     <ul class="list-group">
                                                         <li class="list-group-item text-center font-weight-bold">Low</li>
                                                         <li class="list-group-item">Prefers solitude</li>
@@ -156,6 +158,7 @@
                                                         <li class="list-group-item">Dislikes being the center of attention</li>
                                                     </ul>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -165,7 +168,9 @@
                                         <div class="card-body">
                                             <h6 class="text-center"><em>Agreeableness</em></h6>
                                             <div class="row">
-                                                <div class="col-6" >
+                                                @if($data->agreeableness_percentage >= 50)
+
+                                                <div class="col-12" >
                                                     <ul class="list-group">
                                                     <li class="list-group-item text-center font-weight-bold">High</li>
                                                         <li class="list-group-item">Has a great deal of interest in other people</li>
@@ -175,7 +180,8 @@
                                                         <li class="list-group-item">Assists others who are in need of help</li>
                                                         </ul>
                                                 </div>
-                                                <div class="col-6">
+                                                @else
+                                                <div class="col-12">
                                                     <ul class="list-group">
                                                     <li class="list-group-item text-center font-weight-bold">Low</li>
                                                         <li class="list-group-item">Takes little interest in others</li>
@@ -185,6 +191,7 @@
                                                         <li class="list-group-item">Manipulates others to get what they want</li>
                                                     </ul>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -196,7 +203,9 @@
                                         <div class="card-body">
                                             <h6 class="text-center"><em>Conscientiousness</em></h6>
                                             <div class="row">
-                                                <div class="col-6" >
+                                                @if($data->conscientiousness_percentage >= 50)
+
+                                                <div class="col-12" >
                                                     <ul class="list-group">
                                                         <li class="list-group-item text-center font-weight-bold">High</li>
                                                         <li class="list-group-item">Spends time preparing</li>
@@ -206,7 +215,8 @@
                                              
                                                     </ul>
                                                 </div>
-                                                <div class="col-6">
+                                                @else
+                                                <div class="col-12">
                                                     <ul class="list-group">
                                                     <li class="list-group-item text-center font-weight-bold">Low</li>
                                                         <li class="list-group-item">Dislikes structure and schedules</li>
@@ -216,6 +226,7 @@
                                                         <li class="list-group-item">Fails to complete necessary or assigned tasks</li>
                                                     </ul>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -225,7 +236,9 @@
                                         <div class="card-body">
                                             <h6 class="text-center"><em>Neuroticism</em></h6>
                                             <div class="row">
-                                                <div class="col-6" >
+                                                @if($data->neuroticism_percentage >= 50)
+
+                                                <div class="col-12" >
                                                     <ul class="list-group">
                                                         <li class="list-group-item text-center font-weight-bold">High</li>
                                                         <li class="list-group-item">Experiences a lot of stress</li>
@@ -236,7 +249,8 @@
                                                         <li class="list-group-item">Struggles to bounce back after stressful events</li>
                                                         </ul>
                                                 </div>
-                                                <div class="col-6">
+                                                @else
+                                                <div class="col-12">
                                                     <ul class="list-group">
                                                     <li class="list-group-item text-center font-weight-bold">Low</li>
                                                         <li class="list-group-item">Emotionally stable</li>
@@ -246,6 +260,7 @@
                                                         <li class="list-group-item">Is very relaxed</li>
                                                     </ul>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -258,7 +273,9 @@
                                         <div class="card-body">
                                             <h6 class="text-center"><em>Openness</em></h6>
                                             <div class="row">
-                                                <div class="col-6" >
+                                                @if($data->openness_percentage >= 50)
+
+                                                <div class="col-12" >
                                                     <ul class="list-group">
                                                     <li class="list-group-item text-center font-weight-bold">High</li>
                                                         <li class="list-group-item">Very Creative</li>
@@ -267,7 +284,8 @@
                                                         <li class="list-group-item">Happy to think about abstract concepts</li>
                                                         </ul>
                                                 </div>
-                                                <div class="col-6">
+                                                @else
+                                                <div class="col-12">
                                                     <ul class="list-group">
                                                     <li class="list-group-item text-center font-weight-bold">Low</li>
                                                         <li class="list-group-item">Dislikes change</li>
@@ -277,6 +295,7 @@
                                                         <li class="list-group-item">Dislikes abstract or theoretical concepts</li>
                                                     </ul>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

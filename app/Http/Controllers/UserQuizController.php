@@ -71,9 +71,14 @@ class UserQuizController extends Controller
                 UserQuizAnswers::create($insert);
             }
 
+            $status = $passed ? UserJobApplication::EXAM_PASSED : UserJobApplication::EXAM_FAILED ;
             $application->update([
-                'status' => $passed ? UserJobApplication::EXAM_PASSED : UserJobApplication::EXAM_FAILED 
+                'status' => $status 
             ]);
+            $job_name = $application->job->job_title;
+            auditLog($user_id, "Exam taken for job $job_name - result $status");
+
+
             DB::commit();
 
             Session::flash('redirect', route('user-quiz.view-result', $request->application_id));

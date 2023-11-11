@@ -14,6 +14,8 @@ use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateProfileRequest;
 
+use function PHPUnit\Framework\isNull;
+
 class UserController extends Controller
 {
 
@@ -24,7 +26,7 @@ class UserController extends Controller
             dd($query);
         })
         ->where('is_archived', false)
-        ->where('role', User::APPLICANT)
+        ->whereIn('role', [User::APPLICANT, User::SUB_HR])
         ->paginate(15);
 
         
@@ -74,26 +76,32 @@ class UserController extends Controller
             'languages'=>$request->languages,
             'has_finished_profile'=>true
         ]);
+
+        auditLog($user->id, 'Updated profile');
+
         
         if($request->has('company_name')){
             $user->workHistory()->delete();
             foreach($request->company_name as $index=>$value){
                 $user->workHistory()->create([
-                    'company_name'=>$request->company_name[$index],
-                    'job_title'=>$request->job_title[$index],
-                    'start_date'=>$request->start_date[$index],
-                    'end_date'=>$request->end_date[$index],
-                    'accomplishments'=>$request->accomplishments[$index],
+                    'company_name'=>$request->company_name[$index] ?? '',
+                    'job_title'=>$request->job_title[$index] ?? '',
+                    'start_date'=>$request->start_date[$index] ?? '',
+                    'end_date'=>$request->end_date[$index] ?? '' ,
+                    'accomplishments'=>$request->accomplishments[$index] ?? '',
                     'employment_type'=>'',
                 ]);
 
             }
+            auditLog($user->id, 'Updated work history');
+
         }
 
-        if($request->has('password')){
+        if($request->has('password') && !isNull($request->password)){
             $user->update([
                 'password'=>Hash::make($request->password)
             ]);
+            auditLog($user->id, 'Changed Password');
         }
         if($request->hasFile('cv')){
             $file = $request->file('cv');
@@ -106,6 +114,8 @@ class UserController extends Controller
                 'has_cv'=>true,
                 'cv_name'=>$filename
             ]);
+            auditLog($user->id, 'Uploaded a CV');
+
         }
 
         if($request->hasFile('requirement')){
@@ -125,9 +135,13 @@ class UserController extends Controller
                     'file_name'=>$filename,
                     'extension' => $ext
                 ]);
+
+                auditLog($user->id, "Uploaded a requirement [$req_name]");
+
             }
 
         }
+
        return redirect()->route('profile.edit');
     }
 
@@ -158,11 +172,17 @@ class UserController extends Controller
         }
         
         $user = User::findOrFail($id); 
+        $name = $user->fullname;
         $user->update($fields);
-        if($request->has('password')){
+
+        auditLog(auth()->user()->id, "Updated Profile for $name", $user);
+
+        if($request->has('password') && !isNull($request->password)){
+            dump($request->password);
             $user->update([
                 'password'=>Hash::make($request->password)
             ]);
+            auditLog(auth()->user()->id, "Updated Password for $name", $user);
         }
         return redirect()->route('users.index');
     }
@@ -173,7 +193,8 @@ class UserController extends Controller
     }
     public function storeUser(StoreUserRequest $request)
     {
-        User::create([
+
+        $user= User::create([
             'email'=>$request->email,
             'role'=>$request->role,
             'password'=>Hash::make($request->password),
@@ -181,6 +202,8 @@ class UserController extends Controller
             'cv_name'=>''
             // 'has_finished_profile'=> true,
         ]);
+        auditLog(auth()->user()->id, "Created a new user $request->email - $request->role", $user);
+
         return redirect()->back();
     }
 

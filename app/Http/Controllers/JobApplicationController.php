@@ -60,7 +60,7 @@ class JobApplicationController extends Controller
         }
 
         $job = ManPower::findOrFail($id);
-
+        auditLog($user->id, "Applied for a job [$job->job_title]");
         if($job->quiz->has_passing_rate){
             $application = UserJobApplication::create([
                 'man_power_id'=>$id,
@@ -156,10 +156,14 @@ class JobApplicationController extends Controller
         //     ]);
         if(env('APP_ENV') != 'local'){
             $client = new Semaphore(config('services.semaphore.api_key'));
+            $res = $client->sendSMS($applicant->user->contact_number, $message);
+            auditLog($applicant->user->id, "SMS sent for Interview Link");
         }
-        $res = $client->sendSMS($applicant->user->contact_number, $message);
 
-        return response()->json(['data'=>$res->json()], 200);
+
+        auditLog($applicant->user->id, "E-mail sent for Interview Link");
+
+        return response()->json(['data'=>[]], 200);
     }
 
     public function patch(Request $request, $id)
@@ -179,6 +183,7 @@ class JobApplicationController extends Controller
                 );
             $message = "Hi, $name\n\nWe regret to inform you that we have chosen to move forward with another candidate for the position you applied for. We appreciate your interest in our company and wish you the best in your job search.\n\nThank you,\nEntregoHR";
             $client->sendSMS($user_job->user->contact_number, $message);
+            auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - REJECTED", $user_job);
         }elseif($request->status === UserJobApplication::APPROVED){
             Mail::to($user_job->user->email)
             ->send(
@@ -186,6 +191,12 @@ class JobApplicationController extends Controller
             );
             $message = "Greetings, $name\n\nWe're excited to move forward with your application process.\n\nPlease upload the required documents on the Requirements Tab on your profile page.\nEach of your uploaded files will be checked and validated by our Team.\n\nWe will update you after those requirements are accepted..\n\nThank you,\nEntregoHR";
             $client->sendSMS($user_job->user->contact_number, $message);
+            auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - APPROVE", $user_job);
+
+        }
+
+        if($request->status == UserJobApplication::FOR_REQUIREMENTS){
+            auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - FOR REQUIREMENTS", $user_job);
         }
 
         if($status == UserJobApplication::DEPLOYED){
@@ -193,6 +204,8 @@ class JobApplicationController extends Controller
             $request->replace(['status' => $status]);
             $message = "Greetings, $name\n\nYou are now deployed as $job->job_title.\n\nThank you,\nEntregoHR" ;
             $client->sendSMS($user_job->user->contact_number, $message);
+            auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - DEPLOYED", $user_job);
+
         }
         $user_job->update($request->all());
         

@@ -24,16 +24,22 @@ class DashboardController extends Controller
         $manpower->overview = ManPower::overview($now);
 
         $applicant = new stdClass;
-        $applicant->total  = User::applicant()
-                                    // ->whereMonth('created_at', $now->format('m'))
-                                    ->count();
-
-        $applicant->active = User::applicant()
+        $applicant->total  = User::active()
+                            ->whereRole(User::APPLICANT)
+                            ->count();
+        $applicant->active = User::active()
+                                    ->applicant()
                                     // ->whereMonth('created_at', $now->format('m'))
                                     ->finishedAssessment()
                                     ->finishedProfile()
                                     ->count();
-
+        // dd(
+        //         User::active()
+        //             ->applicant()
+        //             ->finishedAssessment()
+        //             ->finishedProfile()
+        //             ->count()
+        //         );
         $applicant->variation = User::variation($now);
 
         $processing = new stdClass;

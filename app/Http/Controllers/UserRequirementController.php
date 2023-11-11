@@ -42,6 +42,24 @@ class UserRequirementController extends Controller
 
     public function patch(Request $request, $id)
     {
-        UserRequirement::findOrFail($id)->update($request->all());
+        $requirement = UserRequirement::with('user.requirements','requirement')->findOrFail($id);
+        
+        $requirement->update($request->all());
+        $status = $request->status;
+        $applicant_name = $requirement->user->email;
+        $requirement_name = $requirement->requirement->name;
+        
+        $approved = $requirement->user->requirements()->where('status', UserRequirement::APPROVED)->count();
+        $total = User::with('requirements')->find($requirement->user->id)->requirements()->count();
+        auditLog($requirement->user->id, "[$approved/$total] Requirement [$requirement_name] for $applicant_name is $status");
+
+        if($approved == $total)
+        {
+            auditLog($requirement->user->id, "Requirements finished 5/5");
+        }
+        
+        
     }
+
+  
 }

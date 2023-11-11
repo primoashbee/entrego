@@ -28,7 +28,10 @@ class ArchiveUsersJob implements ShouldQueue
     public function handle(): void
     {
         User::get()->each(function($user){
-            if($user->toArchive()) return $user->archive();
+            if($user->toArchive()) {
+                $user->archive();
+                auditLog(User::admin()->id, "$user->email is archived");
+            }
         });
     }
 }

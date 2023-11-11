@@ -412,3 +412,5 @@
             }
         }).mount('#app')
     </script>   
+
+@endsection

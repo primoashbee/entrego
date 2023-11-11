@@ -57,7 +57,8 @@ class QuizController extends Controller
 
                 }
                 QuizQuestions::insert($inserts);
-                DB::commit();
+                DB::commit();   
+                auditLog(auth()->user()->id, "Created a new SJT/CSA - $request->name", []);
 
                 return response()->json([], 200);
 
@@ -134,7 +135,8 @@ class QuizController extends Controller
                 $deletes = array_diff($current_question_ids, $updated_ids);
                 QuizQuestions::insert($inserts);
                 QuizQuestions::whereIn('id', $deletes)->delete();
-                
+                auditLog(auth()->user()->id, "Updated SJT/CSA - $quiz->name", []);
+
                 DB::commit();
 
                 return response()->json([], 200);

@@ -72,7 +72,7 @@
                                             <i class="material-icons">edit</i>
                                           </a>
 
-                                          <a href="javascript:void(0)" manpower-id="{{$item->id}}" data-value="" onclick="deleteRecord('{{json_encode($item)}}')" class="px-2 text-secondary font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
+                                          <a href="javascript:void(0)" manpower-id="{{$item->id}}" data-value="" onclick="deleteRecord({{json_encode($item)}})" class="px-2 text-secondary font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
                                             <i class="material-icons">delete</i>
                                           </a>
                                         </td>
@@ -136,7 +136,9 @@
   })()
   
   async function deleteRecord(item){
-    const data = JSON.parse(item);
+    console.log(item)
+    // const data = JSON.parse(item);
+    const data = item;
     const result = await Swal.fire({
       title: 'Are you sure you want to delete this?',
       showCancelButton: true,
@@ -172,7 +174,7 @@
             title: 'Manpower request successfully DELETED'
           })
         }
-
+        return;
     }
     const Toast = Swal.mixin({
             toast: true,
