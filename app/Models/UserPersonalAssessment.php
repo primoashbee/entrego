@@ -164,8 +164,9 @@ class UserPersonalAssessment extends Model
         $max_label = ucfirst($max_array[0]);
         $min['label'] = $min_label;
         $max['label'] = $max_label;
-        $max['color'] = $colors[$min_array[0]];
-        $min['color'] = $colors[$max_array[0]];
+
+        $max['color'] = $colors[$max_array[0]];
+        $min['color'] = $colors[$min_array[0]];
 
 
 
