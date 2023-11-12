@@ -33,6 +33,7 @@ class SyncUserRequirementsCommand extends Command
         UserJobApplication::with('user')
             ->where('status', UserJobApplication::FOR_REQUIREMENTS)
             ->each(function($job) use ($list){
+                $inserts = [];
                 foreach($list as $item){
                     if($job->user->requirements()->where('requirement_id',$item->id)->count() == 0)
                     {
