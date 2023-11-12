@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\PersonalAssessment;
+use Spatie\Browsershot\Browsershot;
 use App\Models\UserPersonalAssessment;
+use Illuminate\Support\Facades\Storage;
 
 class PersonalAssementController extends Controller
 {
@@ -41,5 +43,18 @@ class PersonalAssementController extends Controller
             ->where('batch_id',$batch_id)
             ->get();
         return view('assessment.show', compact('data'));
+    }
+
+    public function imgReport($id)
+    {
+        $data = User::with('assessments')->findOrFail($id)->assessments()->orderBy('id','desc')->first();
+        return view('assessment.graph', compact('data'));
+    }
+
+    public function generateGraph($id)
+    {
+        $pathToImage = Storage::disk('public')->path('test-img.png');
+        Browsershot::url(route('assessment.img', $id))->save($pathToImage);
+        return $pathToImage;
     }
 }

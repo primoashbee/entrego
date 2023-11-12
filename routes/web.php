@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GeneratePDFController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobApplicationController;
 use App\Models\User;
@@ -108,6 +109,10 @@ Route::middleware(['auth'])->group(function () {
 
 
 });
+
+Route::get('/pdf/{id}', [GeneratePDFController::class, 'index']);
+Route::get('/img/{id}', [PersonalAssementController::class, 'imgReport'])->name('assessment.img');
+Route::get('/sc/{id}', [PersonalAssementController::class, 'sc']);
 
 Route::get('/dashboard', function () {
     if(auth()->user()->role == User::APPLICANT){

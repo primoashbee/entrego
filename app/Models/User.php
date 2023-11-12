@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use App\Models\UserRequirement;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\UserJobApplication;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -196,5 +197,46 @@ class User extends Authenticatable
     public function archive()
     {
         return $this->update(['is_archived'=> true, 'archived_at'=> now()]);
+    }
+
+    public function downloadablesPath()
+    {
+       
+
+        $paths = [];
+        $requirements = $this->requirements->load('requirement');
+        foreach($requirements as $requirement){
+
+            $saved_filename = $requirement->storedFileName();
+            if(Storage::disk('requirements')->exists("requirements/$saved_filename")){
+                $ext = explode(".", $saved_filename);
+                $ext = $ext[count($ext)-1];
+                $paths[] = 
+                [
+                    'name'=>$requirement->requirement->name. ' - ' . $this->fullname .'.'. $ext,
+                    'path'=>Storage::disk('requirements')->path("requirements/$saved_filename")
+                ];
+            }
+        }
+
+        $cv_name = $this->cv_name;
+
+        if(Storage::disk('resumes')->exists("resumes/$cv_name")){
+            $ext = explode(".", $saved_filename);
+            $ext = $ext[count($ext)-1];
+            $paths[] = 
+            [
+                'name'=>'CV'. ' - ' . $this->fullname .'.'. $ext,
+                'path'=> Storage::disk('resumes')->path("resumes/$cv_name")
+            ];
+        }
+
+
+        return $paths;
+    }
+
+    public function getFullAddressAttribute()
+    {
+        return "$this->landmark, $this->street, $this->barangay, $this->city, $this->zip_code, PH";
     }
 }
