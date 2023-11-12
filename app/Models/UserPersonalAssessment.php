@@ -128,12 +128,9 @@ class UserPersonalAssessment extends Model
     public function stats()
     {
         $attr = array_keys($this->getAttributes());
-        $criterias = array_filter($attr, function($value){
-            return str_contains($value, '_percentage');
-        });
-
-        $max= 10000;
-        $min= 0;
+        $criterias = array_filter($attr, function($value){return str_contains($value, '_percentage');});
+        $max= ['criteria'=>'ewan', 'score'=>0];
+        $min= ['criteria'=>'ewan', 'score'=>10000];
 
         $scores = [];
         $colors = [
@@ -148,31 +145,39 @@ class UserPersonalAssessment extends Model
             $scores[] = ['criteria'=> $criteria, 'score'=>$this[$criteria]];
         }
 
+
         foreach($scores as $score)
-        {
-            if($score['score'] > $min){
-                $max = $score;
+        {   
+            dump('Min: ' . $min['criteria'] . ' - ' . $min['score']);
+            dump('Max is ' . $max['criteria'] . ' - ' . $max['score']);
+
+            //getting the minimmum
+            if((int) $score['score'] < $min['score']){
+                $min = $score;
             }
 
-            if($score['score'] < $max){
-                $min = $score;
+            if((int) $score['score'] > $max['score']){
+                $max = $score;
             }
         }
         $min_array  = explode('_',$min['criteria']);
         $max_array  = explode('_',$max['criteria']);
+        
         $min_label = ucfirst($min_array[0]);
         $max_label = ucfirst($max_array[0]);
-        
+
         $min['label'] = $min_label;
         $max['label'] = $max_label;
 
         $max['color'] = $colors[$max_array[0]];
         $min['color'] = $colors[$min_array[0]];
+        return [$min, $max];
 
 
 
         $min_statement ="";
         $max_statement ="";
+        return [$min_label, $max_label];
 
         if($min_label =='Extraversion'){
             $min_statement = "Low scorers prefer solitude and quiet environments. They may find social interactions draining rather than stimulating and may feel more comfortable following others' leads rather than taking initiative. Their smaller circle of close friends reflects their preference for deeper, more intimate connections. They may struggle with social anxiety and find it challenging to meet new people.";

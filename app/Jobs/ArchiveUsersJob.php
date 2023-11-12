@@ -30,7 +30,7 @@ class ArchiveUsersJob implements ShouldQueue
         User::get()->each(function($user){
             if($user->toArchive()) {
                 $user->archive();
-                auditLog(User::admin()->id, "$user->email is archived");
+                auditLog(User::admin()->id, "$user->email is archived");    
             }
         });
     }
