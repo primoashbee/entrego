@@ -83,7 +83,7 @@ class User extends Authenticatable
             ->select('batch_id','created_at')
             ->where('user_id', $this->id)
             ->get();
-;
+
         if($assessments->count() > 0){
             //meron
             if($assessments->count() == 1){
@@ -222,7 +222,7 @@ class User extends Authenticatable
         $cv_name = $this->cv_name;
 
         if(Storage::disk('resumes')->exists("resumes/$cv_name")){
-            $ext = explode(".", $saved_filename);
+            $ext = explode(".", $cv_name);
             $ext = $ext[count($ext)-1];
             $paths[] = 
             [

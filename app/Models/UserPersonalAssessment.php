@@ -162,6 +162,7 @@ class UserPersonalAssessment extends Model
         $max_array  = explode('_',$max['criteria']);
         $min_label = ucfirst($min_array[0]);
         $max_label = ucfirst($max_array[0]);
+        
         $min['label'] = $min_label;
         $max['label'] = $max_label;
 
