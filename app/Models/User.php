@@ -239,4 +239,9 @@ class User extends Authenticatable
     {
         return "$this->landmark, $this->street, $this->barangay, $this->city, $this->zip_code, PH";
     }
+
+    public function canBeZipped()
+    {
+        return $this->hasFinishedAssessment() && $this->has_finished_profile;
+    }
 }

@@ -77,12 +77,14 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Vacancy</label>
-                                                    <select name="vacancies" id="vacancies" class="form-control">
+                                                    {{-- <select name="vacancies" id="vacancies" class="form-control">
                                                         <option value=""> Please Select</option>
                                                         @foreach($vacancies as $vacancy)
                                                         <option value="{{$vacancy['value']}}"> {{$vacancy['label']}}</option>
                                                         @endforeach
-                                                    </select>
+                                                    </select> --}}
+                                                    <input type="number" class="form-control" id="vacancies" name="vacancies" min="1" step="1" />
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">

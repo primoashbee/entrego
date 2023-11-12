@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StoreManPowerRequest;
 use App\Http\Requests\UpdateManPowerRequest;
+use App\Models\UserJobApplication;
 
 class ManPowerController extends Controller
 {
@@ -17,6 +18,9 @@ class ManPowerController extends Controller
         $list = ManPower::when(auth()->user()->role === User::SUB_HR, function($q, $value){
             $q->where('requested_by', auth()->user()->id);
         })
+        ->withCount(['applications'=> function($q){
+            $q->whereStatus(UserJobApplication::DEPLOYED);
+        }])
         ->paginate(15);
 
         return view('manpower.index', compact('list'));
@@ -102,5 +106,10 @@ class ManPowerController extends Controller
 
         return redirect()->route('manpower.edit', $id);
 
+    }
+
+    public function statusList($id)
+    {
+        return response()->json(['data'=>ManPower::with('applications.user')->findOrFail($id)], 200);
     }
 }

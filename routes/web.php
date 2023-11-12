@@ -18,6 +18,7 @@ use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Controllers\UserPersonalAssessmentController;
 use App\Http\Controllers\UserRequirementController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Http\Middleware\UserPacketDownloadMiddleware;
 use App\Models\JobApplication;
 use App\Models\UserJobApplication;
 use App\Models\UserPersonalAssessment;
@@ -58,6 +59,8 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, Appli
 
         Route::get('/{id}', [ManPowerController::class, 'edit'])->name('manpower.edit');
         Route::put('/{id}', [ManPowerController::class, 'update'])->name('manpower.update');
+
+        Route::get('/{id}/{status}', [ManPowerController::class, 'statusList'])->name('manpower.list.status');
     });
 
     Route::prefix('quiz')->group(function(){
@@ -110,7 +113,7 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-Route::get('/pdf/{id}', [GeneratePDFController::class, 'index']);
+Route::get('/user/packet/{id}', [GeneratePDFController::class, 'index'])->middleware([UserPacketDownloadMiddleware::class])->name('user.download.packet');
 Route::get('/img/{id}', [PersonalAssementController::class, 'imgReport'])->name('assessment.img');
 Route::get('/sc/{id}', [PersonalAssementController::class, 'sc']);
 

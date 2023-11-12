@@ -69,6 +69,7 @@
                                       <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Name</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Job</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Personal Assessment</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Exam</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
@@ -93,18 +94,40 @@
                                                   </div>
                                                 </div>
                                             </td>
+                                            <td class="align-middle text-center">
+
+                                                @if($applicant->user->assessments()->count() > 0)
+                                                <span class="badge bg-gradient-success"> Finished </span> <br> 
+                                                <a href="{{route('personal-assessments.view', $applicant->user->assessments()->first()->batch_id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+
+                                                @else
+                                                <span class="badge bg-gradient-default"> Pending </span> <br> 
+
+                                                @endif
+
+                                            </td>
                                             <td class=" text-center">
                                                 @if($applicant->userQuiz)
 
-                                                    <div class="progress" style="width:100%; margin-top:-8px">
-                                                        @if($applicant->userQuiz->percentage < 50)
-                                                            <div class="progress-bar bg-gradient-danger text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>
+                                                    {{-- <div class="progress" style="width:100%; margin-top:-8px"> --}}
+                                                        {{-- @if($applicant->userQuiz->percentage < 50)
+                                                            <div class="progress-bar bg-gradient-danger text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}% </div>
                                                         @elseif($applicant->userQuiz->percentage >= 50 &&  $applicant->userQuiz->percentage <= 75)
                                                             <div class="progress-bar bg-gradient-secondary text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>
                                                         @else
                                                             <div class="progress-bar bg-gradient-success text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>    
+                                                        @endif --}}
+                                                        @if($applicant->userQuiz->is_passed)
+                                                        <span class="badge bg-gradient-success"> Passed </span> <br> 
+                                                        @else
+                                                        <span class="badge bg-gradient-danger"> Failed </span> <br> 
                                                         @endif
-                                                    </div>
+                                                        <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+
+
+
+                                                    {{-- </div> --}}
+     
 
                                                     @else
                                                         N/A
@@ -160,6 +183,12 @@
                                                         <i class="material-icons">laptop</i>
                                                     </a>
                                                     @endif
+                                                @endif
+
+                                                @if($applicant->user->canBeZipped())
+                                                <a href="{{route('user.download.packet', $applicant->user->id)}}" class="font-weight-normal text-xs text-success">
+                                                 <i class="material-icons">file_download</i>
+                                                </a>
                                                 @endif
 
                                            

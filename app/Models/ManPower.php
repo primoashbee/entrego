@@ -174,4 +174,13 @@ class ManPower extends Model
                         ->get();
         
     }
+    
+
+    public function applications()
+    {
+        return $this->hasMany(UserJobApplication::class);
+    }
+
+
+  
 }

@@ -22,6 +22,8 @@
                             <div class="col-12">
                                 <div class="row">
                                     <div class="col-4">
+                                        <h6>Applicant: {{$application->user->fullname}} </h6>
+                                        <h6>Email:  {{$application->user->email}} </h6>
                                         <h6>Score: {{$application->userQuiz->score}} / {{$application->job->quiz->questions()->count()}}</h6>
                                         <h6> Result: 
                                             @if($application->userQuiz->is_passed)

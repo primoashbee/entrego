@@ -31,6 +31,7 @@
                                                 <label class="">First Name</label>
                                                 <input type="text" name="first_name" class="form-control"
                                                     v-model="profile.first_name"
+                                                    
                                                     >
                                             </div>
                                         </div>
@@ -390,6 +391,8 @@
                 const profile = ref(@json($user))
                 const works = ref(@json($user->workHistory))
                 const requirements = ref(@json($requirements))
+                const role = ref(@json(auth()->user()->role))
+              
                 const addWork = () => {
                     works.value.push({})
                 }
@@ -401,6 +404,14 @@
                     console.log(this.$refs[ref].files[0])
                     console.log(this.$refs)
                 }
+
+                // function formCheck(){
+                //     if(role.value == 'SUB_HR'){
+                //         document.querySelectorAll('.form-control').forEach( el => {
+                //             el.disabled = true
+                //         })
+                //     }
+                // }
                 return {
                     profile,
                     works,

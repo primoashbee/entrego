@@ -33,6 +33,8 @@
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Job Group</th>
                                         {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">E-mail</th> --}}
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Job Nature</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Vacancies </th>
+
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Department</th>
                                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Requested At</th>
@@ -43,13 +45,18 @@
                                     @foreach($list as $item)
                                       <tr>
                                         <td>
-                                            <p class="text-center text-xs font-weight-bold mb-0">{{ $item->job_title }}</p>
+                                            <a href="{{route('job.create', $item->id)}}" target="_blank"><p class="text-center text-xs font-weight-bold mb-0">{{ $item->job_title }}</p></a>
                                         </td>
                                         <td>
                                           <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->job_group_name }}</p>
                                         </td>
                                         <td>
                                           <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->job_nature_name }}</p>
+                                        </td>
+                                        <td>
+                                          <p class=" text-center text-xs font-weight-bold mb-0">
+                                            <a href="#" manpower-title="{{$item->job_title}}" class="modalOpen" manpower-id="{{$item->id}}">{{$item->applications_count}} </a>/ {{ $item->vacancies }}
+                                          </p>
                                         </td>
                                         <td>
                                           <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->department_name }}</p>
@@ -91,6 +98,29 @@
     </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Manpower : <span id="lblManPowerTitle"></span></h5>
+        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="content">
+          asdasds
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+        {{-- <button type="button" class="btn bg-gradient-primary">Save changes</button> --}}
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -134,12 +164,76 @@
       });
     });
   })()
-  
+
+  const myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+
+  document.querySelectorAll('.modalOpen').forEach((el)=>{
+    el.addEventListener('click' , async (e)=>{
+      e.preventDefault()
+      const id = el.getAttribute('manpower-id')
+      const title = el.getAttribute('manpower-title')
+
+      document.getElementById('lblManPowerTitle').innerHTML = title
+      document.getElementById("content").innerHTML = ''
+
+      const data = await getDeployedList(id)
+      const application_list = data.data.applications
+      let trows = '';
+      application_list.forEach((application)=>{
+        const row = `
+          <tr>
+              <td>
+                  <a href="/users/update/${application.user.id}" target="_blank"><p  class="text-center text-xs font-weight-bold mb-0"> ${application.user.email} </p></a>
+              </td>
+              <td>
+                  <p class="text-center text-xs font-weight-bold mb-0">${application.user.first_name} ${application.user.last_name}</p>
+              </td>
+              <td>
+                  <p class="text-center text-xs font-weight-bold mb-0">${application.status} </p>
+              </td>
+          </tr>
+        `
+        trows = trows + row
+      })
+      const html = `
+      <div class="table-responsive">
+        <table class="table align-items-center mb-0">
+          <thead>
+            <tr>
+              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
+              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trows}
+          </tbody>
+          </table>
+        </div>
+      `
+      document.getElementById("content").innerHTML = html
+
+      myModal.show()
+
+    })
+  })
+
+  async function getDeployedList(manpower_id){
+    const result  =  await fetch(`/manpower/${manpower_id}/deployed`, {
+          'headers': {
+              "X-CSRF-Token": '{{csrf_token()}}' 
+          },
+          'method': 'GET',
+          'content-type': 'application/json'
+      })
+    const  data  = await result.json()
+    return data
+  }
   async function deleteRecord(item){
     console.log(item)
     // const data = JSON.parse(item);
     const data = item;
-    const result = await Swal.fire({
+    const {result} = await Swal.fire({
       title: 'Are you sure you want to delete this?',
       showCancelButton: true,
       confirmButtonText: 'Yes',
