@@ -148,8 +148,6 @@ class UserPersonalAssessment extends Model
 
         foreach($scores as $score)
         {   
-            dump('Min: ' . $min['criteria'] . ' - ' . $min['score']);
-            dump('Max is ' . $max['criteria'] . ' - ' . $max['score']);
 
             //getting the minimmum
             if((int) $score['score'] < $min['score']){
@@ -171,13 +169,11 @@ class UserPersonalAssessment extends Model
 
         $max['color'] = $colors[$max_array[0]];
         $min['color'] = $colors[$min_array[0]];
-        return [$min, $max];
 
 
 
         $min_statement ="";
         $max_statement ="";
-        return [$min_label, $max_label];
 
         if($min_label =='Extraversion'){
             $min_statement = "Low scorers prefer solitude and quiet environments. They may find social interactions draining rather than stimulating and may feel more comfortable following others' leads rather than taking initiative. Their smaller circle of close friends reflects their preference for deeper, more intimate connections. They may struggle with social anxiety and find it challenging to meet new people.";
