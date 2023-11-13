@@ -128,6 +128,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/view-jobs', [JobApplicationController::class, 'index'])->name('job.listing');
 Route::get('/job/apply/{id}', [JobApplicationController::class, 'create'])->name('job.create');
+// Route::get('/job/applyv2/{id}', [JobApplicationController::class, 'createv2'])->name('job.create');
 Route::post('/job/apply/{id}', [JobApplicationController::class, 'store'])->name('job.store');
 
 

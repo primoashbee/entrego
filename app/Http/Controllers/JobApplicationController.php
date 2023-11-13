@@ -30,7 +30,13 @@ class JobApplicationController extends Controller
     public function create($id)
     {
         $job = ManPower::findOrFail($id);
-        return view('public.apply', compact('job'));
+        return view('public.applyv2', compact('job'));
+    }
+
+    public function createv2($id)
+    {
+        $job = ManPower::findOrFail($id);
+        return view('public.applyv2', compact('job'));
     }
 
     public function store($id)
