@@ -65,10 +65,10 @@
                                           {{-- <a href="{{route('quiz.edit', $quiz->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
                                               <i class="material-icons">remove_red_eye</i>
                                           </a>                                            --}}
-                                          <a href="{{route('quiz.edit', $quiz->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
+                                          {{-- <a href="{{route('quiz.edit', $quiz->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
                                               <i class="material-icons">lightbulb_outline
                                               </i>
-                                          </a>   
+                                          </a>    --}}
                                         </td>
                                       </tr>
                                     @endforeach
