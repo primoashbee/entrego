@@ -31,7 +31,7 @@
                                         @foreach($manpower->list as $item)
                                         <li class="list-group-item">                                            
                                             <div class="form-check form-switch  is-filled">
-                                                <input class="form-check-input" type="checkbox" manpower-id="1" id="flexSwitchCheckDefault" checked="&quot;&quot;">
+                                                <input class="form-check-input" type="checkbox" manpower-id="{{$item->id}}" id="flexSwitchCheckDefault" {{$item->active ? 'checked=""': ''}}>
                                             </div>
                                             <span style="margin-left: 50px">{{$item->job_title}}</span>  
 
@@ -157,7 +157,7 @@
                                 </div>
                                 <div class="text-end pt-1">
                                     <p class="text-sm mb-0 text-capitalize">Deployed</p>
-                                    <h4 class="mb-0">{{ $deployed->active . '/' . $deployed->total }}</h4>
+                                    <h4 class="mb-0">{{ $deployed->total['deployed'] . '/' . $deployed->total['total'] }}</h4>
                                     <ul class="list-group" style="text-align: left !important; min-height:250px; max-height:250px; overflow-y:scroll">
                                         @foreach($deployed->list as $item)
                                         <li class="list-group-item">                                            
@@ -264,4 +264,48 @@
         @include('components.footer')
 
     </div>
+@endsection
+
+@section('scripts')
+<script>
+      (function(){
+    const switches = document.querySelectorAll(".form-check-input");
+    switches.forEach(function(toggle) {
+      toggle.addEventListener("change", async function() {
+        const new_state = toggle.checked
+        const text = new_state ? 'ACTIVATED' : 'DISABLED'
+        const payload = {
+          active: new_state,
+          _method: "PATCH"
+        }
+        const id = this.getAttribute('manpower-id')
+        const res = await fetch(`/manpower/${id}`, {
+          'method': 'PATCH',
+          
+          'body': JSON.stringify(payload),
+          'headers': {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRF-Token": '{{csrf_token()}}',
+          },
+          'content-type': 'application/json'
+        })
+        if(res.status === 200){
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+
+          Toast.fire({
+            icon: 'success',
+            title: `Manpower request status ${text}`
+          })
+        }
+      });
+    });
+  })()
+</script>
 @endsection

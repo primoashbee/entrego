@@ -180,6 +180,29 @@ class ManPower extends Model
         return $this->hasMany(UserJobApplication::class);
     }
 
+    public function deployed()
+    {
+        return $this->applications()->where('status', UserJobApplication::DEPLOYED)->count();
+    }
+
+    public static function totalManPower()
+    {
+        $total = 0;
+        $deployed = 0;
+        self::withCount(['applications'=>function($q){ 
+            return $q->where('status', UserJobApplication::DEPLOYED);
+        }])->each(function($manpower) use (&$total, &$deployed){
+            // $deployed = $deployed + $manpower->job->deployed();
+            $total = $total + (int) $manpower->vacancies;
+            $deployed = $deployed + (int) $manpower->applications_count;
+        });
+
+        return [
+            'total'=>$total, 
+            'deployed'=>$deployed
+        ];
+   
+    }
 
   
 }

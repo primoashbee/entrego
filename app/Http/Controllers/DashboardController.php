@@ -18,8 +18,10 @@ class DashboardController extends Controller
         $now = now();
 
         $manpower = new stdClass;
-        $manpower->total = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
-        $manpower->active = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
+        // $manpower->total = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
+        // $manpower->active = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
+        $manpower->total = ManPower::count();
+        $manpower->active = ManPower::active()->count();
         $manpower->variation = ManPower::variation($now);
         $manpower->overview = ManPower::overview();
         $manpower->list = ManPower::orderBy('id', 'desc')->get();
@@ -60,7 +62,7 @@ class DashboardController extends Controller
         $processing->list      = UserJobApplication::with('user','job')->orderBy('id','desc')->get();
 
         $deployed = new stdClass;
-        $deployed->total = $processing->total;
+        $deployed->total = ManPower::totalManPower();
         $deployed->active = UserJobApplication::
                                 // whereMonth('created_at', $now->format('m'))->
                                 deployed()->count();

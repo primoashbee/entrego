@@ -145,7 +145,13 @@ class UserJobApplication extends Model
 
     public function hiringTimeSpan()
     {
-        return Carbon::parse($this->deployed_at)->diffInDays($this->created_at) . ' days hiring process';
+        $diff = Carbon::parse($this->deployed_at)->diffInDays($this->created_at);
+        $days = 'day';
+        if($diff > 1){
+            $days = 'days';
+        }
+        return  "$diff $days Time to Hire";
     }
+
 
 }

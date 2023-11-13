@@ -58,7 +58,7 @@
                                         <td class="align-middle text-center">
                                           <span class="text-xs font-weight-bold mb-0 mt-2"> {{ $quiz->created_at->diffForHumans() }}</span>
                                         </td>
-                                        <td class="align-middle">
+                                        <td class="align-middle text-center">
                                           <a href="{{route('quiz.edit', $quiz->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
                                               <i class="material-icons">edit</i>
                                           </a>                                           
