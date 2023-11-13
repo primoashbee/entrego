@@ -21,7 +21,8 @@ class DashboardController extends Controller
         $manpower->total = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
         $manpower->active = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
         $manpower->variation = ManPower::variation($now);
-        $manpower->overview = ManPower::overview($now);
+        $manpower->overview = ManPower::overview();
+        $manpower->list = ManPower::orderBy('id', 'desc')->get();
 
         $applicant = new stdClass;
         $applicant->total  = User::active()
@@ -33,6 +34,12 @@ class DashboardController extends Controller
                                     ->finishedAssessment()
                                     ->finishedProfile()
                                     ->count();
+        $applicant->list = User::active()
+                                ->applicant()
+                                ->finishedAssessment()
+                                ->finishedProfile()
+                                ->get();
+                                    
         // dd(
         //         User::active()
         //             ->applicant()
@@ -43,13 +50,14 @@ class DashboardController extends Controller
         $applicant->variation = User::variation($now);
 
         $processing = new stdClass;
-        $processing->total = UserJobApplication::
+        $processing->total = UserJobApplication::count();
                             // whereMonth('created_at', $now->format('m'))->
-                            count();
-        $processing->active = UserJobApplication::
+                            
+        $processing->active = UserJobApplication::active()->count();
                                     // whereMonth('created_at', $now->format('m'))->
-                                    active()->count();
+                                    
         $processing->variation = UserJobApplication::variation($now);
+        $processing->list      = UserJobApplication::with('user','job')->orderBy('id','desc')->get();
 
         $deployed = new stdClass;
         $deployed->total = $processing->total;
@@ -57,6 +65,9 @@ class DashboardController extends Controller
                                 // whereMonth('created_at', $now->format('m'))->
                                 deployed()->count();
         $deployed->variation = UserJobApplication::variationDeployed($now);
+        $deployed->list = UserJobApplication::deployed()
+                                    ->orderBy('id','desc')
+                                    ->get();
         
         return view('user.dashboard', compact('manpower', 'applicant','processing', 'deployed'));
     }

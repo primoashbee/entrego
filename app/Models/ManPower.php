@@ -154,7 +154,7 @@ class ManPower extends Model
        return $variaton;
     }
 
-    public static function overview($date)
+    public static function overview()
     {
         // $last = self::whereMonth('created_at', $date->copy()->subMonth()->month)->count() ;
         // $now = self::whereMonth('created_at', $date->month)->count();
@@ -169,7 +169,6 @@ class ManPower extends Model
                                 SUM(IF(user_job_applications.status ='DEPLOYED', 1, 0)) AS deployed,
                                 COUNT(user_job_applications.id) AS total 
                             "))
-                        ->whereMonth('user_job_applications.created_at', $date->month)
                         ->groupBy('man_powers.id')
                         ->get();
         

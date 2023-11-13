@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\ManPower;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -27,7 +28,7 @@ class UserJobApplication extends Model
     
     const HIRED = "HIRED";
     const DEPLOYED = "DEPLOYED";
-
+    const JOB_OFFER = "JOB_OFFER";
     const STATUSES = [
         [
             "value"=> self::APPLIED,
@@ -61,10 +62,10 @@ class UserJobApplication extends Model
             "value"=> self::FOR_REQUIREMENTS,
             "label"=> "FOR REQUIREMENTS"
         ],
-        // [
-        //     "value"=> self::HIRED,
-        //     "label"=> "HIRED"
-        // ],
+        [
+            "value"=> self::JOB_OFFER,
+            "label"=> "JOB OFFER"
+        ],
         [
             "value"=> self::DEPLOYED,
             "label"=> "DEPLOYED"
@@ -140,6 +141,11 @@ class UserJobApplication extends Model
         }
 
        return $variaton;
+    }
+
+    public function hiringTimeSpan()
+    {
+        return Carbon::parse($this->deployed_at)->diffInDays($this->created_at) . ' days hiring process';
     }
 
 }

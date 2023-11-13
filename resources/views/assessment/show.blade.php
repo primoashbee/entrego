@@ -36,19 +36,19 @@
                                       <div class="px-5">
                                         @if($item->question->reversed)
                                             <span> Accurate</span>
-                                            <input type="radio"  value="5" style="margin-left:25px;transform:scale(2)" {{$item->answer == "5" ? 'checked' : ''}}>
-                                            <input type="radio"  value="4" style="margin-left:25px;transform:scale(2)" {{$item->answer == "4" ? 'checked' : ''}}>
-                                            <input type="radio"  value="3" style="margin-left:25px;transform:scale(2)" {{$item->answer == "3" ? 'checked' : ''}}>
-                                            <input type="radio"  value="2" style="margin-left:25px;transform:scale(2)" {{$item->answer == "2" ? 'checked' : ''}}>
-                                            <input type="radio"  value="1" style="margin-left:25px;transform:scale(2);margin-right:25px" {{$item->answer == "1" ? 'checked' : ''}}>
+                                            <input type="radio"  {{$item->answer == "5" ? '' : 'disabled'}} value="5" style="margin-left:25px;transform:scale(2)" {{$item->answer == "5" ? 'checked' : ''}}>
+                                            <input type="radio"  {{$item->answer == "4" ? '' : 'disabled'}} value="4" style="margin-left:25px;transform:scale(2)" {{$item->answer == "4" ? 'checked' : ''}}>
+                                            <input type="radio"  {{$item->answer == "3" ? '' : 'disabled'}} value="3" style="margin-left:25px;transform:scale(2)" {{$item->answer == "3" ? 'checked' : ''}}>
+                                            <input type="radio"  {{$item->answer == "2" ? '' : 'disabled'}} value="2" style="margin-left:25px;transform:scale(2)" {{$item->answer == "2" ? 'checked' : ''}}>
+                                            <input type="radio"  {{$item->answer == "1" ? '' : 'disabled'}} value="1" style="margin-left:25px;transform:scale(2);margin-right:25px" {{$item->answer == "1" ? 'checked' : ''}}>
                                             <span> Inaccurate</span>    
                                         @else
                                             <span> Accurate</span>
-                                            <input type="radio"  value="1" style="margin-left:25px;transform:scale(2)" {{$item->answer == "1" ? 'checked' : ''}}>
-                                            <input type="radio"  value="2" style="margin-left:25px;transform:scale(2)" {{$item->answer == "2" ? "checked" : ''}}>
-                                            <input type="radio"  value="3" style="margin-left:25px;transform:scale(2)" {{$item->answer == "3" ? "checked" : ''}}>
-                                            <input type="radio"  value="4" style="margin-left:25px;transform:scale(2)" {{$item->answer == "4" ? "checked" : ''}}>
-                                            <input type="radio"  value="5" style="margin-left:25px;transform:scale(2);margin-right:25px" {{$item->answer == "5" ? 'checked' : ''}}>
+                                            <input type="radio"  {{$item->answer == "1" ? '' : 'disabled'}} value="1" style="margin-left:25px;transform:scale(2)" {{$item->answer == "1" ? 'checked' : ''}}>
+                                            <input type="radio"  {{$item->answer == "2" ? '' : 'disabled'}} value="2" style="margin-left:25px;transform:scale(2)" {{$item->answer == "2" ? "checked" : ''}}>
+                                            <input type="radio"  {{$item->answer == "3" ? '' : 'disabled'}} value="3" style="margin-left:25px;transform:scale(2)" {{$item->answer == "3" ? "checked" : ''}}>
+                                            <input type="radio"  {{$item->answer == "4" ? '' : 'disabled'}} value="4" style="margin-left:25px;transform:scale(2)" {{$item->answer == "4" ? "checked" : ''}}>
+                                            <input type="radio"  {{$item->answer == "5" ? '' : 'disabled'}} value="5" style="margin-left:25px;transform:scale(2);margin-right:25px" {{$item->answer == "5" ? 'checked' : ''}}>
                                             <span> Inaccurate</span>
                                         @endif
                                     </div>

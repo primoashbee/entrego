@@ -151,6 +151,8 @@
                                                 @elseif($applicant->status=='FOR_REQUIREMENTS')
                                                 <span class="badge bg-gradient-info">{{ $applicant->status_name }} {{$applicant->user->requirement_summary}} </span> <br> 
                                                 <a href="{{route('requirements.index',['ids'=>implode(',',$applicant->user->requirements->pluck('id')->toArray())])}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+                                                @elseif($applicant->status=='JOB_OFFER')
+                                                <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
                                                 @elseif($applicant->status=='DEPLOYED')
                                                 <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
                                                 @endif
@@ -158,7 +160,7 @@
                                             <td class="align-middle text-center">
                                                 @if(!auth()->user()->isApplicant())
 
-                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}})" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'SEND_INTERVIEW')" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
                                                         <i class="material-icons">mail</i>
                                                     </a>
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'REJECTED')" class="font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
@@ -167,7 +169,13 @@
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'APPROVED')" class="font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
                                                         <i class="material-icons">check_circle</i>
                                                     </a>
-                                                    @if($applicant->canBeDeployed())
+
+                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled())
+                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
+                                                        <i class="material-icons">event_available</i>
+                                                    </a>
+                                                    @endif
+                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status =='JOB_OFFER')
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'DEPLOYED')" class="font-weight-normal text-xs text-warning" data-toggle="tooltip" data-original-title="Edit item">
                                                         <i class="material-icons">work</i>
                                                     </a>
@@ -213,11 +221,12 @@
 
 @section('scripts')
 <script>
-    async function promptEmail(id){
+    async function promptEmail(id, status){
+        const status_text = status.replace("_", " ")
         const { value: url } = await Swal.fire({
                                     input: 'url',
-                                    inputLabel: 'Enter zoom URL',
-                                    inputPlaceholder: 'Enter the URL'
+                                    inputLabel: `Enter zoom URL (${status_text})`,
+                                    inputPlaceholder: `Enter zoom URL (${status_text})`
                                 })
         if(!url){
             return;
@@ -265,7 +274,7 @@
                     },
                 });
 
-                await sendInterview(id, url, datetime)
+                await sendInterview(id, url, datetime, status)
                 alert.close()
 
                 await Swal.fire(
@@ -278,10 +287,11 @@
         }
 
     }
-    async function sendInterview(id, link,datetime){
+    async function sendInterview(id, link,datetime, status){
         const payload = {
             link: link,
-            datetime: datetime
+            datetime: datetime,
+            status: status
         }
         const res = await fetch(`/job/send-interview/${id}`, {
             'method': 'POST',
@@ -298,19 +308,20 @@
     }
 
     async function promptStatus(id, status){
-
+        if(status=='APPROVED'){
+            status = 'FOR_REQUIREMENTS'
+        }
+        const status_text = status.replace("_", " "); 
         const response = await Swal.fire({
                 title: 'Confirmation',
-                text: `Are you sure you want this application ${status}?`,
+                text: `Are you sure you want this application ${status_text}?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes'
             })
-        if(status=='APPROVED'){
-            status = 'FOR_REQUIREMENTS'
-        }
+
         if(!response.isConfirmed){
             return false;
 

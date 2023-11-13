@@ -9,6 +9,7 @@ use Twilio\Rest\Client;
 use App\Models\ManPower;
 use Illuminate\Http\Request;
 use App\Mail\JobInterviewMail;
+use App\Mail\JobOfferMail;
 use App\Mail\JobRejectedMail;
 use App\Models\UserJobApplication;
 use App\Services\Semaphore;
@@ -125,43 +126,91 @@ class JobApplicationController extends Controller
     public function sendInterview(Request $request, $id)
     {
         $applicant = UserJobApplication::with('user','job')->findOrFail($id);
-        $applicant->update([
+        $fields = [
             'link'=>$request->link,
             'interview_date'=>Carbon::parse($request->datetime),
-            'status'=>UserJobApplication::INTERVIEW_SENT
-        ]);
+        ];
+        if($request->status == 'SEND_INTERVIEW'){
+            $fields['status'] = UserJobApplication::INTERVIEW_SENT;
+            $fields['interview_sent_at'] = now();
+        }
+        if($request->status == 'JOB_OFFER'){
+            $fields['status'] = UserJobApplication::JOB_OFFER;
+            $fields['interview_sent_at'] = now();
+
+        }
+        
+    
+ 
+
+        $applicant->update($fields);
 
         tap($applicant);
         $email = $applicant->user->email;
-        Mail::to($email)
+        if($request->status == 'SEND_INTERVIEW'){
+            Mail::to($email)
             ->send(
                 new JobInterviewMail(
                     $applicant
                 )
             );
-        $name = $applicant->user->fullname; 
-        $position = $applicant->job->job_title; 
-        $link = $request->link; 
+            $name = $applicant->user->fullname; 
+            $position = $applicant->job->job_title; 
+            $link = $request->link; 
 
-        $message = "Greetings, $name.\n\nYou're scheduled for an interview for applying $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            $message = "Greetings, $name.\n\nYou're scheduled for an interview for applying $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
 
-        // $sid = config('services.twilio.account_sid');
-        // $token = config('services.twilio.auth_token');
-        // $twilio_number = config('services.twilio.twilio_number');
-        // $client = new Client($sid, $token);
-        // $client->messages->create('+639685794313',
-        //     [
-        //         'From'=> $twilio_number,
-        //         'body'=> $message
-        //     ]);
-        if(env('APP_ENV') != 'local'){
-            $client = new Semaphore(config('services.semaphore.api_key'));
-            $res = $client->sendSMS($applicant->user->contact_number, $message);
-            auditLog($applicant->user->id, "SMS sent for Interview Link");
+            // $sid = config('services.twilio.account_sid');
+            // $token = config('services.twilio.auth_token');
+            // $twilio_number = config('services.twilio.twilio_number');
+            // $client = new Client($sid, $token);
+            // $client->messages->create('+639685794313',
+            //     [
+            //         'From'=> $twilio_number,
+            //         'body'=> $message
+            //     ]);
+            if(env('APP_ENV') != 'local'){
+                $client = new Semaphore(config('services.semaphore.api_key'));
+                $res = $client->sendSMS($applicant->user->contact_number, $message);
+                auditLog($applicant->user->id, "SMS sent for Interview Link");
+            }
+
+
+            auditLog($applicant->user->id, "E-mail sent for Interview Link");
         }
 
+        if($request->status =='JOB_OFFER'){
+            Mail::to($email)
+            ->send(
+                new JobOfferMail(
+                    $applicant
+                )
+            );
+            $name = $applicant->user->fullname; 
+            $position = $applicant->job->job_title; 
+            $link = $request->link; 
 
-        auditLog($applicant->user->id, "E-mail sent for Interview Link");
+            $message = "Greetings, $name.\n\nCongratulations! You're scheduled for the JOB OFFER for your job application -  $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+
+            // $sid = config('services.twilio.account_sid');
+            // $token = config('services.twilio.auth_token');
+            // $twilio_number = config('services.twilio.twilio_number');
+            // $client = new Client($sid, $token);
+            // $client->messages->create('+639685794313',
+            //     [
+            //         'From'=> $twilio_number,
+            //         'body'=> $message
+            //     ]);
+            if(env('APP_ENV') != 'local'){
+                $client = new Semaphore(config('services.semaphore.api_key'));
+                $res = $client->sendSMS($applicant->user->contact_number, $message);
+                auditLog($applicant->user->id, "SMS sent for Job Offer Link");
+            }
+
+
+            auditLog($applicant->user->id, "E-mail sent for Job Offer Link");
+        }
+       
 
         return response()->json(['data'=>[]], 200);
     }
@@ -183,6 +232,8 @@ class JobApplicationController extends Controller
                 );
             $message = "Hi, $name\n\nWe regret to inform you that we have chosen to move forward with another candidate for the position you applied for. We appreciate your interest in our company and wish you the best in your job search.\n\nThank you,\nEntregoHR";
             $client->sendSMS($user_job->user->contact_number, $message);
+            $user_job->update(['rejected_at'=>now()]);
+
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - REJECTED", $user_job);
         }elseif($request->status === UserJobApplication::APPROVED){
             Mail::to($user_job->user->email)
@@ -192,6 +243,8 @@ class JobApplicationController extends Controller
             $message = "Greetings, $name\n\nWe're excited to move forward with your application process.\n\nPlease upload the required documents on the Requirements Tab on your profile page.\nEach of your uploaded files will be checked and validated by our Team.\n\nWe will update you after those requirements are accepted..\n\nThank you,\nEntregoHR";
             $client->sendSMS($user_job->user->contact_number, $message);
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - APPROVE", $user_job);
+            $user_job->update(['approved_at'=>now()]);
+
 
         }
 
@@ -205,6 +258,7 @@ class JobApplicationController extends Controller
             $message = "Greetings, $name\n\nYou are now deployed as $job->job_title.\n\nThank you,\nEntregoHR" ;
             $client->sendSMS($user_job->user->contact_number, $message);
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - DEPLOYED", $user_job);
+            $user_job->update(['deployed_at'=>now()]);
 
         }
         $user_job->update($request->all());

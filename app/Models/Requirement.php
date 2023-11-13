@@ -9,6 +9,7 @@ class Requirement extends Model
 {
     use HasFactory;
 
+    protected $guarded  = [];
     public function scopeRequired()
     {
         return self::where('required', true);

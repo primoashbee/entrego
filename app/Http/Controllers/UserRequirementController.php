@@ -50,12 +50,13 @@ class UserRequirementController extends Controller
         $requirement_name = $requirement->requirement->name;
         
         $approved = $requirement->user->requirements()->where('status', UserRequirement::APPROVED)->count();
-        $total = User::with('requirements')->find($requirement->user->id)->requirements()->count();
+        // $total = User::with('requirements')->find($requirement->user->id)->requirements()->count();
+        $total = Requirement::where('required',true)->count();
         auditLog($requirement->user->id, "[$approved/$total] Requirement [$requirement_name] for $applicant_name is $status");
 
         if($approved == $total)
         {
-            auditLog($requirement->user->id, "Requirements finished 5/5");
+            auditLog($requirement->user->id, "Requirements finished $approved/$total");
         }
         
         

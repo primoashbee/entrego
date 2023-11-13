@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Spatie\Image\Manipulations;
 use Illuminate\Support\Facades\App;
 use Spatie\Browsershot\Browsershot;
 use Illuminate\Support\Facades\Storage;
@@ -16,9 +17,12 @@ class GeneratePDFController extends Controller
         $user = User::with('workHistory','assessments')->findOrFail($user_id);
         $viewer = App::make('dompdf.wrapper'); 
 
-        $image_src = Storage::disk('public')->path('test-img.png');
-        Browsershot::url(route('assessment.img', 2))->save($image_src);
+        $image_src = Storage::disk('public')->path('test-img.jpeg');
+        Browsershot::url(route('assessment.img', 2))
+        ->windowSize(1920, 538)
+        ->save($image_src);
         
+        // return response()->download($image_src);
         $pdf = $viewer->loadView('templates.pdf.profile', compact('user', 'image_src'));
 
         

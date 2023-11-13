@@ -122,14 +122,32 @@ class User extends Authenticatable
     }
     public function getRequirementSummaryAttribute()
     {
-        $reqs = $this->requirements();
-        return $reqs->clone()->where('status', UserRequirement::APPROVED)->count()."/".$reqs->count();
+        $total_requirements = Requirement::where('required',true)->count();
+        return $this->requirements()
+                ->where('status', UserRequirement::APPROVED)
+                ->count() 
+                . "/" . 
+                $total_requirements;
     }
 
     public function requirementsFullfilled()
     {
-        $max_count = Requirement::count();
-        return $this->requirements()->where('status', UserRequirement::APPROVED)->count() == $max_count;
+        $requirements = Requirement::where('required', true)->get();
+        $requirement_ids = $requirements->pluck('id')->toArray();
+
+        $my_requirements = $this->requirements()->where('status', UserRequirement::APPROVED)->get();
+        $my_requirements_ids = $my_requirements->pluck('requirement_id')->toArray();
+
+        $passing_score = count($requirement_ids);
+        $score = 0;
+
+        foreach($my_requirements_ids as $id){
+            if(in_array($id, $requirement_ids)){
+                $score ++;
+            }
+        }
+        return $score == $passing_score;
+        // return $this->requirements()->where('status', UserRequirement::APPROVED)->count() == $max_count;
     }
 
     public function scopeActive()
@@ -243,5 +261,21 @@ class User extends Authenticatable
     public function canBeZipped()
     {
         return $this->hasFinishedAssessment() && $this->has_finished_profile;
+    }
+
+    public function lastUserActivity()
+    {
+        $activity = 'Profile Created';
+        if($this->has_finished_profile){
+            $activity = 'Profile Updated';
+        }
+        if($this->hasFinishedAssessment()){
+            $activity = 'Assessment Taken';
+        }
+        if($this->jobApplications()->count() > 0){
+            $activity = 'Job Applied';
+        }
+
+        return $activity;
     }
 }
