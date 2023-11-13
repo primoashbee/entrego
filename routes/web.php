@@ -1,28 +1,29 @@
 <?php
 
-use App\Http\Controllers\AuditLogController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GeneratePDFController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\JobApplicationController;
 use App\Models\User;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\QuizController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ManPowerController;
-use App\Http\Controllers\UserQuizController;
-use App\Http\Middleware\ApplicanTakenAssessment;
-use App\Http\Middleware\ApplicantTakenAssessment;
-use App\Http\Controllers\PersonalAssementController;
-use App\Http\Middleware\ApplicantHasFinishedProfile;
-use App\Http\Controllers\UserPersonalAssessmentController;
-use App\Http\Controllers\UserRequirementController;
-use App\Http\Middleware\IsAdminMiddleware;
-use App\Http\Middleware\UserPacketDownloadMiddleware;
+use App\Services\Semaphore;
 use App\Models\JobApplication;
 use App\Models\UserJobApplication;
+use Illuminate\Support\Facades\Route;
 use App\Models\UserPersonalAssessment;
-use App\Services\Semaphore;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\TutsController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\IsAdminMiddleware;
+use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\ManPowerController;
+use App\Http\Controllers\UserQuizController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GeneratePDFController;
+use App\Http\Middleware\ApplicanTakenAssessment;
+use App\Http\Middleware\ApplicantTakenAssessment;
+use App\Http\Controllers\JobApplicationController;
+use App\Http\Controllers\UserRequirementController;
+use App\Http\Controllers\PersonalAssementController;
+use App\Http\Middleware\ApplicantHasFinishedProfile;
+use App\Http\Middleware\UserPacketDownloadMiddleware;
+use App\Http\Controllers\UserPersonalAssessmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,4 +149,9 @@ Route::get('/itest', function(){
     $j = UserJobApplication::first();
     return new \App\Mail\JobInterviewMail($j);
 });
+
+Route::get('/tuts', [TutsController::class, 'index'])->name('tuts.create');
+Route::post('/tuts', [TutsController::class, 'store'])->name('tuts.store');
+Route::delete('/tut/{id}', [TutsController::class, 'delete'])->name('tuts.delete');
+Route::patch('/tut/{id}', [TutsController::class, 'patch'])->name('tuts.patch');
 require __DIR__.'/auth.php';
