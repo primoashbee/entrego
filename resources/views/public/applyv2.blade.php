@@ -9,12 +9,12 @@
   <meta content="Browse jobs at Entrego!" name="description">
 
   <!-- Favicons -->
-  <link href="img/favicon.png" rel="icon">
-  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="/img/favicon.png" rel="icon">
+  <link href="/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Favicons -->
-  <link href="img/favicon.png" rel="icon">
-  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="/img/favicon.png" rel="icon">
+  <link href="/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
@@ -66,7 +66,6 @@
               <li><a href="https://entrego.com.ph/about">About Entrego</a></li>
               <li><a href="https://entrego.com.ph/blog">Blog</a></li>
               <li><a href="https://entrego.com.ph/contact">Contact Us</a></li>
-              <li><a href="#">Hirelogic Team</a></li>
             </ul>
           </li>
           @if(auth()->check())
@@ -132,11 +131,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="jobs_right">
-                                <div class="apply_now">
-                                    <a class="heart_mark" href="#"> <iconify-icon icon="zmdi:label-heart"></iconify-icon> </a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="descript_wrap white-bg">
@@ -195,7 +189,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="share_wrap d-flex">
+                    {{-- <div class="share_wrap d-flex">
                         <span>Share at:</span>
                         <ul>
                             <li><a href="#"> <i class="fa fa-facebook"></i></a> </li>
@@ -232,7 +226,7 @@
                             <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpfS1oRGreGSBU5HHjMmQ3o5NLw7VdJ6I&callback=initMap"></script>
                             
                           </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

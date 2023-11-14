@@ -160,11 +160,11 @@
         <div class="flexbox-container">
             <div class="item" style="color:white;text-align:center">
                 <h1> Highs and Lows</h1>   
-                <h5> High {{$data->stats()['max']['label']}}</h5>
-                <p> {{$data->stats()['max']['statement']}}</p>
+                <h5> {{$stats['max']['score_label'] }} {{$stats['max']['label']}}</h5>
+                <p> {{$stats['max']['statement']}}</p>
                 <br>
-                <h5> Low {{$data->stats()['min']['label']}}</h5>
-                <p> {{$data->stats()['min']['statement']}}</p>
+                <h5> {{$stats['min']['score_label']}} {{$stats['min']['label']}}</h5>
+                <p> {{$stats['min']['statement']}}</p>
                 <br>
 
             </div>
@@ -205,13 +205,13 @@
                 <div class="charts" style="align-content: center">
                     
                     <div class="chart-item">
-                        <div class="pie animate" style="--p: {{$data->stats()['min']['score']}};--c:{{$data->stats()['min']['color']}};color:white">  {{$data->stats()['min']['score']}}%</div>
-                        <h5 style="text-align: center"> {{ $data->stats()['min']['label'] }}</h5>
+                        <div class="pie animate" style="--p: {{$stats['min']['score']}};--c:{{$stats['min']['color']}};color:white">  {{$stats['min']['score']}}%</div>
+                        <h5 style="text-align: center"> {{ $stats['min']['label'] }}</h5>
 
                     </div>
                     <div class="chart-item">
-                        <div class="pie animate" style="--p: {{$data->stats()['max']['score']}};--c:{{$data->stats()['max']['color']}};color:white">  {{$data->stats()['max']['score']}}%</div>
-                        <h5 style="text-align: center"> {{ $data->stats()['max']['label'] }}</h5>
+                        <div class="pie animate" style="--p: {{$stats['max']['score']}};--c:{{$stats['max']['color']}};color:white">  {{$stats['max']['score']}}%</div>
+                        <h5 style="text-align: center"> {{ $stats['max']['label'] }}</h5>
 
                     </div>
                 </div>

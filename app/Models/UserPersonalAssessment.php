@@ -170,6 +170,17 @@ class UserPersonalAssessment extends Model
         $max['color'] = $colors[$max_array[0]];
         $min['color'] = $colors[$min_array[0]];
 
+        $min['score_label'] = "Low";
+        $max['score_label'] = "Low";
+
+        if($min['score'] >= 50 ){
+            $min['score_label'] = "High";
+        }
+
+        if($max['score'] >= 50 ){
+            $max['score_label'] = "High";
+        }
+
 
 
         $min_statement ="";
@@ -210,6 +221,8 @@ class UserPersonalAssessment extends Model
         if($max_label =='Openness'){
             $max_statement = "High scorers are typically curious, adventurous, and creative. They embrace new experiences, ideas, and perspectives. Their strong imagination and creative mindset fuel their interest in intellectual pursuits and abstract thinking. They value exploration and the pursuit of new possibilities, seeking to expand their horizons and broaden their understanding of the world. Their appreciation for diversity and open-mindedness fosters a willingness to consider alternative viewpoints and engage in meaningful dialogue.";
         }
+
+
 
 
         $min['statement'] = $min_statement;

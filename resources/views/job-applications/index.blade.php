@@ -159,23 +159,27 @@
                                             </td>
                                             <td class="align-middle text-center">
                                                 @if(!auth()->user()->isApplicant())
-
+                                                    <!-- Step 1 Send Interview Mail -->
                                                     <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'SEND_INTERVIEW')" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
                                                         <i class="material-icons">mail</i>
                                                     </a>
+                                                    <!-- Step X Reject Application  Can be done everytime -->
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'REJECTED')" class="font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
                                                         <i class="material-icons">cancel</i>
                                                     </a>
+
+                                                    <!-- Step 2 Job Offer -->
+                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
+                                                        <i class="material-icons">event_available</i>
+                                                    </a>
+
+                                                    <!-- Step 3 Job Offer Approved - Applicant will now be FOR Requirements -->
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'APPROVED')" class="font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
                                                         <i class="material-icons">check_circle</i>
                                                     </a>
 
-                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled())
-                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
-                                                        <i class="material-icons">event_available</i>
-                                                    </a>
-                                                    @endif
-                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status =='JOB_OFFER')
+                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status == \app\Models\UserJobApplication::FOR_REQUIREMENTS )
+                                                    <!-- Deployment -->
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'DEPLOYED')" class="font-weight-normal text-xs text-warning" data-toggle="tooltip" data-original-title="Edit item">
                                                         <i class="material-icons">work</i>
                                                     </a>
@@ -194,7 +198,7 @@
                                                 @endif
 
                                                 @if($applicant->user->canBeZipped())
-                                                <a href="{{route('user.download.packet', $applicant->user->id)}}" class="font-weight-normal text-xs text-success">
+                                                <a href="javascript:void(0)" onclick="promptDownloadUserReport({{$applicant->user_id}})"  data-toggle="tooltip"  class="font-weight-normal text-xs text-success">
                                                  <i class="material-icons">file_download</i>
                                                 </a>
                                                 @endif
@@ -308,12 +312,20 @@
     }
 
     async function promptStatus(id, status){
+        title = 'Confirmation'
         if(status=='APPROVED'){
             status = 'FOR_REQUIREMENTS'
+            title = 'Accept Job Offer'
+        }
+        if(status=='DEPLOYED'){
+            title = 'Deploy Application'
+        }
+        if(status=='REJECTED'){
+            title ='Reject Application'
         }
         const status_text = status.replace("_", " "); 
         const response = await Swal.fire({
-                title: 'Confirmation',
+                title: title,
                 text: `Are you sure you want this application ${status_text}?`,
                 icon: 'question',
                 showCancelButton: true,
@@ -353,6 +365,24 @@
             'Job Application updated. An e-mail was sent to the applicant instructions',
             'success'
         )
+    }
+
+    async function promptDownloadUserReport(id){
+        const response = await Swal.fire({
+                title: 'Applicant Report',
+                text: `Download application report? This may some time to process.`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+        })
+
+        if(!response.isConfirmed){
+            return;
+        }
+        const url= `/user/packet/${id}`;
+        window.location.href = url
     }
 
     (function () {
