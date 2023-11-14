@@ -313,20 +313,28 @@
 
     async function promptStatus(id, status){
         title = 'Confirmation'
+        const status_text = status.replace("_", " "); 
+        text = `Are you sure you want this application ${status_text}?`
+
         if(status=='APPROVED'){
             status = 'FOR_REQUIREMENTS'
             title = 'Accept Job Offer'
+            text = `Do you want to tag this applicant FOR REQUIREMENTS?`
         }
         if(status=='DEPLOYED'){
             title = 'Deploy Application'
+            text = `Do you want to tag this applicant as DEPLOYED?`
+
         }
         if(status=='REJECTED'){
             title ='Reject Application'
+            text = `Do you want to tag this applicant as REJECTED?`
+
         }
-        const status_text = status.replace("_", " "); 
+
         const response = await Swal.fire({
                 title: title,
-                text: `Are you sure you want this application ${status_text}?`,
+                text: text,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
