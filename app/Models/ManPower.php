@@ -154,23 +154,39 @@ class ManPower extends Model
        return $variaton;
     }
 
-    public static function overview()
+    public static function overview($id = null)
     {
         // $last = self::whereMonth('created_at', $date->copy()->subMonth()->month)->count() ;
         // $now = self::whereMonth('created_at', $date->month)->count();
         
         // get man_powers
+        if(is_null($id)){
+            return DB::table('man_powers')
+            ->leftJoin('user_job_applications','man_powers.id','=','user_job_applications.man_power_id')
+            ->select(DB::raw("
+                    man_powers.job_title as job_title,
+                    SUM(IF(user_job_applications.status ='REJECTED', 1, 0)) AS rejected,
+                    SUM(IF(user_job_applications.status ='APPROVED', 1, 0)) AS approved,
+                    SUM(IF(user_job_applications.status ='DEPLOYED', 1, 0)) AS deployed,
+                    COUNT(user_job_applications.id) AS total 
+                "))
+            ->groupBy('man_powers.id')
+            ->get();
+        }
+
         return DB::table('man_powers')
-                        ->leftJoin('user_job_applications','man_powers.id','=','user_job_applications.man_power_id')
-                        ->select(DB::raw("
-                                man_powers.job_title as job_title,
-                                SUM(IF(user_job_applications.status ='REJECTED', 1, 0)) AS rejected,
-                                SUM(IF(user_job_applications.status ='APPROVED', 1, 0)) AS approved,
-                                SUM(IF(user_job_applications.status ='DEPLOYED', 1, 0)) AS deployed,
-                                COUNT(user_job_applications.id) AS total 
-                            "))
-                        ->groupBy('man_powers.id')
-                        ->get();
+            ->leftJoin('user_job_applications','man_powers.id','=','user_job_applications.man_power_id')
+            ->select(DB::raw("
+                    man_powers.job_title as job_title,
+                    SUM(IF(user_job_applications.status ='REJECTED', 1, 0)) AS rejected,
+                    SUM(IF(user_job_applications.status ='APPROVED', 1, 0)) AS approved,
+                    SUM(IF(user_job_applications.status ='DEPLOYED', 1, 0)) AS deployed,
+                    COUNT(user_job_applications.id) AS total 
+                "))
+            ->where('man_powers.requested_by', $id)
+            ->groupBy('man_powers.id')
+            ->get();
+
         
     }
     

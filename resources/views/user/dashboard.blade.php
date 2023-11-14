@@ -1,6 +1,7 @@
 @extends('layouts.user')
 @section('content')
     <div class="container-fluid py-4">
+        @if(auth()->user()->role == 'ADMINISTRATOR')
         <div class="row">
             <div class="col-lg-12 position-relative z-index-2">
                 <div class="card card-plain mb-4">
@@ -188,7 +189,7 @@
                 </div>
             </div>
         </div>
-
+        @endif
         <div class="row mt-4">
 
             <div class="col-lg-12">
