@@ -104,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/requirement')->group(function(){
         Route::get("/", [UserRequirementController::class, 'index'])->name("requirements.index");
         Route::patch("/{id}", [UserRequirementController::class, 'patch'])->name("requirements.patch");
-    });
+    })->middleware(IsAdminMiddleware::class);
 
     Route::get('/user-dashboard', [DashboardController::class,'index'])->name('user.dashboard');
 
