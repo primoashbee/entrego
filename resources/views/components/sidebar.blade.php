@@ -119,7 +119,7 @@ id="sidenav-main">
         </li>
         @endif
 
-        @if(auth()->user()->role != 'APPLICANT')
+        @if(auth()->user()->role == 'ADMINISTRATOR')
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('requirements.index')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
