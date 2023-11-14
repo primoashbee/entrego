@@ -101,10 +101,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/download/{user_id}', [UserController::class, 'downloadCV'])->name('download.cv');
     Route::get('/download/requirement/{user_id}', [UserRequirementController::class, 'download'])->name('requirement.download');
 
-    Route::prefix('/requirement')->group(function(){
+    Route::group(['prefix'=>'/requirement', 'middleware'=> [IsAdminMiddleware::class]], function(){
         Route::get("/", [UserRequirementController::class, 'index'])->name("requirements.index");
         Route::patch("/{id}", [UserRequirementController::class, 'patch'])->name("requirements.patch");
-    })->middleware(IsAdminMiddleware::class);
+    });
 
     Route::get('/user-dashboard', [DashboardController::class,'index'])->name('user.dashboard');
 
