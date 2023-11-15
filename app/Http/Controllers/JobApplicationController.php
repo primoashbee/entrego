@@ -8,6 +8,7 @@ use Twilio\Rest\Client;
 use App\Models\ManPower;
 use App\Mail\JobOfferMail;
 use App\Services\Semaphore;
+use Illuminate\Support\Str;
 use App\Mail\JobAppliedMail;
 use Illuminate\Http\Request;
 use App\Mail\JobApprovedMail;
@@ -292,8 +293,9 @@ class JobApplicationController extends Controller
         $viewer = App::make('dompdf.wrapper'); 
         $applicants = $this->generateList($request);
         // return view('job-applications.report', compact('applicants'));
+        $id = Str::uuid();
         $pdf = $viewer->loadView('job-applications.report', compact('applicants'))->setPaper('legal', 'landscape');
-        return $pdf->download('card.pdf');
+        return $pdf->download("REPORT $id.pdf");
     }
 
     public function generateList($request)
