@@ -1,9 +1,10 @@
 @extends('layouts.user')
 @section('content')
 <div class="container-fluid py-4" id="div-view">
+    @include('components.errors')
     <div class="row">
         
-        <div class="col-lg-10 position-relative z-index-2">
+        <div class="col-lg-12 position-relative z-index-2">
             <div class="row mt-4">
 
                 <div class="col-12">
@@ -25,7 +26,26 @@
                                 <input type="text" class="form-control"  style="float: right; margin-bottom: 0%">
                                 <button class="btn-primary">Search</button>
                             </div> --}}
-                            <form action="{{url()->current()}}" method="GET" id="frmFilter" onsubmit="submitFilter">
+                            <form action="{{url()->current()}}" method="GET" id="frmFilter">
+                                <div class="row"> 
+                                    <div class="col-2">
+                                        <div class="input-group input-group-static mb-4">
+                                            <label>From Date</label>
+                                            <input type="date" class="form-control form-filter" name="start_date" id="start_date"  >
+                                          </div>                                    
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group input-group-static mb-4">
+                                            <label>End Date</label>
+                                            <input type="date" class="form-control form-filter" name="end_date" id="end_date"  >
+                                          </div>                                    
+                                    </div>
+                                    <div class="col-7"></div>
+                                    <div class="col-1">
+                                        <button class="btn btn-lg btn-success mt-3" type="submit" value="export" name="export"><i class="material-icons">print</i></button>
+                                    </div>
+
+                                </div>
                                 <div class="row"> 
                                     <div class="col-2">
                                         <div class="input-group input-group-outline mb-3">
@@ -50,13 +70,15 @@
                                     <div class="col-4"></div>
                                     <div class="col-3">
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" value="{{request()->q}}">
+                                            <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" id="q" value="{{request()->q}}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">Search</button>
                                             </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
+
                             </form>
 
                               
@@ -396,15 +418,21 @@
     (function () {
         document.getElementById('status').value = '{{request()->status}}'
         document.getElementById('department').value = '{{request()->department}}'
+
+        document.getElementById('start_date').value = "{{request()->start_date == '' ? old('start_date') : request()->start_date }}"
+        document.getElementById('end_date').value = "{{request()->end_date == '' ? old('end_date') : request()->end_date}}"
     })();
 
-    document.getElementById('frmFilter').onsubmit = (e) => {
+   
+    document.getElementById('frmFilter').addEventListener("submit", function(event){
+     
         Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
-            if(element.value == ""){
+            if(element.value == "" ){
                 element.disabled=true
             }
         });
-    }
+
+    })
 
    
 </script>
