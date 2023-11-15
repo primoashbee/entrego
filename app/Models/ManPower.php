@@ -223,10 +223,9 @@ class ManPower extends Model
     public function getVacantAvailableAttribute()
     {
         $deployed = UserJobApplication::where('man_power_id', $this->id)->where('status', UserJobApplication::DEPLOYED)->count();
-
         $total = $this->vacancies;
         
-        return (int) $total - (int) - $deployed; 
+        return (int) $total - (int) $deployed; 
     }
 
 
