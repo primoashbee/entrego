@@ -220,5 +220,15 @@ class ManPower extends Model
    
     }
 
+    public function getVacantAvailableAttribute()
+    {
+        $vacant = $this->loadCount(['applications'=> function ($q){
+            $q->where('status', UserJobApplication::DEPLOYED);
+        }])->count();
+
+        $total = $this->vacancies;
+
+        return "$vacant/$total";
+    }
   
 }

@@ -182,7 +182,7 @@
                         <div class="job_content">
                             <ul>
                                 <li>Published on: <span>{{ $job->created_at->format('F d, Y')}}</span></li>
-                                <li>Vacancy: <span>{{ $job->vacancy }} Position</span></li>
+                                <li>Vacancy: <span>{{ $job->vacant_available }} Position</span></li>
                                 <li>Required Experience: <span>{{ $job->required_experience_name }}</span></li>
                                 <li>Location: <span> {{$job->location}} Philippines</span></li>
                                 <li>Job Nature: <span> {{$job->job_nature_name}}</span></li>
