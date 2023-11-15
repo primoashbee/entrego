@@ -227,8 +227,11 @@ class ManPower extends Model
         }])->count();
 
         $total = $this->vacancies;
-
-        return "$deployed/$total";
+        
+        return (int) $total - (int) - $deployed; 
     }
+
+
+
   
 }

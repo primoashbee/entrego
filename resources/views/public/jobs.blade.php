@@ -191,7 +191,7 @@
                       <i class="ion-checkmark-round"></i> {{$job->job_nature_name}} 
                     </li>
                     <li>
-                      <i class="ion-android-folder-open"></i> {{$job->vacancies}} position(s) available
+                      <i class="ion-android-folder-open"></i> {{$job->vacant_available}} position(s) available
                     </li>
                     <li>
                       <i class="ion-ios-clock-outline"></i> {{$job->required_experience_name}}
