@@ -176,8 +176,8 @@ class JobApplicationController extends Controller
             $name = $applicant->user->fullname; 
             $position = $applicant->job->job_title; 
             $link = $request->link; 
-
-            $message = "Greetings, $name.\n\nYou're scheduled for an interview for applying $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            $interview_date = Carbon::parse($applicant->interview_date)->toDayDateTimeString();
+            $message = "Greetings, $name.\n\nYou're scheduled for an interview: \nDate: $interview_date\nPosition: $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
 
             // $sid = config('services.twilio.account_sid');
             // $token = config('services.twilio.auth_token');
@@ -208,8 +208,9 @@ class JobApplicationController extends Controller
             $name = $applicant->user->fullname; 
             $position = $applicant->job->job_title; 
             $link = $request->link; 
+            $interview_date = Carbon::parse($applicant->interview_date)->toDayDateTimeString();
 
-            $message = "Greetings, $name.\n\nCongratulations! You're scheduled for the JOB OFFER for your job application -  $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            $message = "Greetings, $name.\n\nCongratulations! You're scheduled for the JOB OFFER on $interview_date for your job application -  $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
 
             // $sid = config('services.twilio.account_sid');
             // $token = config('services.twilio.auth_token');
