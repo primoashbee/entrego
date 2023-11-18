@@ -34,7 +34,7 @@ class GeneratePDFController extends Controller
         $zip = new \ZipArchive();
 
         $fileName = "$user->fullname.zip";
-        $files = User::find(2)->downloadablesPath();
+        $files = User::find($user_id)->downloadablesPath();
         $files[] = [
                 'name'=> $user->fullname . ' - Profile.pdf',
                 'path'=>$cvFilePath
@@ -42,6 +42,7 @@ class GeneratePDFController extends Controller
         if(file_exists($fileName)){
             unlink($fileName);
         }
+
         if ($zip->open(public_path($fileName), \ZipArchive::CREATE)== TRUE)
         {
             foreach ($files as $key => $value){
