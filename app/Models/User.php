@@ -124,6 +124,9 @@ class User extends Authenticatable
     {
         $total_requirements = Requirement::where('required',true)->count();
         return $this->requirements()
+                ->whereHas("requirement", function($q){
+                    return $q->where('required', true);
+                })
                 ->where('status', UserRequirement::APPROVED)
                 ->count() 
                 . "/" . 

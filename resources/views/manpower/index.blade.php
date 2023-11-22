@@ -62,9 +62,17 @@
                                           <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->department_name }}</p>
                                         </td>
                                         <td class="">
-                                          <div class="form-check form-switch text-center">
-                                            <input class="form-check-input" type="checkbox" manpower-id="{{$item->id}}" id="flexSwitchCheckDefault" {{$item->active ? 'checked=""': ''}}>
-                                          </div>
+                                          @if(auth()->user()->role == 'ADMINISTRATOR')
+                                            <div class="form-check form-switch text-center">
+                                              <input class="form-check-input" type="checkbox" manpower-id="{{$item->id}}" id="flexSwitchCheckDefault" {{$item->active ? 'checked=""': ''}}>
+                                            </div>
+                                          @else
+                                            @if($item->active)
+                                                <span class="badge bg-gradient-success"> Active </span>
+                                            @else
+                                                <span class="badge bg-gradient-secondary"> Pending </span>
+                                            @endif
+                                          @endif
                                             {{-- @if($item->active)
                                                 <p class="text-center"><span class="badge bg-gradient-success"> Active </span></p>
                                             @else
@@ -78,10 +86,12 @@
                                           <a href="{{route('manpower.edit', $item->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
                                             <i class="material-icons">edit</i>
                                           </a>
+                                          @if(auth()->user()->role == 'ADMINISTRATOR')
 
                                           <a href="javascript:void(0)" manpower-id="{{$item->id}}" data-value="" onclick="deleteRecord({{json_encode($item)}})" class="px-2 text-secondary font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
                                             <i class="material-icons">delete</i>
                                           </a>
+                                          @endif
                                         </td>
                                       </tr>
                                     @endforeach
