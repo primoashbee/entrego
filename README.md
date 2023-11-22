@@ -29,3 +29,7 @@ SAVE EXAM SCORES - 10/09
 More todos...
 
 New changes for tuts....
+
+
+sudo chmod -R ugo+rw storage
+
