@@ -14,5 +14,9 @@ class Requirement extends Model
     {
         return self::where('required', true);
     }
+    public function getRequiredFriendlyAttribute()
+    {
+        return $this->required ? "Yes" : "No";
+    }
 }
 
