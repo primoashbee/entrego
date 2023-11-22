@@ -23,6 +23,8 @@
                                     <thead>
                                       <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Name</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Required</th>
+
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Requirement</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
@@ -35,8 +37,17 @@
                                                 <span class="text-xs font-weight-bold mb-0 mt-2"> {{ $item->user->fullname }}</span>
                                             </td>
                                             <td class="align-middle text-center">
-                                                <span class="text-xs font-weight-bold mb-0 mt-2"> {{ $item->requirement->name }}</span>
+                                                @if($item->requirement->required)
+                                                    <span class="badge badge-pill bg-gradient-success"> Yes </span>
+
+                                                @else
+                                                <span class="badge badge-pill bg-gradient-info"> No </span>
+
+                                                @endif
                                             </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-xs font-weight-bold mb-0 mt-2"> {{ $item->requirement->name }}</span>
+                                            </td>                                            
                                             <td class="align-middle text-center">
                                                 @if($item->status == "MISSING")
                                                     <span class="badge badge-pill bg-gradient-secondary"> Missing </span>
