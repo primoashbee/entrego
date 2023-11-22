@@ -163,7 +163,7 @@
                                         @foreach($deployed->list as $item)
                                         <li class="list-group-item">                                            
                                             <span style="float:left"><b>[{{$item->job->job_title}}]</b> {{$item->user->fullname}}</span>  
-                                            <span style="float:right"><b>{{$item->hiringTimeSpan()}}</span>  
+                                            <span style="float:right"><b>{{$item->hiringTimeSpan()}}</b></span>  
                                           
                                         </li>
                                         @endforeach
