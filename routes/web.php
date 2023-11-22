@@ -1,28 +1,30 @@
 <?php
 
-use App\Http\Controllers\AuditLogController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GeneratePDFController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\JobApplicationController;
 use App\Models\User;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\QuizController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ManPowerController;
-use App\Http\Controllers\UserQuizController;
-use App\Http\Middleware\ApplicanTakenAssessment;
-use App\Http\Middleware\ApplicantTakenAssessment;
-use App\Http\Controllers\PersonalAssementController;
-use App\Http\Middleware\ApplicantHasFinishedProfile;
-use App\Http\Controllers\UserPersonalAssessmentController;
-use App\Http\Controllers\UserRequirementController;
-use App\Http\Middleware\IsAdminMiddleware;
-use App\Http\Middleware\UserPacketDownloadMiddleware;
+use App\Services\Semaphore;
+use App\Mail\JobAppliedMail;
 use App\Models\JobApplication;
 use App\Models\UserJobApplication;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Models\UserPersonalAssessment;
-use App\Services\Semaphore;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\IsAdminMiddleware;
+use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\ManPowerController;
+use App\Http\Controllers\UserQuizController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GeneratePDFController;
+use App\Http\Middleware\ApplicanTakenAssessment;
+use App\Http\Middleware\ApplicantTakenAssessment;
+use App\Http\Controllers\JobApplicationController;
+use App\Http\Controllers\UserRequirementController;
+use App\Http\Controllers\PersonalAssementController;
+use App\Http\Middleware\ApplicantHasFinishedProfile;
+use App\Http\Middleware\UserPacketDownloadMiddleware;
+use App\Http\Controllers\UserPersonalAssessmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
 
     Route::get('/jobs', [JobApplicationController::class, 'viewApplicants'])->name('user-job.index');
+    Route::get('/jobs/report', [JobApplicationController::class, 'viewReport'])->name('user-job.report');
 
     Route::post('/job/send-interview/{id}', [JobApplicationController::class, 'sendInterview'])->name('user-job.send-interview');
     Route::patch('/job/{id}', [JobApplicationController::class, 'patch'])->name('user-job.patch'); // set status
@@ -101,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/download/{user_id}', [UserController::class, 'downloadCV'])->name('download.cv');
     Route::get('/download/requirement/{user_id}', [UserRequirementController::class, 'download'])->name('requirement.download');
 
-    Route::prefix('/requirement')->group(function(){
+    Route::group(['prefix'=>'/requirement', 'middleware'=> [IsAdminMiddleware::class]], function(){
         Route::get("/", [UserRequirementController::class, 'index'])->name("requirements.index");
         Route::patch("/{id}", [UserRequirementController::class, 'patch'])->name("requirements.patch");
     });
@@ -112,6 +115,11 @@ Route::middleware(['auth'])->group(function () {
 
 
 });
+
+// Route::get('/view-mail/{application_id}', function(Request $request, $application_id){
+//     return new JobAppliedMail(UserJobApplication::find($application_id));
+// }); 
+
 
 Route::get('/user/packet/{id}', [GeneratePDFController::class, 'index'])->middleware([UserPacketDownloadMiddleware::class])->name('user.download.packet');
 Route::get('/img/{id}', [PersonalAssementController::class, 'imgReport'])->name('assessment.img');

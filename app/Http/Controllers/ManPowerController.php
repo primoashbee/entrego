@@ -21,7 +21,8 @@ class ManPowerController extends Controller
         ->withCount(['applications'=> function($q){
             $q->whereStatus(UserJobApplication::DEPLOYED);
         }])
-        ->paginate(15);
+        ->get();
+        // ->paginate(15);
 
         return view('manpower.index', compact('list'));
     }

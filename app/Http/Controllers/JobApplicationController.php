@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\JobAppliedMail;
-use App\Mail\JobApprovedMail;
+use Carbon\Carbon;
 use App\Models\User;
 use Twilio\Rest\Client;
 use App\Models\ManPower;
-use Illuminate\Http\Request;
-use App\Mail\JobInterviewMail;
 use App\Mail\JobOfferMail;
-use App\Mail\JobRejectedMail;
-use App\Models\UserJobApplication;
 use App\Services\Semaphore;
-use Carbon\Carbon;
+use Illuminate\Support\Str;
+use App\Mail\JobAppliedMail;
+use Illuminate\Http\Request;
+use App\Mail\JobApprovedMail;
+use App\Mail\JobRejectedMail;
+use App\Mail\JobInterviewMail;
+use App\Models\UserJobApplication;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use App\Http\Requests\ApplicantsRequest;
 
 class JobApplicationController extends Controller
 {
@@ -99,33 +102,43 @@ class JobApplicationController extends Controller
         return redirect()->route('job.create', $id);
     }
 
-    public function viewApplicants(Request $request)
+    public function viewApplicants(ApplicantsRequest $request)
     {
+        if($request->has('export')){
+            // return $this->showReport(compact('applicants', 'statuses','departments'));
+            return redirect()->route('user-job.report', $request->query());
+        }
 
         $user = auth()->user();
         $statuses = UserJobApplication::STATUSES;
         $departments = ManPower::DEPARTMENT;
+
+
+        
         if($user->role === User::APPLICANT){
             $applicants = UserJobApplication::with('user.requirements','job')
                             ->where('user_id', $user->id)
                             ->orderBy('id','desc')->get();
         }else{
-            $applicants = UserJobApplication::with('user','job')
-                                            ->when($request->q, function($q, $value){
-                                                $q
-                                                    ->whereRelation('user','email', 'LIKE' , "%$value%")
-                                                    ->orWhereRelation('user','first_name', 'LIKE' , "%$value%")
-                                                    ->orWhereRelation('user','last_name', 'LIKE' , "%$value%");
-                                            })
-                                            ->when($request->status,function($q, $value){
-                                                $q->where('status', $value);
-                                            })
-                                            ->when($request->department,function($q, $value){
-                                                $q
-                                                ->whereRelation('job','department', $value);
-                                            })
-                                            ->orderBy('id','desc')->get();
+            // $applicants = UserJobApplication::with('user','job')
+            //                                 ->when($request->q, function($q, $value){
+            //                                     $q
+            //                                         ->whereRelation('user','email', 'LIKE' , "%$value%")
+            //                                         ->orWhereRelation('user','first_name', 'LIKE' , "%$value%")
+            //                                         ->orWhereRelation('user','last_name', 'LIKE' , "%$value%");
+            //                                 })
+            //                                 ->when($request->status,function($q, $value){
+            //                                     $q->where('status', $value);
+            //                                 })
+            //                                 ->when($request->department,function($q, $value){
+            //                                     $q
+            //                                     ->whereRelation('job','department', $value);
+            //                                 })
+            //                                 ->orderBy('id','desc')->get();
+            $applicants = $this->generateList($request);
         }
+
+
         return view('job-applications.index',compact('applicants', 'statuses','departments'));
     }
 
@@ -142,7 +155,7 @@ class JobApplicationController extends Controller
         }
         if($request->status == 'JOB_OFFER'){
             $fields['status'] = UserJobApplication::JOB_OFFER;
-            $fields['interview_sent_at'] = now();
+            $fields['job_offered_at'] = now();
 
         }
         
@@ -163,8 +176,8 @@ class JobApplicationController extends Controller
             $name = $applicant->user->fullname; 
             $position = $applicant->job->job_title; 
             $link = $request->link; 
-
-            $message = "Greetings, $name.\n\nYou're scheduled for an interview for applying $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            $interview_date = Carbon::parse($applicant->interview_date)->toDayDateTimeString();
+            $message = "Greetings, $name.\n\nYou're scheduled for an interview: \nDate: $interview_date\nPosition: $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
 
             // $sid = config('services.twilio.account_sid');
             // $token = config('services.twilio.auth_token');
@@ -195,8 +208,9 @@ class JobApplicationController extends Controller
             $name = $applicant->user->fullname; 
             $position = $applicant->job->job_title; 
             $link = $request->link; 
+            $interview_date = Carbon::parse($applicant->interview_date)->toDayDateTimeString();
 
-            $message = "Greetings, $name.\n\nCongratulations! You're scheduled for the JOB OFFER for your job application -  $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            $message = "Greetings, $name.\n\nCongratulations! You're scheduled for the JOB OFFER on $interview_date for your job application -  $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
 
             // $sid = config('services.twilio.account_sid');
             // $token = config('services.twilio.auth_token');
@@ -250,12 +264,15 @@ class JobApplicationController extends Controller
             $client->sendSMS($user_job->user->contact_number, $message);
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - APPROVE", $user_job);
             $user_job->update(['approved_at'=>now()]);
+            $user_job->update(['job_offer_accepted_at'=>now()]);
 
 
         }
 
         if($request->status == UserJobApplication::FOR_REQUIREMENTS){
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - FOR REQUIREMENTS", $user_job);
+            $user_job->update(['job_offer_accepted_at'=>now()]);
+
         }
 
         if($status == UserJobApplication::DEPLOYED){
@@ -269,5 +286,37 @@ class JobApplicationController extends Controller
         }
         $user_job->update($request->all());
         
+    }
+
+
+    public function viewReport(Request $request)
+    {
+        $viewer = App::make('dompdf.wrapper'); 
+        $applicants = $this->generateList($request);
+        // return view('job-applications.report', compact('applicants'));
+        $id = Str::uuid();
+        $pdf = $viewer->loadView('job-applications.report', compact('applicants'))->setPaper('legal', 'landscape');
+        return $pdf->download("REPORT $id.pdf");
+    }
+
+    public function generateList($request)
+    {
+        return UserJobApplication::with('user','job')
+            ->when($request->q, function($q, $value){
+                $q
+                    ->whereRelation('user','email', 'LIKE' , "%$value%")
+                    ->orWhereRelation('user','first_name', 'LIKE' , "%$value%")
+                    ->orWhereRelation('user','last_name', 'LIKE' , "%$value%");
+            })
+            ->when($request->status,function($q, $value){
+                $q->where('status', $value);
+            })
+            ->when($request->department,function($q, $value){
+                $q
+                ->whereRelation('job','department', $value);
+            })
+            ->orderBy('id','desc')
+            ->get();
+            
     }
 }

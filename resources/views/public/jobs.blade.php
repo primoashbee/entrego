@@ -63,7 +63,6 @@
               <li><a href="https://entrego.com.ph/about">About Entrego</a></li>
               <li><a href="https://entrego.com.ph/blog">Blog</a></li>
               <li><a href="https://entrego.com.ph/contact">Contact Us</a></li>
-              <li><a href="#">Hirelogic Team</a></li>
             </ul>
           </li>
           @if(auth()->check())
@@ -192,7 +191,7 @@
                       <i class="ion-checkmark-round"></i> {{$job->job_nature_name}} 
                     </li>
                     <li>
-                      <i class="ion-android-folder-open"></i> {{$job->vacancies}} position(s) available
+                      <i class="ion-android-folder-open"></i> {{$job->vacant_available}} position(s) available
                     </li>
                     <li>
                       <i class="ion-ios-clock-outline"></i> {{$job->required_experience_name}}

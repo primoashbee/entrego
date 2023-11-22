@@ -92,10 +92,14 @@ class UserQuizController extends Controller
         $application = UserJobApplication::with('job.quiz','user')
                                 ->findOrFail($application_id);
 
-        
+        if($application->user_id != auth()->user()->id)
+        {
+            return abort(403);
+        }
         $job_group = ManPower::JOB_GROUP;
         $quiz = $application->job->quiz;
         $taken = $application->userQuiz != null ? true : false; 
+        
         return view('user-quiz.create', compact('application','job_group', 'quiz', 'taken'));
     }
 

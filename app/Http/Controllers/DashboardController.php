@@ -17,60 +17,66 @@ class DashboardController extends Controller
         }
         $now = now();
 
-        $manpower = new stdClass;
-        // $manpower->total = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
-        // $manpower->active = ManPower::whereMonth('created_at', $now->format('m'))->active()->count();
-        $manpower->total = ManPower::count();
-        $manpower->active = ManPower::active()->count();
-        $manpower->variation = ManPower::variation($now);
-        $manpower->overview = ManPower::overview();
-        $manpower->list = ManPower::orderBy('id', 'desc')->get();
+        if(auth()->user()->role == User::ADMINSTRATOR){
+            $manpower = new stdClass;
 
-        $applicant = new stdClass;
-        $applicant->total  = User::active()
-                            ->whereRole(User::APPLICANT)
-                            ->count();
-        $applicant->active = User::active()
+            $manpower->total = ManPower::count();
+            $manpower->active = ManPower::active()->count();
+            $manpower->variation = ManPower::variation($now);
+            $manpower->overview = ManPower::overview();
+            $manpower->list = ManPower::orderBy('id', 'desc')->get();
+    
+            $applicant = new stdClass;
+            $applicant->total  = User::active()
+                                ->whereRole(User::APPLICANT)
+                                ->count();
+            $applicant->active = User::active()
+                                        ->applicant()
+                                        // ->whereMonth('created_at', $now->format('m'))
+                                        ->finishedAssessment()
+                                        ->finishedProfile()
+                                        ->count();
+            $applicant->list = User::active()
                                     ->applicant()
-                                    // ->whereMonth('created_at', $now->format('m'))
                                     ->finishedAssessment()
                                     ->finishedProfile()
-                                    ->count();
-        $applicant->list = User::active()
-                                ->applicant()
-                                ->finishedAssessment()
-                                ->finishedProfile()
-                                ->get();
-                                    
-        // dd(
-        //         User::active()
-        //             ->applicant()
-        //             ->finishedAssessment()
-        //             ->finishedProfile()
-        //             ->count()
-        //         );
-        $applicant->variation = User::variation($now);
+                                    ->get();
+            $applicant->variation = User::variation($now);
+    
+            $processing = new stdClass;
+            $processing->total = UserJobApplication::count();
+                                
+            $processing->active = UserJobApplication::active()->count();
+                                        
+            $processing->variation = UserJobApplication::variation($now);
+            $processing->list      = UserJobApplication::with('user','job')->orderBy('id','desc')->get();
+    
+            $deployed = new stdClass;
+            $deployed->total = ManPower::totalManPower();
+            $deployed->active = UserJobApplication::deployed()->count();
+            $deployed->variation = UserJobApplication::variationDeployed($now);
+            $deployed->list = UserJobApplication::deployed()
+                                        ->orderBy('id','desc')
+                                        ->get();
 
-        $processing = new stdClass;
-        $processing->total = UserJobApplication::count();
-                            // whereMonth('created_at', $now->format('m'))->
-                            
-        $processing->active = UserJobApplication::active()->count();
-                                    // whereMonth('created_at', $now->format('m'))->
-                                    
-        $processing->variation = UserJobApplication::variation($now);
-        $processing->list      = UserJobApplication::with('user','job')->orderBy('id','desc')->get();
+            return view('user.dashboard', compact('manpower', 'applicant','processing', 'deployed'));
 
+        }
+   
+
+        $manpower = new stdClass;
+        $manpower->overview = ManPower::overview(auth()->user()->id);
         $deployed = new stdClass;
         $deployed->total = ManPower::totalManPower();
-        $deployed->active = UserJobApplication::
-                                // whereMonth('created_at', $now->format('m'))->
-                                deployed()->count();
+        $deployed->active = UserJobApplication::deployed()->count();
         $deployed->variation = UserJobApplication::variationDeployed($now);
         $deployed->list = UserJobApplication::deployed()
                                     ->orderBy('id','desc')
                                     ->get();
+        return view('user.dashboard', compact('manpower','deployed'));
+
         
-        return view('user.dashboard', compact('manpower', 'applicant','processing', 'deployed'));
+        
+        
     }
 }

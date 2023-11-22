@@ -153,5 +153,37 @@ class UserJobApplication extends Model
         return  "$diff $days Time to Hire";
     }
 
+    public function getInterviewDateFriendlyAttribute()
+    {
+        if(is_null($this->interview_date)){
+            return '-';
+        }
+        return Carbon::parse($this->interview_date);
+    }
+
+    public function getJobOfferedAtFriendlyAttribute()
+    {
+        if(is_null($this->job_offered_at)){
+            return '-';
+        }
+        return Carbon::parse($this->job_offered_at);
+    }
+
+    public function getJobOfferAcceptedAtFriendlyAttribute()
+    {
+        if(is_null($this->job_offer_accepted_at)){
+            return '-';
+        }
+        return Carbon::parse($this->job_offer_accepted_at);
+    }
+
+    public function getDeployedAtFriendlyAttribute()
+    {
+        if(is_null($this->deployed_at)){
+            return '-';
+        }
+        return Carbon::parse($this->deployed_at);
+    }
+
 
 }

@@ -22,21 +22,24 @@ class UserController extends Controller
     public function index(Request $request) : View
     {   
         $active_users = User::query()
-        ->when(request('query', false), function($q, $query){    
-            dd($query);
-        })
+        // ->when(request('query', false), function($q, $query){    
+        //     dd($query);
+        // })
         ->where('is_archived', false)
         ->whereIn('role', [User::APPLICANT, User::SUB_HR])
-        ->paginate(15);
+        ->get();
+        // ->paginate(15);
+
+        
 
         
         $archived_users = User::query()
-        ->when(request('query', false), function($q, $query){    
-            dd($query);
-        })
+        // ->when(request('query', false), function($q, $query){    
+        //     dd($query);
+        // })
         ->where('is_archived', true)
         ->where('role', User::APPLICANT)
-        ->paginate(15);
+        ->get();
         
         return view('user.index', compact('active_users','archived_users'));
     }

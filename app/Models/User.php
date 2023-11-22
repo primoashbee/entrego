@@ -260,7 +260,7 @@ class User extends Authenticatable
 
     public function canBeZipped()
     {
-        return $this->hasFinishedAssessment() && $this->has_finished_profile;
+        return $this->hasFinishedAssessment() && $this->has_finished_profile && $this->cv_name != '';
     }
 
     public function lastUserActivity()

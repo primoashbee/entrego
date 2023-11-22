@@ -19,7 +19,7 @@ id="sidenav-main">
 <hr class="horizontal light mt-0 mb-2">
 <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
     <ul class="navbar-nav">
-        @if($user->role == "ADMINISTRATOR")
+        @if($user->role != "APPLICANT")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('user.dashboard')}}">
 
@@ -58,6 +58,7 @@ id="sidenav-main">
         </li>
         @endif
 
+        @if($user->role == "ADMINISTRATOR")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{ route('personal-assessments.index') }}">
 
@@ -68,6 +69,7 @@ id="sidenav-main">
                 <span class="nav-link-text ms-1">Personality Assessments</span>
             </a>
         </li>
+        @endif
 
         @if($user->role == "ADMINISTRATOR")
         <li class="nav-item">
@@ -95,6 +97,7 @@ id="sidenav-main">
         </li>
         @endif
 
+        @if($user->role == "ADMINISTRATOR" || $user->role =="APPLICANT")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('user-job.index')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -103,6 +106,7 @@ id="sidenav-main">
                 <span class="nav-link-text ms-1">Job Applications</span>
             </a>
         </li>
+        @endif
 
         @if(auth()->user()->role == 'APPLICANT')
         <li class="nav-item">
@@ -115,7 +119,7 @@ id="sidenav-main">
         </li>
         @endif
 
-        @if(auth()->user()->role != 'APPLICANT')
+        @if(auth()->user()->role == 'ADMINISTRATOR')
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('requirements.index')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -141,6 +145,8 @@ id="sidenav-main">
 
 
         <hr class="horizontal light mt-0 mb-2">
+
+
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('profile.edit')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">

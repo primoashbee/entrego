@@ -20,14 +20,12 @@ class UserPacketDownloadMiddleware
             abort(403);
         }
         $user = auth()->user();
-
         if($user->role == User::APPLICANT){
             $pass = $user->id == $request->id;
             if(!$pass){
                 abort(403);
             }
         }
-        
         if(!User::find($request->id)->canBeZipped()){
             abort(403);
         }

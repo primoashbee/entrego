@@ -1,9 +1,10 @@
 @extends('layouts.user')
 @section('content')
 <div class="container-fluid py-4" id="div-view">
+    @include('components.errors')
     <div class="row">
         
-        <div class="col-lg-10 position-relative z-index-2">
+        <div class="col-lg-12 position-relative z-index-2">
             <div class="row mt-4">
 
                 <div class="col-12">
@@ -25,7 +26,26 @@
                                 <input type="text" class="form-control"  style="float: right; margin-bottom: 0%">
                                 <button class="btn-primary">Search</button>
                             </div> --}}
-                            <form action="{{url()->current()}}" method="GET" id="frmFilter" onsubmit="submitFilter">
+                            <form action="{{url()->current()}}" method="GET" id="frmFilter">
+                                <div class="row"> 
+                                    <div class="col-2">
+                                        <div class="input-group input-group-static mb-4">
+                                            <label>From Date</label>
+                                            <input type="date" class="form-control form-filter" name="start_date" id="start_date"  >
+                                          </div>                                    
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group input-group-static mb-4">
+                                            <label>End Date</label>
+                                            <input type="date" class="form-control form-filter" name="end_date" id="end_date"  >
+                                          </div>                                    
+                                    </div>
+                                    <div class="col-7"></div>
+                                    <div class="col-1">
+                                        <button class="btn btn-lg btn-success mt-3" type="submit" value="export" name="export"><i class="material-icons">print</i></button>
+                                    </div>
+
+                                </div>
                                 <div class="row"> 
                                     <div class="col-2">
                                         <div class="input-group input-group-outline mb-3">
@@ -50,13 +70,15 @@
                                     <div class="col-4"></div>
                                     <div class="col-3">
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" value="{{request()->q}}">
+                                            <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" id="q" value="{{request()->q}}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">Search</button>
                                             </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
+
                             </form>
 
                               
@@ -159,23 +181,27 @@
                                             </td>
                                             <td class="align-middle text-center">
                                                 @if(!auth()->user()->isApplicant())
-
+                                                    <!-- Step 1 Send Interview Mail -->
                                                     <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'SEND_INTERVIEW')" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
                                                         <i class="material-icons">mail</i>
                                                     </a>
+                                                    <!-- Step X Reject Application  Can be done everytime -->
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'REJECTED')" class="font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
                                                         <i class="material-icons">cancel</i>
                                                     </a>
+
+                                                    <!-- Step 2 Job Offer -->
+                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
+                                                        <i class="material-icons">event_available</i>
+                                                    </a>
+
+                                                    <!-- Step 3 Job Offer Approved - Applicant will now be FOR Requirements -->
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'APPROVED')" class="font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
                                                         <i class="material-icons">check_circle</i>
                                                     </a>
 
-                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled())
-                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
-                                                        <i class="material-icons">event_available</i>
-                                                    </a>
-                                                    @endif
-                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status =='JOB_OFFER')
+                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status == \app\Models\UserJobApplication::FOR_REQUIREMENTS )
+                                                    <!-- Deployment -->
                                                     <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'DEPLOYED')" class="font-weight-normal text-xs text-warning" data-toggle="tooltip" data-original-title="Edit item">
                                                         <i class="material-icons">work</i>
                                                     </a>
@@ -194,7 +220,7 @@
                                                 @endif
 
                                                 @if($applicant->user->canBeZipped())
-                                                <a href="{{route('user.download.packet', $applicant->user->id)}}" class="font-weight-normal text-xs text-success">
+                                                <a href="javascript:void(0)" onclick="promptDownloadUserReport({{$applicant->user_id}})"  data-toggle="tooltip"  class="font-weight-normal text-xs text-success">
                                                  <i class="material-icons">file_download</i>
                                                 </a>
                                                 @endif
@@ -308,13 +334,29 @@
     }
 
     async function promptStatus(id, status){
+        title = 'Confirmation'
+        const status_text = status.replace("_", " "); 
+        text = `Are you sure you want this application ${status_text}?`
+
         if(status=='APPROVED'){
             status = 'FOR_REQUIREMENTS'
+            title = 'Accept Job Offer'
+            text = `Do you want to tag this applicant FOR REQUIREMENTS?`
         }
-        const status_text = status.replace("_", " "); 
+        if(status=='DEPLOYED'){
+            title = 'Deploy Application'
+            text = `Do you want to tag this applicant as DEPLOYED?`
+
+        }
+        if(status=='REJECTED'){
+            title ='Reject Application'
+            text = `Do you want to tag this applicant as REJECTED?`
+
+        }
+
         const response = await Swal.fire({
-                title: 'Confirmation',
-                text: `Are you sure you want this application ${status_text}?`,
+                title: title,
+                text: text,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -355,18 +397,42 @@
         )
     }
 
+    async function promptDownloadUserReport(id){
+        const response = await Swal.fire({
+                title: 'Applicant Report',
+                text: `Download application report? This may some time to process.`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+        })
+
+        if(!response.isConfirmed){
+            return;
+        }
+        const url= `/user/packet/${id}`;
+        window.location.href = url
+    }
+
     (function () {
         document.getElementById('status').value = '{{request()->status}}'
         document.getElementById('department').value = '{{request()->department}}'
+
+        document.getElementById('start_date').value = "{{request()->start_date == '' ? old('start_date') : request()->start_date }}"
+        document.getElementById('end_date').value = "{{request()->end_date == '' ? old('end_date') : request()->end_date}}"
     })();
 
-    document.getElementById('frmFilter').onsubmit = (e) => {
+   
+    document.getElementById('frmFilter').addEventListener("submit", function(event){
+     
         Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
-            if(element.value == ""){
+            if(element.value == "" ){
                 element.disabled=true
             }
         });
-    }
+
+    })
 
    
 </script>

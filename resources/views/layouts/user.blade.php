@@ -45,7 +45,7 @@
         @yield('content')
     </main>
 
-    @include('components.fixed-plugins')
+    {{-- @include('components.fixed-plugins') --}}
 
     <!--   Core JS Files   -->
     {{-- <script src="{{ asset('js/core/popper.min.js') }}"></script> --}}
@@ -68,7 +68,7 @@
 
 
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="{{asset('js/material-dashboard.min.js?v=3.1.0')}}"></script>
+    <script src="{{asset('js/material-dashboard.min.js?v=') . rand()}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -21,17 +21,18 @@ class PersonalAssementController extends Controller
     public function index()
     {   
 
-        if(auth()->user()->role == User::ADMINSTRATOR){
-            $list = UserPersonalAssessment::with('user')
-                ->distinct()
-                ->select('user_id','created_at','extraversion_percentage','agreeableness_percentage','conscientiousness_percentage','neuroticism_percentage','openness_percentage','batch_id')
-                ->get();
-        }else{
-            $list = UserPersonalAssessment::with('user')
+        if(auth()->user()->role == User::APPLICANT ){
+                $list = UserPersonalAssessment::with('user')
                 ->distinct()
                 ->select('user_id','created_at','extraversion_percentage','agreeableness_percentage','conscientiousness_percentage','neuroticism_percentage','openness_percentage','batch_id')
                 ->where('user_id', auth()->user()->id)
                 ->get();
+                
+        }else{
+            $list = UserPersonalAssessment::with('user')
+            ->distinct()
+            ->select('user_id','created_at','extraversion_percentage','agreeableness_percentage','conscientiousness_percentage','neuroticism_percentage','openness_percentage','batch_id')
+            ->get();
         }
 
         return view('assessment.index', compact('list'));
@@ -48,7 +49,8 @@ class PersonalAssementController extends Controller
     public function imgReport($id)
     {
         $data = User::with('assessments')->findOrFail($id)->assessments()->orderBy('id','desc')->first();
-        return view('assessment.graph', compact('data'));
+        $stats = $data->stats();
+        return view('assessment.graph', compact('data','stats'));
     }
 
     public function generateGraph($id)
