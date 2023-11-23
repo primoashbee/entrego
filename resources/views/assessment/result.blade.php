@@ -54,7 +54,7 @@
                                             <p class="ps-2">
                                                 Conscientiousness describes a person's level of goal orientation and persistence. Those who are high in Conscientiousness are organized and determined, and are able to forego immediate gratification for the sake of long-term achievement. Those who are low in this trait are impulsive and easily sidetracked.
                                             </p>    
-                                            <p>
+                                            <p class="ps-2">
                                                 In the brain, Conscientiousness is associated with frontal lobe activity. The frontal lobe can be thought of as the "executive brain," moderating and regulating the more animal and instinctual impulses from other areas of the brain. For example, while we might instinctually want to eat a piece of cake that's in front of us, the frontal lobe steps in and says "no, that's not healthy, and it doesn't fit in with our diet goals." People who are high in Conscientiousness are more likely to use this brain region to control their impulses and keep themselves on track.
                                             </p>
                                             
@@ -72,9 +72,9 @@
                                             <h5 style="margin-left:15px">Neuroticism</h5>
                                             <p class="ps-2">
                                                 Neuroticism describes a person's tendency to respond to stressors with negative emotions, including fear, sadness, anxiety, guilt, and shame. 
-                                            </p>    
-                                            <p>This trait can be thought of as an alarm system. People experience negative emotions as a sign that something is wrong in the world. Fear is a response to danger, guilt a response to having done something wrong. However, not everyone has the same reaction to a given situation. High Neuroticism scorers are more likely to react to a situation with strong negative emotions. Low Neuroticism scorers are more likely to brush off their misfortune and move on. </p>
-                                            <p>In the brain, Neuroticism appears to relate to the interconnection of several regions, including regions involved in processing negative stimuli (such as angry faces or aggressive dogs) and dealing with negative emotions. One study found an association between high Neuroticism and altered serotonin processing in the brain. </p>
+                                            </p class="ps-2">    
+                                            <p class="ps-2">This trait can be thought of as an alarm system. People experience negative emotions as a sign that something is wrong in the world. Fear is a response to danger, guilt a response to having done something wrong. However, not everyone has the same reaction to a given situation. High Neuroticism scorers are more likely to react to a situation with strong negative emotions. Low Neuroticism scorers are more likely to brush off their misfortune and move on. </p>
+                                            <p class="ps-2">In the brain, Neuroticism appears to relate to the interconnection of several regions, including regions involved in processing negative stimuli (such as angry faces or aggressive dogs) and dealing with negative emotions. One study found an association between high Neuroticism and altered serotonin processing in the brain. </p>
                                             
                                         </blockquote>
                                     </figure>
@@ -86,8 +86,8 @@
                                             <p class="ps-2">
                                                 Not to be confused with one's tendency to be open and disclose their thoughts and feelings, Openness in the context of the Big Five refers more specifically to Openness to Experience, or openness to considering new ideas. This trait has also been called "Intellect" by some researchers, but this terminology has been largely abandoned because it implies that people high in Openness are more intelligent, which is not necessarily true.
                                                 Openness describes a person's tendency to think abstractly. Those who are high in Openness tend to be creative, adventurous, and intellectual. They enjoy playing with ideas and discovering novel experiences. Those who are low in Openness tend to be practical, traditional, and focused on the concrete. They tend to avoid the unknown and follow traditional ways.
-                                            </p>    
-                                            <p>In the brain, Openness seems to be related to the degree to which certain brain regions are interconnected. Those high in Openness seem to have more connection between disparate brain regions, which may explain why they are more likely to see connections where others do not. </p>
+                                            </p class="ps-2">    
+                                            <p class="ps-2">In the brain, Openness seems to be related to the degree to which certain brain regions are interconnected. Those high in Openness seem to have more connection between disparate brain regions, which may explain why they are more likely to see connections where others do not. </p>
                                             
                                         </blockquote>
                                     </figure>
