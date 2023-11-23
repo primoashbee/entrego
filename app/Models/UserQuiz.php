@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Quiz;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,5 +26,10 @@ class UserQuiz extends Model
         $mins = str_pad(floor($total / 60), 2, "0", STR_PAD_LEFT);
         $secs = str_pad($total % 60, 2, "0", STR_PAD_LEFT);
         return "$mins minutes and $secs seconds";
+    }
+
+    public function quiz()
+    {
+        return $this->belongsTo(Quiz::class);
     }
 }

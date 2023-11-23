@@ -29,6 +29,7 @@ class UserJobApplication extends Model
     const HIRED = "HIRED";
     const DEPLOYED = "DEPLOYED";
     const JOB_OFFER = "JOB_OFFER";
+    const CANCELLED = "CANCELLED";
     const STATUSES = [
         [
             "value"=> self::APPLIED,
@@ -70,6 +71,10 @@ class UserJobApplication extends Model
             "value"=> self::DEPLOYED,
             "label"=> "DEPLOYED"
         ],
+        [
+            "value"=> self::CANCELLED,
+            "label"=> "CANCELLED"
+        ],
     ];
     
     public function user()
@@ -99,7 +104,7 @@ class UserJobApplication extends Model
 
     public function scopeActive()
     {
-        return $this->whereNotIn('status', [self::APPLIED, self::REJECTED, self::DEPLOYED]);
+        return $this->whereNotIn('status', [self::APPLIED, self::REJECTED, self::DEPLOYED, self::CANCELLED]);
     }
 
     public function scopeDeployed()

@@ -128,6 +128,8 @@
                                             <span style="float:right" class="badge bg-gradient-secondary">{{ $item->status_name }}</span>
                                             @elseif($item->status=='DEPLOYED')
                                             <span style="float:right" class="badge bg-gradient-success">{{ $item->status_name }}</span>
+                                            @elseif($item->status=='CANCELLED')
+                                            <span style="float:right" class="badge bg-gradient-info">{{ $item->status_name }}</span>
                                             @endif
                                         </li>
                                         @endforeach

@@ -281,4 +281,9 @@ class User extends Authenticatable
 
         return $activity;
     }
+
+    public function cancelJobApplications($except_application_id)
+    {
+        return $this->jobApplications()->whereNot('id', $except_application_id)->update(['status'=> UserJobApplication::CANCELLED]);
+    }
 }

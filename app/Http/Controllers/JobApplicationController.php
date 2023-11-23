@@ -282,6 +282,7 @@ class JobApplicationController extends Controller
             $client->sendSMS($user_job->user->contact_number, $message);
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - DEPLOYED", $user_job);
             $user_job->update(['deployed_at'=>now()]);
+            $user_job->user->cancelJobApplications($id);
 
         }
         $user_job->update($request->all());
@@ -301,7 +302,10 @@ class JobApplicationController extends Controller
 
     public function generateList($request)
     {
-        return UserJobApplication::with('user','job')
+  
+        return UserJobApplication::with(['user','job.quiz.questions','userQuiz.quiz'=>function($q){
+                $q->orderBy('userQuiz.score','desc');
+            }])
             ->when($request->q, function($q, $value){
                 $q
                     ->whereRelation('user','email', 'LIKE' , "%$value%")
@@ -315,7 +319,6 @@ class JobApplicationController extends Controller
                 $q
                 ->whereRelation('job','department', $value);
             })
-            ->orderBy('id','desc')
             ->get();
             
     }

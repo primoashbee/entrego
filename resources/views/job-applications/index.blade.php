@@ -93,6 +93,7 @@
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Job</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Personal Assessment</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Exam</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Score</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
                                       </tr>
@@ -155,6 +156,13 @@
                                                         N/A
                                                     @endif
                                             </td>
+                                            <td class=" text-center">
+                                                @if($applicant->userQuiz)
+                                                    {{$applicant->userQuiz->score}} / {{$applicant->job->quiz->questions->count()}}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
                                             <td class="align-middle text-center">
                                                 @if($applicant->status == 'WAITING_FOR_EXAM_RESULT')
                                                 <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
@@ -177,6 +185,8 @@
                                                 <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
                                                 @elseif($applicant->status=='DEPLOYED')
                                                 <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
+                                                @elseif($applicant->status=='CANCELLED')
+                                                <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
                                                 @endif
                                             </td>
                                             <td class="align-middle text-center">
@@ -341,7 +351,7 @@
         if(status=='APPROVED'){
             status = 'FOR_REQUIREMENTS'
             title = 'Accept Job Offer'
-            text = `Do you want to tag this applicant FOR REQUIREMENTS?`
+            text = `Job Offer ACCEPTED?`
         }
         if(status=='DEPLOYED'){
             title = 'Deploy Application'

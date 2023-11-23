@@ -44,12 +44,12 @@ class DashboardController extends Controller
             $applicant->variation = User::variation($now);
     
             $processing = new stdClass;
-            $processing->total = UserJobApplication::count();
+            $processing->total = UserJobApplication::whereNot('status', UserJobApplication::CANCELLED)->count();
                                 
             $processing->active = UserJobApplication::active()->count();
                                         
             $processing->variation = UserJobApplication::variation($now);
-            $processing->list      = UserJobApplication::with('user','job')->orderBy('id','desc')->get();
+            $processing->list      = UserJobApplication::with('user','job')->whereNot('status', UserJobApplication::CANCELLED)->orderBy('id','desc')->get();
     
             $deployed = new stdClass;
             $deployed->total = ManPower::totalManPower();
