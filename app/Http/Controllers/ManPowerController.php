@@ -64,8 +64,11 @@ class ManPowerController extends Controller
             'expires_at'=> $request->expires_at,
             'required_experience'=> $request->required_experience,
             'department'=> $request->department,
-            'quiz_id'=> $request->quiz_id
+            'quiz_id'=> $request->quiz_id,
+            'job_level'=>$request->job_level
         ])->id;
+
+        dd($id);
 
         
 

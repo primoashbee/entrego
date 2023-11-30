@@ -10,15 +10,18 @@ use App\Models\UserJobApplication;
 use App\Mail\ManPowerRequestChanged;
 use Illuminate\Support\Facades\Route;
 use App\Models\UserPersonalAssessment;
+use App\Mail\PersonalAssessmentDueMail;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\V2QuizController;
 use App\Http\Middleware\IsAdminMiddleware;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ManPowerController;
 use App\Http\Controllers\UserQuizController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\V2UserQuizController;
 use App\Http\Controllers\GeneratePDFController;
 use App\Http\Middleware\ApplicanTakenAssessment;
 use App\Http\Middleware\ApplicantTakenAssessment;
@@ -28,7 +31,6 @@ use App\Http\Controllers\PersonalAssementController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Middleware\UserPacketDownloadMiddleware;
 use App\Http\Controllers\UserPersonalAssessmentController;
-use App\Mail\PersonalAssessmentDueMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +82,8 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, Appli
 
     });
 
+
+
     Route::prefix('/personal-assessments')->group(function(){
         Route::get('/', [PersonalAssementController::class, 'index'])->name('personal-assessments.index');
         Route::get('/{batch_id}', [PersonalAssementController::class, 'show'])->name('personal-assessments.show');
@@ -126,6 +130,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings/{type}/{id}', [SettingController::class, 'edit'])->name('settings.edit');
     Route::patch('/settings/{type}/{id}', [SettingController::class, 'patch'])->name('settings.patch');
     Route::delete('/settings/{type}/{id}', [SettingController::class, 'delete'])->name('settings.delete');
+
+    Route::prefix('v2/quiz')->group(function(){
+        Route::get('/', [V2QuizController::class, 'index'])->name('v2.quiz.index');
+        Route::get('/create', [V2QuizController::class, 'create'])->name('v2.quiz.create');
+        Route::post('/create', [V2QuizController::class, 'store'])->name('v2.quiz.store');
+        Route::get('/update/{id}', [V2QuizController::class, 'edit'])->name('v2.quiz.edit');
+        Route::put('/update/{id}', [V2QuizController::class, 'update'])->name('v2.quiz.update');
+
+    });
+    Route::prefix('v2/user-quiz')->group(function(){
+        Route::get('/take/{application_id}', [V2UserQuizController::class, 'create'])->name('v2.user-quiz.take');
+        Route::post('/take', [V2UserQuizController::class, 'store'])->name('v2.user-quiz.submit');
+        Route::get('/result/{application_id}', [V2UserQuizController::class, 'view'])->name('v2.user-quiz.view-result');
+    
+    });
+
 
 
 });

@@ -116,7 +116,11 @@ class ManPower extends Model
 
     public function getDepartmentNameAttribute()
     {   
-        return collect(self::DEPARTMENT)->firstWhere('value', $this->department)['label'];
+        $dept_name =collect(self::DEPARTMENT)->firstWhere('value', $this->department);
+        if(is_null($dept_name)){
+           return $this->belongsTo(Department::class,'department','key')->first()->value;
+        }
+        return $dept_name['label'];
     }
 
     public function scopeActive()

@@ -30,4 +30,10 @@ class Quiz extends Model
     {
         return $this->hasMany(QuizQuestions::class);
     }
+
+    public function questionsV2()
+    {
+        return $this->hasMany(QuizQuestionsV2::class);
+    }
+    
 }
