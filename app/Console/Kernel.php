@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('users:archive')->daily();
         $schedule->command('test:log')->everyMinute();
+        $schedule->command('app:recheck-personality-assessment')->daily();
     }
 
     /**

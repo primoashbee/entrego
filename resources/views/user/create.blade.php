@@ -27,7 +27,8 @@
                                                     <select class="form-control" name="role" id="role">
                                                         <option value="">Please select</option>
                                                         <option value="ADMINISTRATOR">ADMINISTRATOR</option>
-                                                        <option value="SUB_HR">SUB HR</option>
+                                                        <option value="SUB_HR">DEPARTMENT HEAD</option>
+                                                        <option value="HR">HR</option>
                                                     </select>
                                                 </div>
                                             </div>

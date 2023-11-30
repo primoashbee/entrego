@@ -7,6 +7,7 @@ use Mockery\Matcher\Any;
 use App\Models\Requirement;
 use App\Models\WorkHistory;
 use Illuminate\Support\Carbon;
+use App\Models\UserArchiveLogs;
 use App\Models\UserRequirement;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\UserJobApplication;
@@ -285,5 +286,15 @@ class User extends Authenticatable
     public function cancelJobApplications($except_application_id)
     {
         return $this->jobApplications()->whereNot('id', $except_application_id)->update(['status'=> UserJobApplication::CANCELLED]);
+    }
+    
+    public function archiveLogs()
+    {
+        return $this->hasMany(UserArchiveLogs::class);
+    }
+
+    public function archiveStatus()
+    {
+        return $this->is_archived ? 'ARCHIVED' : 'ACTIVE';
     }
 }

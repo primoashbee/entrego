@@ -98,6 +98,12 @@ class ManPower extends Model
     
     protected $guarded = [];
 
+    protected $dates = ['expires_at'];
+
+    public function getActiveFriendlyAttribute()
+    {
+        return $this->active == 'Active' ? 'Active' : 'Inactive';
+    }
     public function getJobGroupNameAttribute()
     {   
         return collect(self::JOB_GROUP)->firstWhere('value', $this->job_group)['label'];
@@ -228,7 +234,15 @@ class ManPower extends Model
         return (int) $total - (int) $deployed; 
     }
 
+    public function requestor()
+    {
+        return $this->belongsTo(User::class, 'requested_by' ,'id');
+    }
 
 
+    public function departmentLink()
+    {
+        return $this->belongsTo(Department::class, 'department','key');
+    }
   
 }

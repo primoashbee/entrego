@@ -76,7 +76,7 @@
                                           </div>
                                         </td>
                                         <td>
-                                          <p class="text-xs font-weight-bold mb-0">{{ $user->role }}</p>
+                                          <p class="text-xs font-weight-bold mb-0">{{ $user->role == 'SUB_HR' ? 'DEPARTMENT HEAD' : $user->role }}</p>
                                           {{-- <p class="text-xs text-secondary mb-0">Organization</p> --}}
                                         </td>
                                         <td class="align-middle text-center text-sm">
@@ -120,8 +120,9 @@
                                             </div>
                                           </div>
                                         </td>
+
                                         <td>
-                                          <p class="text-xs font-weight-bold mb-0">{{ $user->role }}</p>
+                                          <p class="text-xs font-weight-bold mb-0">{{ $user->role == 'SUB_HR' ? 'DEPARTMENT HEAD' : $user->role }}</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
                                           <span class="badge badge-sm badge-success"> {{$user->contact}} </span>

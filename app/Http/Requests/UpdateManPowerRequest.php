@@ -27,6 +27,7 @@ class UpdateManPowerRequest extends FormRequest
             'job_title'=>'required',
             'job_group'=>['required', Rule::in(collect(ManPower::JOB_GROUP)->pluck('value')->toArray())],
             'description'=>'required',
+            'has_sjt'=>'nullable',
             'responsibilities'=>'required',
             'qualifications'=>'required',
             'benefits'=>'required',
@@ -37,7 +38,8 @@ class UpdateManPowerRequest extends FormRequest
             'expires_at'=>'required',
             'required_experience'=>'required',
             'department'=>'required',
-            'quiz_id'=>'required|exists:quizzes,id'
+            'quiz_id'=>'required_if_accepted:has_sjt',
+            'job_level'=>'required'
 
         ];
     }

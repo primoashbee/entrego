@@ -9,12 +9,15 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\UserRequirement;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserAccountStatusChanged;
+use function PHPUnit\Framework\isNull;
 use App\Http\Requests\StoreUserRequest;
+
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateProfileRequest;
-
-use function PHPUnit\Framework\isNull;
 
 class UserController extends Controller
 {
@@ -53,7 +56,10 @@ class UserController extends Controller
 
     public function editUser($id) : View
     {
-        $user = User::with('requirements')->findOrFail($id);
+        $user = User::with(['requirements','archiveLogs'=>function($q){
+            return $q->orderBy('id','desc');
+        }])->findOrFail($id);
+
         $requirements = $user->requirements;
         // dd($user);
         return view('user.profile', compact('user','requirements'));
@@ -279,5 +285,56 @@ class UserController extends Controller
         }
         return $user->requirements->load('requirement');
 
+    }
+
+    public function patch(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        if($request->archive_status === "ACTIVE"  ){
+            
+            $user->update([
+                'is_archived'=>0,
+                'archived_at'=>now()
+            ]);
+
+            $user->archiveLogs()->create([
+                'status' => 1,
+                'done_by'=>auth()->user()->id,
+                'notes'=>$request->archive_notes
+            ]);
+
+
+        }
+        if($request->archive_status === "ARCHIVED" ){
+            $user->update([
+                'is_archived'=>1,
+                'archived_at'=>now()
+            ]);
+
+            $user->archiveLogs()->create([
+                'status' => 0,
+                'done_by'=>auth()->user()->id,
+                'notes'=>$request->archive_notes
+            ]);
+
+        }
+        Mail::to($user->email)
+            ->send(
+                new UserAccountStatusChanged($user)
+            );
+        return redirect()->back();
+    }
+
+    public function pdfReport($id)
+    {
+        $user = User::with(['workHistory','assessments'=>function($q){
+                $q->orderBy('id','desc');
+            }])->findOrFail($id);
+        $assessment = $user->assessments->first()->statsV2();
+        $viewer = App::make('dompdf.wrapper'); 
+        $pdf = $viewer->loadView('templates.pdf.profile', compact('user','assessment'));
+
+        return view('templates.pdf.profile', compact('user','assessment'));
     }
 }

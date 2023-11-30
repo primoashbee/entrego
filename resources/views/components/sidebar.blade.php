@@ -45,7 +45,7 @@ id="sidenav-main">
         </li>
         @endif
 
-        @if($user->role == "ADMINISTRATOR")
+        @if(in_array($user->role == "ADMINISTRATOR", ['ADMINISTRATOR','SUB_HR']))
         <li class="nav-item">
             <a class="nav-link text-white " href="{{ route('quiz.index') }}">
 
@@ -146,6 +146,15 @@ id="sidenav-main">
 
         <hr class="horizontal light mt-0 mb-2">
 
+
+        <li class="nav-item">
+            <a class="nav-link text-white " href="{{route('settings.index')}}">
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">settings</i>
+                </div>
+                <span class="nav-link-text ms-1">Settings</span>
+            </a>
+        </li>
 
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('profile.edit')}}">

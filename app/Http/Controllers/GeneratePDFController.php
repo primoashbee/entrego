@@ -17,13 +17,19 @@ class GeneratePDFController extends Controller
         $user = User::with('workHistory','assessments')->findOrFail($user_id);
         $viewer = App::make('dompdf.wrapper'); 
 
-        $image_src = Storage::disk('public')->path('test-img.jpeg');
-        Browsershot::url(route('assessment.img', 2))
-        ->windowSize(1920, 538)
-        ->save($image_src);
+        // $image_src = Storage::disk('public')->path('test-img.jpeg');
+        // Browsershot::url(route('assessment.img', 2))
+        // ->windowSize(1920, 538)
+        // ->save($image_src);
+
+        $user = User::with(['workHistory','assessments'=>function($q){
+            $q->orderBy('id','desc');
+        }])->findOrFail($user_id);
+        $assessment = $user->assessments->first()->statsV2();
         
+        // return view('templates.pdf.profile', compact('user', 'image_src'));
         // return response()->download($image_src);
-        $pdf = $viewer->loadView('templates.pdf.profile', compact('user', 'image_src'));
+        $pdf = $viewer->loadView('templates.pdf.profile', compact('user','assessment'));
 
         
         //Save the pdf

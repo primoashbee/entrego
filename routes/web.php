@@ -1,17 +1,20 @@
 <?php
 
 use App\Models\User;
+use App\Models\ManPower;
 use App\Services\Semaphore;
 use App\Mail\JobAppliedMail;
+use Illuminate\Http\Request;
 use App\Models\JobApplication;
 use App\Models\UserJobApplication;
-use Illuminate\Http\Request;
+use App\Mail\ManPowerRequestChanged;
 use Illuminate\Support\Facades\Route;
 use App\Models\UserPersonalAssessment;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ManPowerController;
 use App\Http\Controllers\UserQuizController;
@@ -25,6 +28,7 @@ use App\Http\Controllers\PersonalAssementController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Middleware\UserPacketDownloadMiddleware;
 use App\Http\Controllers\UserPersonalAssessmentController;
+use App\Mail\PersonalAssessmentDueMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +50,8 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, Appli
         Route::post('/create', [UserController::class, 'storeUser'])->name('users.store');
         Route::get('/update/{id}', [UserController::class, 'editUser'])->name('users.edit');
         Route::post('/update/{id}', [UserController::class, 'updateUser'])->name('users.update');
+        Route::patch('/update/{id}', [UserController::class, 'patch'])->name('profile.patch');
+
     });
        Route::prefix('applicants')->group(function(){
         Route::get('/', [UserController::class, 'applicants'])->name('applicants.index');
@@ -92,6 +98,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
 
     Route::get('/jobs', [JobApplicationController::class, 'viewApplicants'])->name('user-job.index');
+    Route::get('/job/{id}', [JobApplicationController::class, 'show'])->name('user-job.show');
     Route::get('/jobs/report', [JobApplicationController::class, 'viewReport'])->name('user-job.report');
 
     Route::post('/job/send-interview/{id}', [JobApplicationController::class, 'sendInterview'])->name('user-job.send-interview');
@@ -113,6 +120,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
 
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::get('/settings/create/{type}', [SettingController::class, 'create'])->name('settings.create');
+    Route::post('/settings/create/{type}', [SettingController::class, 'store'])->name('settings.store');
+    Route::get('/settings/{type}/{id}', [SettingController::class, 'edit'])->name('settings.edit');
+    Route::patch('/settings/{type}/{id}', [SettingController::class, 'patch'])->name('settings.patch');
+
 
 });
 
@@ -122,6 +135,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::get('/user/packet/{id}', [GeneratePDFController::class, 'index'])->middleware([UserPacketDownloadMiddleware::class])->name('user.download.packet');
+Route::get('/pdf/profile/{id}', [UserController::class, 'pdfReport'])->name('pdf.report');
 Route::get('/img/{id}', [PersonalAssementController::class, 'imgReport'])->name('assessment.img');
 Route::get('/sc/{id}', [PersonalAssementController::class, 'sc']);
 
@@ -153,7 +167,7 @@ Route::get('/test', function(){
 });
 
 Route::get('/itest', function(){
-    $j = UserJobApplication::first();
-    return new \App\Mail\JobInterviewMail($j);
+    $j = User::find(6);
+    return new PersonalAssessmentDueMail($j);
 });
 require __DIR__.'/auth.php';

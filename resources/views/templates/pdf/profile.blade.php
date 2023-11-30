@@ -105,6 +105,7 @@
         .pagebreak {
             page-break-before: always;
         }
+
     </style>
 
     <style>
@@ -202,7 +203,61 @@
             margin-bottom: 10px;
         }
     </style>
+    <style>
+        @media print {
+            tr.vendorListHeading {
+                background-color: #1a4567 !important;
+                print-color-adjust: exact;
+            }
+        }
 
+        @media print {
+            .vendorListHeading th {
+                color: white !important;
+            }
+        }
+
+        .trait-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .trait-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .bar-graph {
+            background-color: #f0f0f0;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .bar {
+            height: 100%;
+            width: 30%;
+            background-color: #007BFF;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .low-label {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .high-label {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
 
 
 
@@ -245,12 +300,97 @@
         @endforeach
     </section>
 
-    <div class="pagebreak">
+    <div class="pagebreak"></div>
+    <header id="info">
+        <h1> Personal Assessment</h1>
+    </header>
+
+    @foreach($assessment as $key=>$item)
+   
+    <div class="trait-container">
+        <div class="trait-title ">{{ucfirst($item['key'])}}</div>
+        <div class="bar-graph">
+            <div class="bar" style="width: {{$item['percentage']}}%;"></div>
+            <span class="low-label">Low</span>
+            <span class="high-label">High</span>
+        </div>
+        Percentage of Extraversion : {{$item['percentage']}} %<br>
+        Trait Definition: <br> {{$item['remarks']}}<br>
+    </div>
+
+    @if($key==2)     
+        <div class="pagebreak"></div> 
+    @elseif($key==4)
+    @else
+        <hr>
+    @endif
+    @endforeach
+    {{-- <div class="trait-container">
+        <div class="trait-title">Agreeableness</div>
+        <div class="bar-graph">
+            <div class="bar" style="width: 60%;"></div>
+            <span class="low-label">Low</span>
+            <span class="high-label">High</span>
+        </div>
+        Percentage of Agreeableness : 60 %<br>
+        Trait Definition: <br> High scorers are typically polite, compassionate, and helpful. They have a great deal of
+        interest in other people, care about others' well-being, and feel empathy and concern for others. They enjoy
+        helping and contributing to the happiness of others and readily extend support to those in need. However, their
+        focus on others' needs may sometimes lead them to neglect their own needs or prioritize others' interests over
+        their own.<br>
+    </div>
+    <hr>
+    <div class="trait-container">
+        <div class="trait-title">Conscientiousness</div>
+        <div class="bar-graph">
+            <div class="bar" style="width: 20%;"></div>
+            <span class="low-label">Low</span>
+            <span class="high-label">High</span>
+        </div>
+        Percentage of Conscientiousness : 20%<br>
+        Trait Definition: <br> Low scorers may be more spontaneous and flexible. They may struggle with organization and
+        prioritization, leading to disarray and missed deadlines. Their lack of attention to detail may result in errors
+        and a lack of polish in their work. They may prefer to complete tasks quickly rather than meticulously, leading
+        to subpar results.<br>
+    </div>
+    <hr>
+    <div class="trait-container">
+        <div class="trait-title">Openness</div>
+        <div class="bar-graph">
+            <div class="bar" style="width: 60%;"></div>
+            <span class="low-label">Low</span>
+            <span class="high-label">High</span>
+        </div>
+        Percentage of Openness : 60%<br>
+        Trait Definition: <br> High scorers are typically prone to negative emotions such as anxiety, worry, and
+        sadness. They may overthink potential problems or negative outcomes, leading to rumination and emotional
+        distress. Stressful situations can easily overwhelm them, causing intense reactions and emotional turmoil. Their
+        mood swings and fluctuations in emotional well-being can significantly impact their daily lives. The impact of
+        stressful events can be prolonged and debilitating, making it difficult for them to bounce back quickly.<br>
+    </div>
+
+    <hr>
+    <div class="trait-container">
+        <div class="trait-title">Neuroticism</div>
+        <div class="bar-graph">
+            <div class="bar" style="width: 10%;"></div>
+            <span class="low-label">Low</span>
+            <span class="high-label">High</span>
+        </div>
+        Percentage of Neuroticism : 10%<br>
+        Trait Definition: <br>Low scorers exhibit emotional stability and resilience in the face of challenges. They
+        remain calm and composed under pressure, able to manage their emotions effectively. Negative emotions are less
+        frequent and intense, allowing them to maintain a positive outlook. They adapt well to changes and unexpected
+        events, demonstrating flexibility and a willingness to embrace new experiences. Stressful situations are viewed
+        as opportunities for growth rather than insurmountable obstacles, enabling them to recover quickly and move
+        forward.<br>
+    </div> --}}
+
+    {{-- <div class="pagebreak">
         <section id="statement">
             <img src="{{$image_src}}" style="  width: 100%;            ">
         </section>
-        {{-- <img src="https://quickchart.io/chart?w=500&h=300&c=%7B%0A++%22type%22%3A+%22bar%22%2C%0A++%22data%22%3A+%7B%0A++++%22labels%22%3A+%5B2012%2C+2013%2C+2014%2C+2015%2C+2016%5D%2C%0A++++%22datasets%22%3A+%5B%7B%0A++++++%22label%22%3A+%22Users%22%2C%0A++++++%22data%22%3A+%5B120%2C+60%2C+50%2C+180%2C+120%5D%0A++++%7D%5D%0A++%7D%0A%7D" style="width: 500px; height:500px"/> --}}
-    </div>
+    </div> --}}
     {{-- <section id="skills">
         <h2>Experience</h2>
         <div class="skillstable">

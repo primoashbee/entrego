@@ -32,6 +32,9 @@
 
 
     <link id="pagestyle" href="{{ asset('css/material-dashboard.css?v=3.1.0') }}" rel="stylesheet" />
+
+    @yield('styles')
+
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">

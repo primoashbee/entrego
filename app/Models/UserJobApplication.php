@@ -190,5 +190,246 @@ class UserJobApplication extends Model
         return Carbon::parse($this->deployed_at);
     }
 
+    public function steps()
+    {
+        
+        //Apply > Waiting for Exam Result | For sending interview > Interview Sent >  JOB OFFER > Job Offer Accepted > Deployed	
+        
+        $steps = collect([
+            [
+                'label'=>'Applied',
+                'key'=> self::APPLIED,
+                'date'=>$this->created_at,
+                'data'=> [
+                    'application'=> $this,
+                    'notes'=> 'Applied on job listing page'
+                ],
+                'class'=> '',
+                'finished'=>true
+            ],
+
+            [
+                'label'=>'Interview Sent',
+                'key'=> self::INTERVIEW_SENT,
+                'date'=> null,
+                'data'=> [
+                    'application'=> null,
+                    'notes'=>null
+                ],
+                'class'=> '',
+                'finished'=>false
+            ],
+            [
+                'label'=>'Job Offer Sent',
+                'key'=> self::JOB_OFFER,
+                'date'=> null,
+                'data'=> [
+                    'application'=> null,
+                    'notes'=>null
+                ],
+                'class'=> '',
+                'finished'=>false
+            ],
+            [
+                'label'=>'Job Offer Accepted',
+                'key'=> self::FOR_REQUIREMENTS,
+                'date'=> null,
+                'data'=> [
+                    'application'=> null,
+                    'notes'=>null
+                ],
+                'class'=> '',
+                'finished'=>false
+            ],
+            
+            [
+                'label'=>'Deployed',
+                'key'=> self::DEPLOYED,
+                'date'=> null,
+                'data'=> [
+                    'application'=> null,
+                    'notes'=>null
+                ],
+                'class'=> '',
+                'finished'=>false
+            ],
+            
+
+        ]);
+
+        if($this->job->has_sjt){
+            $exam =  [
+                'label'=>'Exam Taken',
+                'key'=> self::WAITING_FOR_EXAM_RESULT,
+                'date'=>$this->userQuiz?->created_at,
+                'data'=> [
+                    'quiz'=>$this->userQuiz,
+                    'notes'=>'Exam finished'
+                ],
+                'class'=>'active text-center',
+                'finished'=>true
+            ];
+            $steps->splice(1, 0, [$exam]);
+        }
+
+        if($this->status ==  self::INTERVIEW_SENT){
+            $steps = $steps->map(function($step){
+                if($step['key'] == self::INTERVIEW_SENT){
+                    return [
+                        'label'=>'Interview sent',
+                        'key'=> self::INTERVIEW_SENT,
+                        'date'=> $this->interview_sent_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->send_interview_notes
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                return $step;
+            });
+        }
+
+        if($this->status ==  self::JOB_OFFER){
+            $steps = $steps->map(function($step){
+                if($step['key'] == self::INTERVIEW_SENT){
+                    return [
+                        'label'=>'Interview sent',
+                        'key'=> self::INTERVIEW_SENT,
+                        'date'=> $this->interview_sent_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->send_interview_notes
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                if($step['key'] == self::JOB_OFFER){
+                    return [
+                        'label'=>$step['label'],
+                        'key'=> $step['key'],
+                        'date'=> $this->job_offered_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->job_offer_notes
+
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                return $step;
+            });
+        }
+
+        
+
+        if($this->status ==  self::FOR_REQUIREMENTS){
+            $steps = $steps->map(function($step){
+                if($step['key'] == self::INTERVIEW_SENT){
+                    return [
+                        'label'=>'Interview sent',
+                        'key'=> self::INTERVIEW_SENT,
+                        'date'=> $this->interview_sent_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->send_interview_notes
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                if($step['key'] == self::JOB_OFFER){
+                    return [
+                        'label'=>$step['label'],
+                        'key'=> $step['key'],
+                        'date'=> $this->job_offered_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->job_offer_notes
+
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                if($step['key'] == self::FOR_REQUIREMENTS){
+                    return [
+                        'label'=>$step['label'],
+                        'key'=> $step['key'],
+                        'date'=> $this->job_offer_accepted_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->accepted_job_offer_notes
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                return $step;
+            });
+        }
+        if($this->status ==  self::DEPLOYED){
+            $steps = $steps->map(function($step){
+                if($step['key'] == self::INTERVIEW_SENT){
+                    return [
+                        'label'=>'Interview sent',
+                        'key'=> self::INTERVIEW_SENT,
+                        'date'=> $this->interview_sent_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->send_interview_notes
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                if($step['key'] == self::JOB_OFFER){
+                    return [
+                        'label'=>$step['label'],
+                        'key'=> $step['key'],
+                        'date'=> $this->job_offered_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->job_offer_notes
+
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                if($step['key'] == self::FOR_REQUIREMENTS){
+                    return [
+                        'label'=>$step['label'],
+                        'key'=> $step['key'],
+                        'date'=> $this->job_offer_accepted_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->accepted_job_offer_notes
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                if($step['key'] == self::DEPLOYED){
+                    return [
+                        'label'=>$step['label'],
+                        'key'=> $step['key'],
+                        'date'=> $this->deployed_at,
+                        'data'=> [
+                            'application'=> null,
+                            'notes'=> $this->deployed_notes
+                        ],
+                        'class'=>'active text-center',
+                        'finished'=>true
+                    ];
+                }
+                return $step;
+            });
+        }
+        return $steps;
+    }
 
 }

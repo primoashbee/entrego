@@ -1,6 +1,6 @@
 @extends('layouts.user')
 @section('content')
-@include('components.errors')
+    @include('components.errors')
     <div id="app">
         @if (request()->route('id'))
             <form action="{{ route('users.update', request()->route('id')) }}" method="POST" id="frmSubmit"
@@ -11,7 +11,7 @@
         @csrf
         <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-lg-10 position-relative z-index-2">
+                <div class="col-sm 12 col-lg-10 position-relative z-index-2">
                     <!-- Start Personal Profile -->
                     <div class="row mt-4">
                         <div class="col-12">
@@ -30,27 +30,22 @@
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">First Name</label>
                                                 <input type="text" name="first_name" class="form-control"
-                                                    v-model="profile.first_name"
-                                                    
-                                                    >
+                                                    v-model="profile.first_name">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Middle Name</label>
                                                 <input type="text" name="middle_name" class="form-control"
-                                                    v-model="profile.middle_name"
-                                                    >
-                                                    
+                                                    v-model="profile.middle_name">
+
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Last Name</label>
                                                 <input type="text" name="last_name" class="form-control"
-                                                    v-model="profile.last_name"
-
-                                                    >
+                                                    v-model="profile.last_name">
                                             </div>
                                         </div>
                                     </div>
@@ -59,18 +54,16 @@
                                             <div class="input-group input-group-static">
                                                 <label>Birthday</label>
                                                 <input type="date" class="form-control" name="birthday"
-                                                   onfocus="focused(this)"
-                                                    onfocusout="defocused(this)" 
-                                                    v-model="profile.birthday"
-                                                    >
+                                                    onfocus="focused(this)" onfocusout="defocused(this)"
+                                                    v-model="profile.birthday">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="input-group input-group-static">
                                                 <label for="gender" class="ms-0">Gender</label>
-                                                <select class="form-control" id="gender" name="gender" v-model="profile.gender"
-                                                    data-gtm-form-interact-field-id="0">
-                                                    <option >Please select</option>
+                                                <select class="form-control" id="gender" name="gender"
+                                                    v-model="profile.gender" data-gtm-form-interact-field-id="0">
+                                                    <option>Please select</option>
                                                     <option value="Female"> Female </option>
                                                     <option value="Male"> Male </option>
                                                 </select>
@@ -80,18 +73,14 @@
                                             <div class="input-group input-group-static">
                                                 <label class="">Contact Number</label>
                                                 <input type="text" name="contact_number" class="form-control"
-                                                    v-model="profile.contact_number"
-                                                    >
+                                                    v-model="profile.contact_number">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="input-group input-group-static">
                                                 <label class="">E-mail</label>
-                                                <input type="text" name="email" class="form-control"
-                                                     readonly disabled
-                                                    v-model="profile.email"
-
-                                                    >
+                                                <input type="text" name="email" class="form-control" readonly disabled
+                                                    v-model="profile.email">
                                             </div>
                                         </div>
                                     </div>
@@ -100,44 +89,35 @@
                                             <div class="input-group input-group-static my-3">
                                                 <label>Street</label>
                                                 <input type="text" class="form-control" name="street"
-                                                    v-model="profile.street"
-                                                    >
+                                                    v-model="profile.street">
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="input-group input-group-static my-3">
                                                 <label>Landmark</label>
                                                 <input type="text" class="form-control" name="landmark"
-                                                    v-model="profile.landmark"
-
-                                                    >
+                                                    v-model="profile.landmark">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="input-group input-group-static my-3">
                                                 <label>City</label>
                                                 <input type="text" class="form-control" name="city"
-                                                    v-model="profile.city"
-
-                                                    >
+                                                    v-model="profile.city">
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="input-group input-group-static my-3">
                                                 <label>Brgy</label>
                                                 <input type="text" class="form-control" name="barangay"
-                                                    v-model="profile.barangay"
-
-                                                    >
+                                                    v-model="profile.barangay">
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="input-group input-group-static my-3">
                                                 <label>Zip Code</label>
                                                 <input type="text" class="form-control" name="zip_code"
-                                                    v-model="profile.zip_code"
-
-                                                    >
+                                                    v-model="profile.zip_code">
                                             </div>
                                         </div>
                                     </div>
@@ -160,19 +140,22 @@
 
                                 </div>
                                 <div class="card-body" id="frmWorkSection" v-for="(work, key) in works">
-                                    <button type="button" class="btn btn-warning" style="float: right;" @click="removeWork(key)">X</button>
-                                   
+                                    <button type="button" class="btn btn-warning" style="float: right;"
+                                        @click="removeWork(key)">X</button>
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Company Name</label>
-                                                <input type="text" name="company_name[]" v-model="work.company_name" class="form-control">
+                                                <input type="text" name="company_name[]" v-model="work.company_name"
+                                                    class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Job Title</label>
-                                                <input type="text"  name="job_title[]" v-model="work.job_title" class="form-control">
+                                                <input type="text" name="job_title[]" v-model="work.job_title"
+                                                    class="form-control">
                                             </div>
                                         </div>
 
@@ -181,21 +164,23 @@
                                         <div class="col-md-6">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Start Date</label>
-                                                <input type="date" class="form-control"  v-model="work.start_date" name="start_date[]"
-                                                    onfocus="focused(this)" onfocusout="defocused(this)">
+                                                <input type="date" class="form-control" v-model="work.start_date"
+                                                    name="start_date[]" onfocus="focused(this)"
+                                                    onfocusout="defocused(this)">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">End Date</label>
-                                                <input type="date" class="form-control" v-model="work.end_date" name="end_date[]"
-                                                    onfocus="focused(this)" onfocusout="defocused(this)">
+                                                <input type="date" class="form-control" v-model="work.end_date"
+                                                    name="end_date[]" onfocus="focused(this)"
+                                                    onfocusout="defocused(this)">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Accomplishments</label>
-                                                <textarea class="form-control" v-model="work.accomplishments"  name="accomplishments[]">
+                                                <textarea class="form-control" v-model="work.accomplishments" name="accomplishments[]">
                                                     </textarea>
                                             </div>
                                         </div>
@@ -229,17 +214,13 @@
                                         <div class="col-md-6">
                                             <div class="input-group input-group-static">
                                                 <label class="">Skills</label>
-                                                <textarea name="skills" class="form-control"
-                                                    v-model="profile.skills"
-                                                >{{ $user->skills }}</textarea>
+                                                <textarea name="skills" class="form-control" v-model="profile.skills">{{ $user->skills }}</textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="input-group input-group-static">
                                                 <label class="">Languages</label>
-                                                <textarea name="languages" class="form-control"
-                                                    v-model="profile.languages"
-                                                >{{ $user->languages }}</textarea>
+                                                <textarea name="languages" class="form-control" v-model="profile.languages">{{ $user->languages }}</textarea>
                                             </div>
                                         </div>
 
@@ -265,14 +246,8 @@
 
                                     <div class="form-group">
                                         <label for="cv">Resume / CV (.pdf, .doc, docx)</label><br>
-                                        <input 
-                                            type="file" 
-                                            name="cv" 
-                                            id="cv" 
-                                            accept=".pdf, .doc, .docx" 
-                                            
-                                            @change="uploadFile('cv')" ref="cv"
-                                            >
+                                        <input type="file" name="cv" id="cv" accept=".pdf, .doc, .docx"
+                                            @change="uploadFile('cv')" ref="cv">
 
                                     </div>
                                     @if ($user->has_cv)
@@ -301,10 +276,12 @@
                                         <div class="col-md-4">
                                             <div class="input-group input-group-static">
                                                 <label class="">Role</label>
-                                                <select class="form-control" name="role" id="role" v-model="profile.role">
-                                                    <option >Please select</option>
+                                                <select class="form-control" name="role" id="role"
+                                                    v-model="profile.role">
+                                                    <option>Please select</option>
                                                     <option value="ADMINISTRATOR">ADMINISTRATOR</option>
-                                                    <option value="SUB_HR">SUB HR</option>
+                                                    <option value="SUB_HR">DEPARTMENT HEAD</option>
+                                                    <option value="HR">HR</option>
                                                     <option value="APPLICANT">APPLICANT</option>
                                                 </select>
                                             </div>
@@ -312,13 +289,15 @@
                                         <div class="col-md-4">
                                             <div class="input-group input-group-static">
                                                 <label class="">Password</label>
-                                                <input type="password" name="password" class="form-control" v-model="profile.password">
+                                                <input type="password" name="password" class="form-control"
+                                                    v-model="profile.password">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="input-group input-group-static">
                                                 <label class="">Password Confirmation</label>
-                                                <input type="password" name="password_confirmation" class="form-control" v-model="profile.password_confirmation">
+                                                <input type="password" name="password_confirmation" class="form-control"
+                                                    v-model="profile.password_confirmation">
                                             </div>
                                         </div>
                                     </div>
@@ -326,7 +305,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     @if (auth()->user()->isApplicant() && $user->canUploadRequirements())
                         @include('components.requirements')
                     @endif
@@ -334,10 +313,58 @@
 
                     <button class="btn text-right btn-primary" type="submit">Update Profile</button>
                 </div>
+                </form>
+                <div class="col-sm 12 col-lg-2">
+                    <div class="row mt-4">
+                        <div class="card mb-4">
+                            <div class="d-flex">
+                                <div
+                                    class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
+                                    <i class="material-icons opacity-10" aria-hidden="true">check</i>
+                                </div>
+                                <h6 class="mt-3 mb-2 ms-3 ">Status</h6>
+
+                            </div>
+                            <div class="card-body">
+                                <form action="{{route('profile.patch', $user->id)}}" method="POST">
+                                    @method('PATCH')
+                                    @csrf
+                                    <div class="col-md-12">
+                                        <div class="input-group input-group-static"><label class="">Status</label>
+                                            <select
+                                                class="form-control" name="archive_status" id="archive_status" v-model="archive_status"
+                                            >
+                                                <option value="ACTIVE">Active</option>
+                                                <option value="ARCHIVED">Archived</option>
+                                            </select>
+                                        </div>
+                                        <div class="input-group input-group-static">
+                                            <label class="">Notes</label>
+                                            <textarea class="form-control" name="archive_notes" type="textarea" rows="5" > </textarea>
+                                        </div>
+
+                                        <input type="submit" class="btn btn-primary text-right float-right">
+                                    </div>
+                                </form>
+                                <ul>
+                                    @foreach($user->archiveLogs as $log)
+                                    <li>
+                                        Account set to {{$log->status_name}}. <br>
+                                        Notes: {{$log->notes}} <br>
+                                        Date: {{$log->created_at->diffForHumans()}}
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
             </div>
             @include('components.footer')
         </div>
-        </form>
+        
     </div>
 
 
@@ -366,8 +393,8 @@
                     }
                 })
             })
-        })();
 
+        })();
     </script>
 @endsection
 
@@ -376,7 +403,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
         integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        
+
     <script type="module">
         import {
             createApp,
@@ -392,15 +419,16 @@
                 const works = ref(@json($user->workHistory))
                 const requirements = ref(@json($requirements))
                 const role = ref(@json(auth()->user()->role))
-              
+                const archive_status = ref(@json($user->archiveStatus()))
                 const addWork = () => {
                     works.value.push({})
                 }
-                function removeWork(index){
-                    works.value.splice(index,1)
+
+                function removeWork(index) {
+                    works.value.splice(index, 1)
                 }
 
-                function uploadFile(ref){
+                function uploadFile(ref) {
                     console.log(this.$refs[ref].files[0])
                     console.log(this.$refs)
                 }
@@ -418,10 +446,10 @@
                     addWork,
                     removeWork,
                     uploadFile,
-                    requirements
+                    requirements,
+                    archive_status
                 }
             }
         }).mount('#app')
-    </script>   
-
+    </script>
 @endsection

@@ -33,7 +33,15 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            
                                             <div class="col-md-12 mb-3">
+                                                <div class="input-group input-group-static">
+                                                    <input type="checkbox" name="has_sjt" id="has_sjt" onclick="hasSJTClicked()" value='chcked' >
+                                                    <label class="pl-2" for="has_sjt"> &nbsp; Has SJT </label>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-3" id="div-sjt" style="display:none">
                                                 <div class="input-group input-group-static">
                                                     <label class=""> SJT/ CSA </label>
                                                     <select name="quiz_id" id="quiz_id" class="form-control">
@@ -74,7 +82,7 @@
                                                     <textarea  name="benefits" class="form-control" value=""> {{old('benefits')}} </textarea>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Vacancy</label>
                                                     {{-- <select name="vacancies" id="vacancies" class="form-control">
@@ -87,7 +95,7 @@
 
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Job Nature</label>
                                                     <select name="job_nature" id="job_nature" class="form-control">
@@ -95,19 +103,29 @@
                                                         <option value="FULL_TIME"> Full Time</option>
                                                         <option value="PART_TIME"> Part Time</option>
                                                         <option value="CONTRACT"> Contract </option>
+                                                        <option value="PROJECT_BASED"> Project Based </option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-3">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="input-group input-group-static">
+                                                    <label class="">Job Level</label>
+                                                    <select name="job_level" id="job_level" class="form-control">
+                                                        <option value=""> Please Select</option>
+                                                        @foreach($levels as $loc)
+                                                        <option value="{{$loc->key}}"> {{ $loc->value }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Location</label>
                                                     <select name="location" id="location" class="form-control">
                                                         <option value=""> Please Select</option>
-                                                        <option value="DAVAO"> Davao </option>
-                                                        <option value="CEBU"> Cebu </option>
-                                                        <option value="NCR"> NCR </option>
-                                                        <option value="PAMPANGA"> Pampanga </option>
-                                                        <option value="LEGAZPI"> Legazpi </option>
+                                                        @foreach($locations as $loc)
+                                                        <option value="{{$loc->key}}"> {{ $loc->value }}</option>
+                                                        @endforeach
                                     
                                                     </select>
                                                 </div>
@@ -136,7 +154,7 @@
                                                     <select name="department" id="department" class="form-control">
                                                         <option value=""> Please Select</option>
                                                         @foreach($departments as $department)
-                                                        <option value="{{$department['value']}}"> {{ $department['label'] }}</option>
+                                                        <option value="{{$department->key}}"> {{ $department->value }}</option>
                                                         @endforeach
 
                                                     </select>
@@ -177,11 +195,29 @@
         department = document.getElementById('department')
         department.value = "{{old('department')}}"
 
+        job_level = document.getElementById('job_level')
+        job_level.value = "{{old('job_level')}}"
+
+        job_nature = document.getElementById('job_nature')
+        job_nature.value = "{{old('job_nature')}}"
+
         quiz_id = document.getElementById('quiz_id')
         quiz_id.value = "{{old('quiz_id')}}"
 
 
 
+
     })()
+    function hasSJTClicked()
+    {
+        sjt = document.getElementById('div-sjt')
+        has_sjt = document.getElementById('has_sjt')
+        if(has_sjt.checked===true){
+            sjt.style.display = null
+        }else{
+            sjt.style.display = 'none'
+        }
+    }
+
 </script>
 @endsection

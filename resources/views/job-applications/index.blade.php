@@ -67,7 +67,17 @@
                                             </select>
                                         </div>                                        
                                     </div>
-                                    <div class="col-4"></div>
+                                    <div class="col-3">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <select name="job_id" id="job_id" class="form-control form-filter" placeholder="department">
+                                                <option value="">Job Title</option>
+                                                @foreach($jobs as $job)
+                                                    <option value="{{$job->id}}">{{$job->job_title}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>                                        
+                                    </div>
+                                    <div class="col-1"></div>
                                     <div class="col-3">
                                         <div class="input-group input-group-outline mb-3">
                                             <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" id="q" value="{{request()->q}}">
@@ -81,168 +91,357 @@
 
                             </form>
 
-                              
+                            <!---- !-->
 
-                              
+
                             <div class="card">
-                                <div class="table-responsive">
-                                  <table class="table align-items-center mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Name</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Job</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Personal Assessment</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Exam</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Score</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Status</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($applicants as $applicant)
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-1">
-                                                  <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-xs">{{ $applicant->user->fullname }}</h6>
-                                                    <p class="text-xs text-secondary mb-0"> {{$applicant->user->email}} </p>
-                                                  </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex px-2 py-1">
-                                                  <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-xs">{{ $applicant->job->job_title }}</h6>
-                                                    <p class="text-xs text-secondary mb-0"> {{$applicant->job->job_group}} | {{$applicant->job->department_name}}</p>
-                                                  </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-middle text-center">
-
-                                                @if($applicant->user->assessments()->count() > 0)
-                                                <span class="badge bg-gradient-success"> Finished </span> <br> 
-                                                <a href="{{route('personal-assessments.view', $applicant->user->assessments()->first()->batch_id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
-
-                                                @else
-                                                <span class="badge bg-gradient-default"> Pending </span> <br> 
-
-                                                @endif
-
-                                            </td>
-                                            <td class=" text-center">
-                                                @if($applicant->userQuiz)
-
-                                                    {{-- <div class="progress" style="width:100%; margin-top:-8px"> --}}
-                                                        {{-- @if($applicant->userQuiz->percentage < 50)
-                                                            <div class="progress-bar bg-gradient-danger text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}% </div>
-                                                        @elseif($applicant->userQuiz->percentage >= 50 &&  $applicant->userQuiz->percentage <= 75)
-                                                            <div class="progress-bar bg-gradient-secondary text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>
-                                                        @else
-                                                            <div class="progress-bar bg-gradient-success text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>    
-                                                        @endif --}}
-                                                        @if($applicant->userQuiz->is_passed)
-                                                        <span class="badge bg-gradient-success"> Passed </span> <br> 
-                                                        @else
-                                                        <span class="badge bg-gradient-danger"> Failed </span> <br> 
-                                                        @endif
-                                                        <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
-
-
-
-                                                    {{-- </div> --}}
-     
-
-                                                    @else
-                                                        N/A
-                                                    @endif
-                                            </td>
-                                            <td class=" text-center">
-                                                @if($applicant->userQuiz)
-                                                    {{$applicant->userQuiz->score}} / {{$applicant->job->quiz->questions->count()}}
-                                                @else
-                                                    N/A
-                                                @endif
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                @if($applicant->status == 'WAITING_FOR_EXAM_RESULT')
-                                                <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='EXAM_PASSED')
-                                                <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='EXAM_FAILED')
-                                                <span class="badge bg-gradient-danger">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='INTERVIEW_SENT')
-                                                <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='FOR_SENDING_INTERVIEW')
-                                                <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='REJECTED')
-                                                <span class="badge bg-gradient-danger">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='APPROVED')
-                                                <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='FOR_REQUIREMENTS')
-                                                <span class="badge bg-gradient-info">{{ $applicant->status_name }} {{$applicant->user->requirement_summary}} </span> <br> 
-                                                <a href="{{route('requirements.index',['ids'=>implode(',',$applicant->user->requirements->pluck('id')->toArray())])}}" class="text-xs font-weight-bold mb-0">Click to View</a>
-                                                @elseif($applicant->status=='JOB_OFFER')
-                                                <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='DEPLOYED')
-                                                <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
-                                                @elseif($applicant->status=='CANCELLED')
-                                                <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
-                                                @endif
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                @if(!auth()->user()->isApplicant())
-                                                    <!-- Step 1 Send Interview Mail -->
-                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'SEND_INTERVIEW')" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
-                                                        <i class="material-icons">mail</i>
-                                                    </a>
-                                                    <!-- Step X Reject Application  Can be done everytime -->
-                                                    <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'REJECTED')" class="font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
-                                                        <i class="material-icons">cancel</i>
-                                                    </a>
-
-                                                    <!-- Step 2 Job Offer -->
-                                                    <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
-                                                        <i class="material-icons">event_available</i>
-                                                    </a>
-
-                                                    <!-- Step 3 Job Offer Approved - Applicant will now be FOR Requirements -->
-                                                    <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'APPROVED')" class="font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
-                                                        <i class="material-icons">check_circle</i>
-                                                    </a>
-
-                                                    @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status == \app\Models\UserJobApplication::FOR_REQUIREMENTS )
-                                                    <!-- Deployment -->
-                                                    <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'DEPLOYED')" class="font-weight-normal text-xs text-warning" data-toggle="tooltip" data-original-title="Edit item">
-                                                        <i class="material-icons">work</i>
-                                                    </a>
-                                                    @endif
-                                                @else
-                                                    <!-- This means currently logged in is applicant !-->
-                                                    @if($applicant->userQuiz)
-                                                        <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
-                                                            <i class="material-icons">question_answer</i>
-                                                        </a>
-                                                    @else
-                                                    <a href="{{route('user-quiz.take', $applicant->id)}}" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
-                                                        <i class="material-icons">laptop</i>
-                                                    </a>
-                                                    @endif
-                                                @endif
-
-                                                @if($applicant->user->canBeZipped())
-                                                <a href="javascript:void(0)" onclick="promptDownloadUserReport({{$applicant->user_id}})"  data-toggle="tooltip"  class="font-weight-normal text-xs text-success">
-                                                 <i class="material-icons">file_download</i>
-                                                </a>
-                                                @endif
-
-                                           
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                  </table>
+                                <div class="nav-wrapper position-relative end-0">
+                                    <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                                      <li class="nav-item" onclick="show('in_progress')">
+                                        <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab"  role="tab" aria-controls="preview" aria-selected="true" >
+                                        <span class="material-icons align-middle mb-1">
+                                          location_city
+                                        </span>
+                                        In Progress
+                                        </a>
+                                      </li>
+                                      <li class="nav-item" onclick="show('deployed')">
+                                        <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab"  role="tab" aria-controls="code" aria-selected="false" >
+                                          <span class="material-icons align-middle mb-1">
+                                              group
+                                          </span>
+                                          Deployed
+                                        </a>
+                                      </li>
+                                    </ul>
+                                  </div>
+    
+    
+    
+    
+                                <div class="table-responsive" id="tbl_in_progress">
+                                    <div class="table-responsive">
+                                        <table class="table align-items-center mb-0">
+                                          <thead>
+                                            <tr>
+                                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Name</th>
+                                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Job</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Personal Assessment</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Exam</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Score</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Status</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                              @foreach($applicants as $applicant)
+                                              <tr>
+                                                  <td>
+                                                      <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                          <h6 class="mb-0 text-xs">{{ $applicant->user->fullname }}</h6>
+                                                          <p class="text-xs text-secondary mb-0"> {{$applicant->user->email}} </p>
+                                                        </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>
+                                                      <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                          <h6 class="mb-0 text-xs">{{ $applicant->job->job_title }}</h6>
+                                                          <p class="text-xs text-secondary mb-0"> {{$applicant->job->job_group}} | {{$applicant->job->department_name}}</p>
+                                                        </div>
+                                                      </div>
+                                                  </td>
+                                                  <td class="align-middle text-center">
+      
+                                                      @if($applicant->user->assessments()->count() > 0)
+                                                      <span class="badge bg-gradient-success"> Finished </span> <br> 
+                                                      <a href="{{route('personal-assessments.view', $applicant->user->assessments()->first()->batch_id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+      
+                                                      @else
+                                                      <span class="badge bg-gradient-default"> Pending </span> <br> 
+      
+                                                      @endif
+      
+                                                  </td>
+                                                  <td class=" text-center">
+                                                      @if($applicant->userQuiz)
+      
+                                                          {{-- <div class="progress" style="width:100%; margin-top:-8px"> --}}
+                                                              {{-- @if($applicant->userQuiz->percentage < 50)
+                                                                  <div class="progress-bar bg-gradient-danger text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}% </div>
+                                                              @elseif($applicant->userQuiz->percentage >= 50 &&  $applicant->userQuiz->percentage <= 75)
+                                                                  <div class="progress-bar bg-gradient-secondary text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>
+                                                              @else
+                                                                  <div class="progress-bar bg-gradient-success text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>    
+                                                              @endif --}}
+                                                              @if($applicant->userQuiz->is_passed)
+                                                              <span class="badge bg-gradient-success"> Passed </span> <br> 
+                                                              @else
+                                                              <span class="badge bg-gradient-danger"> Failed </span> <br> 
+                                                              @endif
+                                                              <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+      
+      
+      
+                                                          {{-- </div> --}}
+           
+      
+                                                          @else
+                                                              N/A
+                                                          @endif
+                                                  </td>
+                                                  <td class=" text-center">
+                                                      @if($applicant->userQuiz)
+                                                          {{$applicant->userQuiz->score}} / {{$applicant->job->quiz->questions->count()}}
+                                                      @else
+                                                          N/A
+                                                      @endif
+                                                  </td>
+                                                  <td class="align-middle text-center">
+                                                      @if($applicant->status == 'WAITING_FOR_EXAM_RESULT')
+                                                      <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='EXAM_PASSED')
+                                                      <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='EXAM_FAILED')
+                                                      <span class="badge bg-gradient-danger">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='INTERVIEW_SENT')
+                                                      <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='FOR_SENDING_INTERVIEW')
+                                                      <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='REJECTED')
+                                                      <span class="badge bg-gradient-danger">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='APPROVED')
+                                                      <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='FOR_REQUIREMENTS')
+                                                      <span class="badge bg-gradient-info">{{ $applicant->status_name }} {{$applicant->user->requirement_summary}} </span> <br> 
+                                                      <a href="{{route('requirements.index',['ids'=>implode(',',$applicant->user->requirements->pluck('id')->toArray())])}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+                                                      @elseif($applicant->status=='JOB_OFFER')
+                                                      <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='DEPLOYED')
+                                                      <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='CANCELLED')
+                                                      <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
+                                                      @endif
+                                                  </td>
+                                                  <td class="align-middle text-center">
+                                                    <a href="{{route('user-job.show', $applicant->id)}}" class="font-weight-normal text-xs " data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                        <i class="material-icons">rate_review
+                                                        </i>
+                                                    </a>   
+                                                      @if(!auth()->user()->isApplicant())
+                                                          <!-- Step 1 Send Interview Mail -->
+                                                          <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'SEND_INTERVIEW')" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                              <i class="material-icons">mail</i>
+                                                          </a>
+                                                          <!-- Step X Reject Application  Can be done everytime -->
+                                                          <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'REJECTED')" class="font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
+                                                              <i class="material-icons">cancel</i>
+                                                          </a>
+      
+                                                          <!-- Step 2 Job Offer -->
+                                                          <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
+                                                              <i class="material-icons">event_available</i>
+                                                          </a>
+      
+                                                          <!-- Step 3 Job Offer Approved - Applicant will now be FOR Requirements -->
+                                                          <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'APPROVED')" class="font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
+                                                              <i class="material-icons">check_circle</i>
+                                                          </a>
+      
+                                                          @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status == \app\Models\UserJobApplication::FOR_REQUIREMENTS )
+                                                          <!-- Deployment -->
+                                                          <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'DEPLOYED')" class="font-weight-normal text-xs text-warning" data-toggle="tooltip" data-original-title="Edit item">
+                                                              <i class="material-icons">work</i>
+                                                          </a>
+                                                          @endif
+                                                      @else
+                                                          <!-- This means currently logged in is applicant !-->
+                                                          @if($applicant->userQuiz)
+                                                              <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                                  <i class="material-icons">question_answer</i>
+                                                              </a>
+                                                          @else
+                                                          <a href="{{route('user-quiz.take', $applicant->id)}}" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                              <i class="material-icons">laptop</i>
+                                                          </a>
+                                                          @endif
+                                                      @endif
+      
+                                                      @if($applicant->user->canBeZipped())
+                                                      <a href="javascript:void(0)" onclick="promptDownloadUserReport({{$applicant->user_id}})"  data-toggle="tooltip"  class="font-weight-normal text-xs text-success">
+                                                       <i class="material-icons">file_download</i>
+                                                      </a>
+                                                      @endif
+      
+                                                 
+                                                  </td>
+                                              </tr>
+                                              @endforeach
+                                          </tbody>
+                                        </table>
+                                      </div>
                                 </div>
-                              </div>
+                                <div class="table-responsive" id="tbl_deployed" style="display:none">
+                                    <div class="table-responsive">
+                                        <table class="table align-items-center mb-0">
+                                          <thead>
+                                            <tr>
+                                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Name</th>
+                                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Job</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Personal Assessment</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Exam</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Score</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Status</th>
+                                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                              @foreach($deployed as $applicant)
+                                              <tr>
+                                                  <td>
+                                                      <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                          <h6 class="mb-0 text-xs">{{ $applicant->user->fullname }}</h6>
+                                                          <p class="text-xs text-secondary mb-0"> {{$applicant->user->email}} </p>
+                                                        </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>
+                                                      <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                          <h6 class="mb-0 text-xs">{{ $applicant->job->job_title }}</h6>
+                                                          <p class="text-xs text-secondary mb-0"> {{$applicant->job->job_group}} | {{$applicant->job->department_name}}</p>
+                                                        </div>
+                                                      </div>
+                                                  </td>
+                                                  <td class="align-middle text-center">
+      
+                                                      @if($applicant->user->assessments()->count() > 0)
+                                                      <span class="badge bg-gradient-success"> Finished </span> <br> 
+                                                      <a href="{{route('personal-assessments.view', $applicant->user->assessments()->first()->batch_id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+      
+                                                      @else
+                                                      <span class="badge bg-gradient-default"> Pending </span> <br> 
+      
+                                                      @endif
+      
+                                                  </td>
+                                                  <td class=" text-center">
+                                                      @if($applicant->userQuiz)
+      
+                                                          {{-- <div class="progress" style="width:100%; margin-top:-8px"> --}}
+                                                              {{-- @if($applicant->userQuiz->percentage < 50)
+                                                                  <div class="progress-bar bg-gradient-danger text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}% </div>
+                                                              @elseif($applicant->userQuiz->percentage >= 50 &&  $applicant->userQuiz->percentage <= 75)
+                                                                  <div class="progress-bar bg-gradient-secondary text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>
+                                                              @else
+                                                                  <div class="progress-bar bg-gradient-success text-center" style="width: {{$applicant->userQuiz->percentage}}%; height:20px">{{$applicant->userQuiz->percentage}}%</div>    
+                                                              @endif --}}
+                                                              @if($applicant->userQuiz->is_passed)
+                                                              <span class="badge bg-gradient-success"> Passed </span> <br> 
+                                                              @else
+                                                              <span class="badge bg-gradient-danger"> Failed </span> <br> 
+                                                              @endif
+                                                              <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+      
+      
+      
+                                                          {{-- </div> --}}
+           
+      
+                                                          @else
+                                                              N/A
+                                                          @endif
+                                                  </td>
+                                                  <td class=" text-center">
+                                                      @if($applicant->userQuiz)
+                                                          {{$applicant->userQuiz->score}} / {{$applicant->job->quiz->questions->count()}}
+                                                      @else
+                                                          N/A
+                                                      @endif
+                                                  </td>
+                                                  <td class="align-middle text-center">
+                                                      @if($applicant->status == 'WAITING_FOR_EXAM_RESULT')
+                                                      <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='EXAM_PASSED')
+                                                      <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='EXAM_FAILED')
+                                                      <span class="badge bg-gradient-danger">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='INTERVIEW_SENT')
+                                                      <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='FOR_SENDING_INTERVIEW')
+                                                      <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='REJECTED')
+                                                      <span class="badge bg-gradient-danger">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='APPROVED')
+                                                      <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='FOR_REQUIREMENTS')
+                                                      <span class="badge bg-gradient-info">{{ $applicant->status_name }} {{$applicant->user->requirement_summary}} </span> <br> 
+                                                      <a href="{{route('requirements.index',['ids'=>implode(',',$applicant->user->requirements->pluck('id')->toArray())])}}" class="text-xs font-weight-bold mb-0">Click to View</a>
+                                                      @elseif($applicant->status=='JOB_OFFER')
+                                                      <span class="badge bg-gradient-secondary">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='DEPLOYED')
+                                                      <span class="badge bg-gradient-success">{{ $applicant->status_name }}</span>
+                                                      @elseif($applicant->status=='CANCELLED')
+                                                      <span class="badge bg-gradient-info">{{ $applicant->status_name }}</span>
+                                                      @endif
+                                                  </td>
+                                                  <td class="align-middle text-center">
+                                                      @if(!auth()->user()->isApplicant())
+                                                          <!-- Step 1 Send Interview Mail -->
+                                                          <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'SEND_INTERVIEW')" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                              <i class="material-icons">mail</i>
+                                                          </a>
+                                                          <!-- Step X Reject Application  Can be done everytime -->
+                                                          <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'REJECTED')" class="font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
+                                                              <i class="material-icons">cancel</i>
+                                                          </a>
+      
+                                                          <!-- Step 2 Job Offer -->
+                                                          <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
+                                                              <i class="material-icons">event_available</i>
+                                                          </a>
+      
+                                                          <!-- Step 3 Job Offer Approved - Applicant will now be FOR Requirements -->
+                                                          <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'APPROVED')" class="font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
+                                                              <i class="material-icons">check_circle</i>
+                                                          </a>
+      
+                                                          @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status == \app\Models\UserJobApplication::FOR_REQUIREMENTS )
+                                                          <!-- Deployment -->
+                                                          <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'DEPLOYED')" class="font-weight-normal text-xs text-warning" data-toggle="tooltip" data-original-title="Edit item">
+                                                              <i class="material-icons">work</i>
+                                                          </a>
+                                                          @endif
+                                                      @else
+                                                          <!-- This means currently logged in is applicant !-->
+                                                          @if($applicant->userQuiz)
+                                                              <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                                  <i class="material-icons">question_answer</i>
+                                                              </a>
+                                                          @else
+                                                          <a href="{{route('user-quiz.take', $applicant->id)}}" class="font-weight-normal text-xs text-info" data-toggle="tooltip" data-original-title="Send interview email" tooltip="send intrer">
+                                                              <i class="material-icons">laptop</i>
+                                                          </a>
+                                                          @endif
+                                                      @endif
+      
+                                                      @if($applicant->user->canBeZipped())
+                                                      <a href="javascript:void(0)" onclick="promptDownloadUserReport({{$applicant->user_id}})"  data-toggle="tooltip"  class="font-weight-normal text-xs text-success">
+                                                       <i class="material-icons">file_download</i>
+                                                      </a>
+                                                      @endif
+      
+                                                 
+                                                  </td>
+                                              </tr>
+                                              @endforeach
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -257,7 +456,33 @@
 
 @section('scripts')
 <script>
+    function show(div){
+        in_progress = document.getElementById('tbl_in_progress');
+        deployed = document.getElementById('tbl_deployed');
+
+        in_progress.style.display = 'none'
+        deployed.style.display = 'none'
+
+        document.getElementById(`tbl_${div}`).style.display = null
+    }
     async function promptEmail(id, status){
+
+        const { isConfirmed} = await Swal.fire({
+            title: 'Is this an onsite interview?',
+            icon: 'warning',
+            showDenyButton: true,
+            // showCancelButton: true,
+            confirmButtonText: 'Yes',
+            denyButtonText: 'No',
+            customClass: {
+                actions: 'my-actions',
+                cancelButton: 'order-1 right-gap',
+                confirmButton: 'order-2',
+                denyButton: 'order-3',
+            },
+        })
+        console.log(isConfirmed)
+        const isOnsite = isConfirmed
         const status_text = status.replace("_", " ")
         const { value: url } = await Swal.fire({
                                     input: 'url',
@@ -267,6 +492,15 @@
         if(!url){
             return;
         }
+
+        const { value: notes } = await Swal.fire({
+            title: "Notes",
+            input: "text",
+            inputLabel: "Notes",
+            inputPlaceholder: "Enter Notes"
+        });
+
+
         var dtToday = new Date();
         var month = dtToday.getMonth() + 1;
         var day = dtToday.getDate();
@@ -310,7 +544,7 @@
                     },
                 });
 
-                await sendInterview(id, url, datetime, status)
+                await sendInterview(id, url, datetime, status, notes, isOnsite)
                 alert.close()
 
                 await Swal.fire(
@@ -323,11 +557,13 @@
         }
 
     }
-    async function sendInterview(id, link,datetime, status){
+    async function sendInterview(id, link,datetime, status, notes, isOnsite){
         const payload = {
             link: link,
             datetime: datetime,
-            status: status
+            status: status,
+            notes: notes,
+            is_onsite: isOnsite
         }
         const res = await fetch(`/job/send-interview/${id}`, {
             'method': 'POST',
@@ -344,23 +580,30 @@
     }
 
     async function promptStatus(id, status){
+
+            
         title = 'Confirmation'
         const status_text = status.replace("_", " "); 
         text = `Are you sure you want this application ${status_text}?`
+        let notes_type = ''
 
         if(status=='APPROVED'){
             status = 'FOR_REQUIREMENTS'
             title = 'Accept Job Offer'
             text = `Job Offer ACCEPTED?`
+            notes_type ='approved_notes'
         }
         if(status=='DEPLOYED'){
             title = 'Deploy Application'
             text = `Do you want to tag this applicant as DEPLOYED?`
+            notes_type ='deployed_notes'
+
 
         }
         if(status=='REJECTED'){
             title ='Reject Application'
             text = `Do you want to tag this applicant as REJECTED?`
+            notes_type ='rejected_notes'
 
         }
 
@@ -374,10 +617,17 @@
                 confirmButtonText: 'Yes'
             })
 
+
         if(!response.isConfirmed){
             return false;
 
         }
+        const { value: notes } = await Swal.fire({
+            title: "Notes",
+            input: "text",
+            inputLabel: "Notes",
+            inputPlaceholder: "Enter Notes"
+        });
         let alert = Swal.fire({
                     title: 'Processing',
                     timerProgressBar: true,
@@ -388,7 +638,7 @@
 
         const res = await fetch(`/job/${id}`, {
           'method': 'PATCH',
-          'body': JSON.stringify({status:status}),
+          'body': JSON.stringify({status:status, notes_type:notes_type, notes: notes}),
           'headers': {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -431,6 +681,8 @@
 
         document.getElementById('start_date').value = "{{request()->start_date == '' ? old('start_date') : request()->start_date }}"
         document.getElementById('end_date').value = "{{request()->end_date == '' ? old('end_date') : request()->end_date}}"
+
+        document.getElementById('job_id').value = "{{request()->job_id}}"
     })();
 
    

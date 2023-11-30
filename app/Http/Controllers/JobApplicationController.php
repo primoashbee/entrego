@@ -26,7 +26,7 @@ class JobApplicationController extends Controller
     {
         // return ManPower::all();
         $list = ManPower::JOB_GROUP;
-        $jobs = ManPower::active()->orderBy('id','desc')->get();
+        $jobs = ManPower::active()->where('expires_at', '>' ,now())->orderBy('id','desc')->get();
         return view('public.jobs',compact('jobs','list'));
     }
 
@@ -71,7 +71,7 @@ class JobApplicationController extends Controller
 
         $job = ManPower::findOrFail($id);
         auditLog($user->id, "Applied for a job [$job->job_title]");
-        if($job->quiz->has_passing_rate){
+        if($job->has_sjt && $job->quiz->has_passing_rate){
             $application = UserJobApplication::create([
                 'man_power_id'=>$id,
                 'user_id'=>$user->id,
@@ -112,12 +112,17 @@ class JobApplicationController extends Controller
         $user = auth()->user();
         $statuses = UserJobApplication::STATUSES;
         $departments = ManPower::DEPARTMENT;
+        $jobs = ManPower::select('id','job_title')->get();
 
 
         
         if($user->role === User::APPLICANT){
             $applicants = UserJobApplication::with('user.requirements','job')
                             ->where('user_id', $user->id)
+                            ->orderBy('id','desc')->get();
+            $deployed = UserJobApplication::with('user.requirements','job')
+                            ->where('user_id', $user->id)
+                            ->where('status', UserJobApplication::DEPLOYED)
                             ->orderBy('id','desc')->get();
         }else{
             // $applicants = UserJobApplication::with('user','job')
@@ -136,15 +141,18 @@ class JobApplicationController extends Controller
             //                                 })
             //                                 ->orderBy('id','desc')->get();
             $applicants = $this->generateList($request);
+            $deployed = $this->deployedList($request);
         }
 
 
-        return view('job-applications.index',compact('applicants', 'statuses','departments'));
+        return view('job-applications.index',compact('applicants', 'statuses','departments','deployed','jobs'));
     }
 
     public function sendInterview(Request $request, $id)
     {
+    
         $applicant = UserJobApplication::with('user','job')->findOrFail($id);
+        $status = $request->status;
         $fields = [
             'link'=>$request->link,
             'interview_date'=>Carbon::parse($request->datetime),
@@ -152,10 +160,15 @@ class JobApplicationController extends Controller
         if($request->status == 'SEND_INTERVIEW'){
             $fields['status'] = UserJobApplication::INTERVIEW_SENT;
             $fields['interview_sent_at'] = now();
+            $fields['send_interview_notes'] = $request->notes;
+            $fields['send_interview_onsite'] = $request->is_onsite;
+
         }
         if($request->status == 'JOB_OFFER'){
             $fields['status'] = UserJobApplication::JOB_OFFER;
             $fields['job_offered_at'] = now();
+            $fields['job_offer_interview_onsite'] = $request->is_onsite;
+
 
         }
         
@@ -255,6 +268,9 @@ class JobApplicationController extends Controller
             $user_job->update(['rejected_at'=>now()]);
 
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - REJECTED", $user_job);
+            $user_job->update([
+                'rejected_notes'=>$request->notes
+            ]);
         }elseif($request->status === UserJobApplication::APPROVED){
             Mail::to($user_job->user->email)
             ->send(
@@ -265,27 +281,40 @@ class JobApplicationController extends Controller
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - APPROVE", $user_job);
             $user_job->update(['approved_at'=>now()]);
             $user_job->update(['job_offer_accepted_at'=>now()]);
-
+            $user_job->update([
+                'approved_notes'=>$request->notes
+            ]);
 
         }
 
+        // Job Offer is accepted
         if($request->status == UserJobApplication::FOR_REQUIREMENTS){
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - FOR REQUIREMENTS", $user_job);
-            $user_job->update(['job_offer_accepted_at'=>now()]);
+            $user_job->update([
+                'job_offer_accepted_at'=>now(),
+                'accepted_job_offer_notes'=>$request->notes
+            ]);
 
         }
 
         if($status == UserJobApplication::DEPLOYED){
             $status = UserJobApplication::DEPLOYED;
+            $notes = $request->notes;
+
             $request->replace(['status' => $status]);
             $message = "Greetings, $name\n\nYou are now deployed as $job->job_title.\n\nThank you,\nEntregoHR" ;
             $client->sendSMS($user_job->user->contact_number, $message);
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - DEPLOYED", $user_job);
-            $user_job->update(['deployed_at'=>now()]);
+
+            $user_job->update([
+                'deployed_at'=>now(),
+                'deployed_notes'=> $notes
+            ]);
             $user_job->user->cancelJobApplications($id);
 
         }
-        $user_job->update($request->all());
+
+        $user_job->update($request->except('notes_type','notes'));
         
     }
 
@@ -300,7 +329,7 @@ class JobApplicationController extends Controller
         return $pdf->download("REPORT $id.pdf");
     }
 
-    public function generateList($request)
+    public function generateList($request, $deployed = false)
     {
   
         return UserJobApplication::with(['user','job.quiz.questions','userQuiz.quiz'=>function($q){
@@ -315,11 +344,46 @@ class JobApplicationController extends Controller
             ->when($request->status,function($q, $value){
                 $q->where('status', $value);
             })
+            ->when($deployed, function($q, $value){
+                dd($value);
+            })
             ->when($request->department,function($q, $value){
                 $q
                 ->whereRelation('job','department', $value);
             })
+            ->when($request->job_id, function($q, $value){
+                $q->where('man_power_id', $value);
+            })
             ->get();
             
+    }
+
+    public function deployedList($request)
+    {
+        return UserJobApplication::with(['user','job.quiz.questions','userQuiz.quiz'=>function($q){
+            $q->orderBy('userQuiz.score','desc');
+        }])
+        ->when($request->q, function($q, $value){
+            $q
+                ->whereRelation('user','email', 'LIKE' , "%$value%")
+                ->orWhereRelation('user','first_name', 'LIKE' , "%$value%")
+                ->orWhereRelation('user','last_name', 'LIKE' , "%$value%");
+        })
+        ->when($request->department,function($q, $value){
+            $q
+            ->whereRelation('job','department', $value);
+        })
+        ->when($request->job_id, function($q, $value){
+            $q->where('man_power_id', $value);
+        })
+        ->where('status', UserJobApplication::DEPLOYED)
+        ->get();
+    }
+
+    public function show($id)
+    {   
+        $application = UserJobApplication::with('user','job')->findOrFail($id);
+        $other_jobs = $application->user->jobApplications()->where('id','!=', $id)->with('job')->get();
+        return view('job-applications.show', compact('application','other_jobs'));
     }
 }

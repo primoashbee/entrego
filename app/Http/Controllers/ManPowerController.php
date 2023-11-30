@@ -9,7 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StoreManPowerRequest;
 use App\Http\Requests\UpdateManPowerRequest;
+use App\Mail\ManPowerRequestChanged;
+use App\Models\Department;
+use App\Models\JobLevel;
+use App\Models\Location;
 use App\Models\UserJobApplication;
+use Illuminate\Support\Facades\Mail;
 
 class ManPowerController extends Controller
 {
@@ -31,14 +36,19 @@ class ManPowerController extends Controller
     {   
         $job_group = ManPower::JOB_GROUP;
         $experiences = ManPower::EXPERIENCES;
-        $departments = ManPower::DEPARTMENT;
         $vacancies = ManPower::VACANCIES;
+
+        // $departments = ManPower::DEPARTMENT;
+        $departments = Department::select('key','value')->orderBy('value','desc')->get();
+        $locations = Location::select('key','value')->orderBy('value','desc')->get();
+        $levels = JobLevel::select('key','value')->orderBy('value','desc')->get();
         $quizzes = Quiz::select('id','name')->orderBy('id','desc')->get();
-        return view('manpower.create', compact('job_group', 'experiences', 'departments','vacancies', 'quizzes'));
+        return view('manpower.create', compact('job_group', 'experiences', 'departments','vacancies', 'quizzes','locations','levels'));
     }
 
     public function store(StoreManPowerRequest $request)
     {
+
         $id = ManPower::create([
             'requested_by'=> auth()->user()->id,
             'job_title'=> $request->job_title,
@@ -80,7 +90,10 @@ class ManPowerController extends Controller
         $res = $manpower->update($request->all());
         $status = $request->active == 1 ? "turned ON" : "turned OFF";
         auditLog(auth()->user()->id, "Manpower request[$manpower->job_title] $status", $manpower);
-
+        Mail::to($manpower->requestor->email)
+            ->send(
+                new ManPowerRequestChanged($manpower)
+            );
         return response()->json(compact('res'), $status = 200);
     }
 
@@ -88,12 +101,15 @@ class ManPowerController extends Controller
     {
         $job_group = ManPower::JOB_GROUP;
         $experiences = ManPower::EXPERIENCES;
-        $departments = ManPower::DEPARTMENT;
         $vacancies = ManPower::VACANCIES;
         $manpower = ManPower::findOrFail($id);
+
+        $departments = Department::select('key','value')->orderBy('value','desc')->get();
+        $locations = Location::select('key','value')->orderBy('value','desc')->get();
+        $levels = JobLevel::select('key','value')->orderBy('value','desc')->get();
         $quizzes = Quiz::select('id','name')->orderBy('id','desc')->get();
 
-        return view('manpower.edit', compact('manpower','job_group', 'experiences', 'departments','vacancies','quizzes'));
+        return view('manpower.edit', compact('manpower','job_group', 'experiences', 'departments','vacancies','quizzes','locations','levels'));
     }
 
     public function update(UpdateManPowerRequest $request, $id)

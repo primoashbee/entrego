@@ -38,6 +38,7 @@
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Department</th>
                                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Requested At</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Expires At</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                                       </tr>
                                     </thead>
@@ -81,6 +82,9 @@
                                         </td>
                                         <td>
                                             <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->created_at->diffForHumans() }}</p>
+                                          </td>
+                                        <td>
+                                            <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->expires_at_name }}</p>
                                           </td>
                                         <td class="align-middle">
                                           <a href="{{route('manpower.edit', $item->id)}}" class="text-secondary font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
