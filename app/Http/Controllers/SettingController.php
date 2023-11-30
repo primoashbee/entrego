@@ -73,7 +73,32 @@ class SettingController extends Controller
 
     public function edit($type, $id)
     {
-        $model;
+        $model = $this->getModel($type);
+        $item = $model->find($id);
+        $allowed = ['location','department','job_level'];
+        if(!in_array($type, $allowed)){
+            return redirect()->route('settings.index');
+        }
+        $type_label =  ucfirst(str_replace("_", " ", $type)) . 's';
+        return view('settings.edit', compact('type','id','item','type_label'));
+    }
+
+    public function patch(Request $request, $type, $id)
+    {
+        $model = $this->getModel($type);
+        $model->find($id)->update($request->except('_token','_method'));
+        return redirect()->route('settings.index');
+    }
+
+    public function delete(Request $request, $type, $id)
+    {
+        $model = $this->getModel($type);
+        $model->find($id)->delete();
+        return response()->json([], 204);
+    }
+
+    private function getModel($type)
+    {
         switch($type){
             case 'location':
                 $model = Location::query();
@@ -85,8 +110,6 @@ class SettingController extends Controller
                 $model = JobLevel::query();
                 break;
         }
-
-        dd($model);
-        return view('settings.edit', compact('type','id'));
+        return $model;
     }
 }

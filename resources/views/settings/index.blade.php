@@ -54,8 +54,8 @@
 
                                 <!-- Locations Table -->
                                 <div class="table-responsive" id="tbl_locations">
-                                <h1> Locations </h1>
-                                <a href="{{route('settings.create', 'location')}}" class="btn btn-success" style="float: right; margin-bottom: 0%">Add New Location</a>
+                                    <h1> Locations </h1>
+                                    <a href="{{route('settings.create', 'location')}}" class="btn btn-success" style="float: right; margin-bottom: 0%">Add New Location</a>
                                   <table class="table align-items-center mb-0">
                                     <thead>
                                       <tr>
@@ -69,8 +69,11 @@
                                         @foreach($locations as $item)
                                         <tr>
                                             <td>{{$item->value}}</td>
-                                            <td></td>
-                                        </tr>
+                                            <td class="text-center">
+                                              <a href="{{route('settings.edit',['type'=>'location', 'id'=> $item->id])}}"> Edit </a> |
+                                              <a href="javascript:void(0)" onclick="deleteSetting('{{route('settings.delete',['type'=>'location', 'id'=> $item->id])}}')" url="{{route('settings.delete',['type'=>'location', 'id'=> $item->id])}}"> Delete </a>
+                                            </td>
+                                          </tr>
                                         @endforeach
                                     </tbody>
                                   </table>
@@ -94,7 +97,11 @@
                                             @foreach($departments as $item)
                                             <tr>
                                                 <td>{{$item->value}}</td>
-                                                <td></td>
+                                                <td class="text-center">
+                                                  <a href="{{route('settings.edit',['type'=>'department', 'id'=> $item->id])}}"> Edit </a> | 
+                                                  <a href="javascript:void(0)" onclick="deleteSetting('{{route('settings.delete',['type'=>'department', 'id'=> $item->id])}}')" url="{{route('settings.delete',['type'=>'department', 'id'=> $item->id])}}"> Delete </a>
+
+                                                </td>
                                             </tr>
                                             @endforeach
                                     </tbody>
@@ -118,8 +125,12 @@
                                         @foreach($job_levels as $item)
                                         <tr>
                                             <td>{{$item->value}}</td>
-                                            <td></td>
-                                        </tr>
+                                            <td class="text-center">
+                                              <a href="{{route('settings.edit',['type'=>'job_level', 'id'=> $item->id])}}"> Edit </a> | 
+                                              
+                                              <a href="javascript:void(0)" onclick="deleteSetting('{{route('settings.delete',['type'=>'job_level', 'id'=> $item->id])}}')" url="{{route('settings.delete',['type'=>'job_level', 'id'=> $item->id])}}"> Delete </a>
+                                            </td>
+                                          </tr>
                                         @endforeach
                                     </tbody>
                                   </table>
@@ -148,6 +159,36 @@ function show(div){
   job_levels.style.display = 'none'
 
   document.getElementById(`tbl_${div}`).style.display = null
+}
+
+async function deleteSetting(url){
+
+  const {isConfirmed} = await Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+  })
+
+  if(!isConfirmed){
+    return;
+  }
+  const result = await fetch(url, {
+    'headers': {
+                  "X-CSRF-Token": '{{csrf_token()}}' 
+              },
+    method: 'DELETE'
+  })
+  const response = result.json()
+  await Swal.fire({
+    title: "Success",
+    text: "Record deleted",
+    icon: "success"
+  });
+  location.reload()
 }
 </script>
 @endsection

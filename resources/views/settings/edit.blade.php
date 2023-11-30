@@ -19,8 +19,10 @@
                             <div class="card-body">
                                 <form action="{{ route('settings.patch', ['type'=>$type, 'id'=>$item->id]) }}" method="POST">
                                     @csrf
+                                    @method('PATCH')
                                     <div class="input-group input-group-static my-3">
-                                        <label class="">Location Name</label>
+                                        
+                                        <label class="">{{substr($type_label, 0, -1)}} Name</label>
                                         <input type="text" name="value" class="form-control"
                                             onfocus="focused(this)" onfocusout="defocused(this)" 
                                             value="{{$item->value}}"

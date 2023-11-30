@@ -125,6 +125,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/settings/create/{type}', [SettingController::class, 'store'])->name('settings.store');
     Route::get('/settings/{type}/{id}', [SettingController::class, 'edit'])->name('settings.edit');
     Route::patch('/settings/{type}/{id}', [SettingController::class, 'patch'])->name('settings.patch');
+    Route::delete('/settings/{type}/{id}', [SettingController::class, 'delete'])->name('settings.delete');
 
 
 });
