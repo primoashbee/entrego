@@ -43,7 +43,7 @@
                             </div>
 
                             <hr class="dark horizontal my-0">
-                            <div class="card-footer p-3">
+                            {{-- <div class="card-footer p-3">
                                 @if($manpower->variation < 0)
                                 <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">{{$manpower->variation}}% </span>than
                                     last month
@@ -54,7 +54,7 @@
                                 </p>
                                 @endif
 
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="col-lg-6 col-sm-6">
@@ -80,7 +80,7 @@
                             </div>
 
                             <hr class="dark horizontal my-0">
-                            <div class="card-footer p-3">
+                            {{-- <div class="card-footer p-3">
                                 @if($manpower->variation < 0)
                                 <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">{{$manpower->variation}}% </span>than
                                     last month
@@ -90,7 +90,7 @@
                                     last month
                                 </p>
                                 @endif
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="col-lg-6 col-sm-6">
@@ -138,7 +138,7 @@
                             </div>
 
                             <hr class="dark horizontal my-0">
-                            <div class="card-footer p-3">
+                            {{-- <div class="card-footer p-3">
                                 @if($manpower->variation < 0)
                                 <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">{{$manpower->variation}}% </span>than
                                     last month
@@ -148,7 +148,7 @@
                                     last month
                                 </p>
                                 @endif
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="col-lg-6 col-sm-6">
@@ -174,7 +174,7 @@
                             </div>
 
                             <hr class="dark horizontal my-0">
-                            <div class="card-footer p-3">
+                            {{-- <div class="card-footer p-3">
                                 @if($manpower->variation < 0)
                                 <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">{{$manpower->variation}}% </span>than
                                     last month
@@ -184,7 +184,7 @@
                                     last month
                                 </p>
                                 @endif
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
