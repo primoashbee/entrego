@@ -29,7 +29,7 @@ class UserController extends Controller
         //     dd($query);
         // })
         ->where('is_archived', false)
-        ->whereIn('role', [User::APPLICANT, User::SUB_HR])
+        ->whereIn('role', [User::APPLICANT, User::SUB_HR, User::HR])
         ->when($request->q, function($q, $value){
                 $q->where('email', 'LIKE' , "%$value%");
                 $q->orWhere('first_name', 'LIKE' , "%$value%");
@@ -232,20 +232,24 @@ class UserController extends Controller
     {
 
         $active_users = User::query()
-        ->when(request('query', false), function($q, $query){    
-            dd($query);
+        ->when($request->q, function($q, $value){    
+            $q->orWhere('email', 'LIKE' , "%$value%");
+            $q->orWhere('first_name', 'LIKE' , "%$value%");
+            $q->orWhere('last_name', 'LIKE' , "%$value%");
         })
         ->where('is_archived', false)
         ->where('role', User::APPLICANT)
         ->paginate(15);
 
 
-        $archived_users = User::query()
-        ->when(request('query', false), function($q, $query){    
-            dd($query);
+        $archived_users = User::when($request->q, function($q, $value){    
+            // $q->where('email', 'LIKE' , "%$value%");
+            // $q->orWhere('first_name', 'LIKE' , "%$value%");
+            // $q->orWhere('last_name', 'LIKE' , "%$value%");
         })
-        ->where('is_archived', true)
         ->where('role', User::APPLICANT)
+        ->where('is_archived', true)
+
         ->paginate(15);
         
         return view('user.index', compact('active_users','archived_users'));

@@ -106,6 +106,7 @@ class JobApplicationController extends Controller
     {
 
         $for_report = $request->has('export');
+        // dd($request->all());
         if($for_report){
             // return $this->showReport(compact('applicants', 'statuses','departments'));
             return redirect()->route('user-job.report', $request->query());

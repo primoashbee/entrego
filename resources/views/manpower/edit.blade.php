@@ -7,7 +7,30 @@
         @csrf
         <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-4"></div>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body">
+                            Logs
+                            @foreach($manpower->notes as $log)
+                            <ul class="list-group list-group-flush">
+                            <figure>
+
+                                <blockquote class="blockquote">
+                                    
+                                <p class="ps-2" ><small>
+                                        Notes: {{$log->notes}}
+                                        </small>
+                                    </p>
+                                </blockquote>
+                                <figcaption class="blockquote-footer ps-3">
+                                {{$log->doneBy->fullname}} <cite title="Source Title">{{$log->created_at->diffForHumans()}}</cite>
+                                </figcaption>
+                            </figure>
+                            </ul>
+                        @endforeach
+                        </div>
+                    </div>
+                </div>
                 <div class="col-lg-8 position-relative z-index-2">
                     <!-- Accounts Languages -->
                     <div class="row mt-4">

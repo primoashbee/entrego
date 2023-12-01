@@ -255,4 +255,8 @@ class ManPower extends Model
         return $this->belongsTo(Location::class, 'location','key');
     }
   
+    public function notes()
+    {
+        return $this->hasMany(ManPowerNotes::class);
+    }
 }

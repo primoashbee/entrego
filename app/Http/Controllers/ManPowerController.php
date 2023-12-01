@@ -20,13 +20,22 @@ class ManPowerController extends Controller
 {
     public function index()
     {
-        $list = ManPower::when(auth()->user()->role === User::SUB_HR, function($q, $value){
-            $q->where('requested_by', auth()->user()->id);
-        })
-        ->withCount(['applications'=> function($q){
-            $q->whereStatus(UserJobApplication::DEPLOYED);
-        }])
-        ->get();
+        $user = auth()->user();
+
+        if($user->role == User::ADMINSTRATOR){
+            $list = ManPower::withCount(['applications'=> function($q){
+                $q->whereStatus(UserJobApplication::DEPLOYED);
+            }])
+            ->get();
+        }
+        if($user->role == User::SUB_HR){
+            $list = ManPower::withCount(['applications'=> function($q){
+                $q->whereStatus(UserJobApplication::DEPLOYED);
+            }])
+            ->where('requested_by', $user->id)
+            ->get();
+        }
+
         // ->paginate(15);
 
         return view('manpower.index', compact('list'));
@@ -96,6 +105,7 @@ class ManPowerController extends Controller
     {
         $manpower = ManPower::find($id);
         $res = $manpower->update($request->all());
+
         $status = $request->active == 1 ? "turned ON" : "turned OFF";
         auditLog(auth()->user()->id, "Manpower request[$manpower->job_title] $status", $manpower);
         Mail::to($manpower->requestor->email)
@@ -110,7 +120,7 @@ class ManPowerController extends Controller
         $job_group = ManPower::JOB_GROUP;
         $experiences = ManPower::EXPERIENCES;
         $vacancies = ManPower::VACANCIES;
-        $manpower = ManPower::findOrFail($id);
+        $manpower = ManPower::with(['notes'=>function($q){ $q->orderBy('id','desc');}])->findOrFail($id);
 
         $departments = Department::select('key','value')->orderBy('value','desc')->get();
         $locations = Location::select('key','value')->orderBy('value','desc')->get();
@@ -125,17 +135,31 @@ class ManPowerController extends Controller
         $manpower = ManPower::findOrFail($id);
 
         if($request->has('has_sjt') && $request->has_sjt == 'on'){
-            $request->merge(['has_sjt'=>true]);
+            $request->merge(['has_sjt'=>1]);
         }else{
             
-            $request->request->add(['has_sjt'=>false]);
+            $request->request->add(['has_sjt'=>0]);
         }
-
         $manpower->update(
             $request->all()
         );
-        Session::flash("success", "Manpower has been updated.");
-        auditLog(auth()->user()->id, "Updated manpower request - $manpower->job_title", $manpower);
+        $user = auth()->user()->full_name;
+        $changes = $manpower->getChanges();
+        if(count($changes)){
+            $fields = "$user made changes in ";
+            foreach($changes as $key=>$change){
+                if($key != 'updated_at'){
+                    $fields.= "$key = $change, ";
+                }
+            }
+            $fields = rtrim($fields,", ") . ".";
+
+            Session::flash("success", "Manpower has been updated.");
+            $note = "Updated manpower request - $manpower->job_title. $fields";
+            auditLog(auth()->user()->id, $note , $manpower);
+            $manpower->notes()->create(['done_by'=>auth()->user()->id,'notes'=>$note]);
+        }
+       
 
         return redirect()->route('manpower.edit', $id);
 

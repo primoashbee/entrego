@@ -32,7 +32,7 @@ id="sidenav-main">
         </li>
         @endif
 
-        @if($user->role == "ADMINISTRATOR" || $user->role =="SUB_HR")
+        @if($user->role == "ADMINISTRATOR" || $user->role =="SUB_HR" || $user->role == "HR")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('manpower.index')}}">
 

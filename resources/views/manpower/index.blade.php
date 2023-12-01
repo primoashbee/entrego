@@ -30,7 +30,6 @@
                                     <thead>
                                       <tr>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Job Tile</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Job Group</th>
                                         {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">E-mail</th> --}}
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Job Nature</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Vacancies </th>
@@ -48,9 +47,7 @@
                                         <td>
                                             <a href="{{route('job.create', $item->id)}}" target="_blank"><p class="text-center text-xs font-weight-bold mb-0">{{ $item->job_title }}</p></a>
                                         </td>
-                                        <td>
-                                          <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->job_group_name }}</p>
-                                        </td>
+
                                         <td>
                                           <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->job_nature_name }}</p>
                                         </td>

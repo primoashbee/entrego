@@ -146,7 +146,7 @@
                                           <span class="badge badge-sm badge-success"> {{$user->contact}} </span>
                                         </td>
                                         <td class="align-middle text-center">
-                                          <span class="text-secondary text-xs font-weight-normal"> {{ $user->archived_at->diffForHumans() }}</span>
+                                          <span class="text-secondary text-xs font-weight-normal"> {{ $user->archived_at?->diffForHumans() }}</span>
                                         </td>
                                         <td class="align-middle text-center">
                                           <a href="{{route('users.edit', $user->id)}}" class="text-secondary font-weight-normal text-xs" data-toggle="tooltip" data-original-title="Edit user">
