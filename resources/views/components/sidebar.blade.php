@@ -45,7 +45,7 @@ id="sidenav-main">
         </li>
         @endif
 
-        @if(in_array($user->role == "ADMINISTRATOR", ['ADMINISTRATOR','SUB_HR']))
+        @if(in_array($user->role == "ADMINISTRATOR", ['ADMINISTRATOR','SUB_HR','HR']))
         <li class="nav-item">
             <a class="nav-link text-white " href="{{ route('quiz.index') }}">
 
