@@ -20,9 +20,9 @@ class QuizController extends Controller
             return abort(403);
         }
         if($user->role ==  User::ADMINSTRATOR){
-            $list = Quiz::with('createdBy')->withCount('questions')->where('delete', false)->get();
+            $list = Quiz::with('createdBy')->withCount('questions')->where('hidden', false)->get();
         }else{
-            $list = Quiz::with('createdBy')->withCount('questions')->where('delete', false)->where('created_by', $user->id)->get();
+            $list = Quiz::with('createdBy')->withCount('questions')->where('hidden', false)->where('created_by', $user->id)->get();
 
         }
 
