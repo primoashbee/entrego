@@ -3,18 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quiz;
+use App\Models\User;
 use App\Models\ManPower;
 use Illuminate\Http\Request;
+use App\Models\QuizQuestions;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreQuizRequest;
 use App\Http\Requests\UpdateQuizRequest;
-use App\Models\QuizQuestions;
 
 class QuizController extends Controller
 {
     public function index()
     {
-        $list = Quiz::with('createdBy')->withCount('questions')->get();
+        $user = auth()->user();
+        if($user->role ==  User::APPLICANT){
+            return abort(403);
+        }
+        if($user->role ==  User::ADMINSTRATOR){
+            $list = Quiz::with('createdBy')->withCount('questions')->get();
+        }else{
+            $list = Quiz::with('createdBy')->withCount('questions')->where('created_by', $user->id)->get();
+
+        }
+
+
         return view('quiz.index', compact('list'));
     }
 
