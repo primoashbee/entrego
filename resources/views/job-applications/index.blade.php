@@ -460,7 +460,8 @@
     const raw_users = @json($staffs);
     const users_model = {}
     raw_users.forEach((user)=>{
-        users_model[user.id] = `${user.first_name} - ${user.last_name} [${user.role}]` 
+        role = user.role = "SUB_HR" ? : "DEPARTMENT HEAD" : "HR"
+        users_model[user.id] = `${user.first_name} - ${user.last_name} [${role}]` 
     })
 
     console.log(users_model)
