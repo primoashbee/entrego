@@ -15,4 +15,9 @@ class UserArchiveLogs extends Model
         return $this->status === 1 ? 'Active' : 'Archived';
     }
 
+    public function doneBy()
+    {
+        return $this->belongsTo(User::class,'done_by','id');
+    }
+
 }

@@ -20,6 +20,8 @@ class QuizController extends Controller
 
     public function create()
     {
+        return redirect()->route('v2.quiz.create');
+
         $job_group = ManPower::JOB_GROUP;
         return view('quiz.create', compact('job_group'));
     }
@@ -71,6 +73,9 @@ class QuizController extends Controller
     }
     public function edit($id)
     {
+        
+        return redirect()->route('v2.quiz.edit', ['id'=>$id]);
+
         $quiz = Quiz::with('questions')->findOrFail($id);
         $job_group = ManPower::JOB_GROUP;
         return view('quiz.edit',compact('quiz','job_group'));

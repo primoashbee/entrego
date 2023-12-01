@@ -28,7 +28,7 @@ class JobRejectedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Job Rejected Mail',
+            subject: 'Job Rejected',
         );
     }
 

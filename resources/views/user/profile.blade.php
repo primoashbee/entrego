@@ -314,53 +314,76 @@
                     <button class="btn text-right btn-primary" type="submit">Update Profile</button>
                 </div>
                 </form>
-                <div class="col-sm 12 col-lg-2">
-                    <div class="row mt-4">
-                        <div class="card mb-4">
-                            <div class="d-flex">
-                                <div
-                                    class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
-                                    <i class="material-icons opacity-10" aria-hidden="true">check</i>
-                                </div>
-                                <h6 class="mt-3 mb-2 ms-3 ">Status</h6>
+                @if(auth()->user()->role != 'APPLICANT')
 
-                            </div>
-                            <div class="card-body">
-                                <form action="{{route('profile.patch', $user->id)}}" method="POST">
-                                    @method('PATCH')
-                                    @csrf
-                                    <div class="col-md-12">
-                                        <div class="input-group input-group-static"><label class="">Status</label>
-                                            <select
-                                                class="form-control" name="archive_status" id="archive_status" v-model="archive_status"
-                                            >
-                                                <option value="ACTIVE">Active</option>
-                                                <option value="ARCHIVED">Archived</option>
-                                            </select>
-                                        </div>
-                                        <div class="input-group input-group-static">
-                                            <label class="">Notes</label>
-                                            <textarea class="form-control" name="archive_notes" type="textarea" rows="5" > </textarea>
-                                        </div>
-
-                                        <input type="submit" class="btn btn-primary text-right float-right">
+                    <div class="col-sm 12 col-lg-2">
+                        <div class="row mt-4">
+                            <div class="card mb-4">
+                                <div class="d-flex">
+                                    <div
+                                        class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
+                                        <i class="material-icons opacity-10" aria-hidden="true">check</i>
                                     </div>
-                                </form>
-                                <ul>
-                                    @foreach($user->archiveLogs as $log)
-                                    <li>
-                                        Account set to {{$log->status_name}}. <br>
-                                        Notes: {{$log->notes}} <br>
-                                        Date: {{$log->created_at->diffForHumans()}}
-                                    </li>
-                                    @endforeach
-                                </ul>
+                                    <h6 class="mt-3 mb-2 ms-3 ">Status</h6>
+
+                                </div>
+                                <div class="card-body">
+                                    <form action="{{route('profile.patch', $user->id)}}" method="POST">
+                                        @method('PATCH')
+                                        @csrf
+                                        <div class="col-md-12">
+                                            <div class="input-group input-group-static"><label class="">Status</label>
+                                                <select
+                                                    class="form-control" name="archive_status" id="archive_status" v-model="archive_status"
+                                                >
+                                                    <option value="ACTIVE">Active</option>
+                                                    <option value="ARCHIVED">Archived</option>
+                                                </select>
+                                            </div>
+                                            <div class="input-group input-group-static">
+                                                <label class="">Notes</label>
+                                                <textarea class="form-control" name="archive_notes" type="textarea" rows="5" > </textarea>
+                                            </div>
+
+                                            <input type="submit" class="btn btn-primary text-right float-right" style="float: right;">
+                                        </div>
+                                    </form>
+
+                                </div>
                             </div>
 
+                            <div class="card">
+                                <div class="card-body">
+                                    @foreach($user->archiveLogs as $log)
+                                    <ul class="list-group list-group-flush">
+                                    <figure>
+                                        <p>                                                   
+                                            <small>Account was set to
+                                                @if($log->status_name =='Archived')
+                                                <span class="font-weight-bold text-danger">{{$log->status_name}}</span>
+                                                @else 
+                                                <span class="font-weight-bold text-success">{{$log->status_name}}</span>
+                                                @endif
+                                            </small> 
+                                        </p>
+                                        <blockquote class="blockquote">
+                                            
+                                        <p class="ps-2" ><small>
+                                                Notes: {{$log->notes}}
+                                                </small>
+                                            </p>
+                                        </blockquote>
+                                        <figcaption class="blockquote-footer ps-3">
+                                        {{$log->doneBy->fullname}} <cite title="Source Title">{{$log->created_at->diffForHumans()}}</cite>
+                                        </figcaption>
+                                    </figure>
+                                    </ul>
+                                @endforeach
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                </div>
+                @endif
             </div>
             @include('components.footer')
         </div>

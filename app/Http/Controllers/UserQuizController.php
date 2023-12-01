@@ -89,6 +89,7 @@ class UserQuizController extends Controller
 
     public function create(Request $request, $application_id)
     {
+        return redirect()->route('v2.user-quiz.take', ['application_id'=>$application_id]);
         $application = UserJobApplication::with('job.quiz','user')
                                 ->findOrFail($application_id);
 
@@ -105,6 +106,8 @@ class UserQuizController extends Controller
 
 
     public function view($application_id){
+        return redirect()->route('v2.user-quiz.view-result', ['application_id'=>$application_id]);
+
         $application =  UserJobApplication::with('userQuiz.answers','job.quiz.questions')->findOrFail($application_id);
         if(!$application->userQuiz){
             return abort(404);

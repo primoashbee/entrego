@@ -35,7 +35,7 @@ class JobAppliedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Job Applied Mail',
+            subject: 'Job Application',
         );
     }
 

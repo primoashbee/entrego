@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Location;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -247,6 +248,11 @@ class ManPower extends Model
     public function departmentLink()
     {
         return $this->belongsTo(Department::class, 'department','key');
+    }
+
+    public function locationLink()
+    {
+        return $this->belongsTo(Location::class, 'location','key');
     }
   
 }

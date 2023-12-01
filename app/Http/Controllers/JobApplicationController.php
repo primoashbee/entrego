@@ -104,7 +104,9 @@ class JobApplicationController extends Controller
 
     public function viewApplicants(ApplicantsRequest $request)
     {
-        if($request->has('export')){
+
+        $for_report = $request->has('export');
+        if($for_report){
             // return $this->showReport(compact('applicants', 'statuses','departments'));
             return redirect()->route('user-job.report', $request->query());
         }
@@ -113,7 +115,8 @@ class JobApplicationController extends Controller
         $statuses = UserJobApplication::STATUSES;
         $departments = ManPower::DEPARTMENT;
         $jobs = ManPower::select('id','job_title')->get();
-
+        
+        $staffs = User::select('id','first_name','last_name','email','role')->whereNotIn('role',[User::APPLICANT])->get();
 
         
         if($user->role === User::APPLICANT){
@@ -140,12 +143,12 @@ class JobApplicationController extends Controller
             //                                     ->whereRelation('job','department', $value);
             //                                 })
             //                                 ->orderBy('id','desc')->get();
-            $applicants = $this->generateList($request);
-            $deployed = $this->deployedList($request);
+            $applicants = $this->generateList($request, $for_report);
+            $deployed = $this->deployedList($request, $for_report);
         }
 
 
-        return view('job-applications.index',compact('applicants', 'statuses','departments','deployed','jobs'));
+        return view('job-applications.index',compact('applicants', 'statuses','departments','deployed','jobs','staffs'));
     }
 
     public function sendInterview(Request $request, $id)
@@ -162,14 +165,13 @@ class JobApplicationController extends Controller
             $fields['interview_sent_at'] = now();
             $fields['send_interview_notes'] = $request->notes;
             $fields['send_interview_onsite'] = $request->is_onsite;
-
+            $fields['interviewed_by'] = $request->hr_id;
         }
         if($request->status == 'JOB_OFFER'){
             $fields['status'] = UserJobApplication::JOB_OFFER;
             $fields['job_offered_at'] = now();
             $fields['job_offer_interview_onsite'] = $request->is_onsite;
-
-
+            $fields['job_offer_sent_by'] = $request->hr_id;
         }
         
     
@@ -180,6 +182,7 @@ class JobApplicationController extends Controller
         tap($applicant);
         $email = $applicant->user->email;
         if($request->status == 'SEND_INTERVIEW'){
+            
             Mail::to($email)
             ->send(
                 new JobInterviewMail(
@@ -190,8 +193,14 @@ class JobApplicationController extends Controller
             $position = $applicant->job->job_title; 
             $link = $request->link; 
             $interview_date = Carbon::parse($applicant->interview_date)->toDayDateTimeString();
-            $message = "Greetings, $name.\n\nYou're scheduled for an interview: \nDate: $interview_date\nPosition: $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            if($request->is_onsite){
+                $location = $applicant->job->locationLink->value;
+                $message = "Greetings, $name.\n\nYou're scheduled for an interview: \nDate: $interview_date\nPosition: $position.\n\nLocated at $location office.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
 
+            }else{
+                $message = "Greetings, $name.\n\nYou're scheduled for an interview: \nDate: $interview_date\nPosition: $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            }
+            dd($message);
             // $sid = config('services.twilio.account_sid');
             // $token = config('services.twilio.auth_token');
             // $twilio_number = config('services.twilio.twilio_number');
@@ -223,7 +232,13 @@ class JobApplicationController extends Controller
             $link = $request->link; 
             $interview_date = Carbon::parse($applicant->interview_date)->toDayDateTimeString();
 
-            $message = "Greetings, $name.\n\nCongratulations! You're scheduled for the JOB OFFER on $interview_date for your job application -  $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            if($request->is_onsite){
+                $location = $applicant->job->locationLink->value;
+                $message = "Greetings, $name.\n\nYou're scheduled for final interview: \nDate: $interview_date\nPosition: $position.\n\nLocated at $location office.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+
+            }else{
+                $message = "Greetings, $name.\n\nYou're scheduled for final interview: \nDate: $interview_date\nPosition: $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
+            }
 
             // $sid = config('services.twilio.account_sid');
             // $token = config('services.twilio.auth_token');
@@ -269,7 +284,8 @@ class JobApplicationController extends Controller
 
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - REJECTED", $user_job);
             $user_job->update([
-                'rejected_notes'=>$request->notes
+                'rejected_notes'=>$request->notes,
+                'rejected_by'=>$request->hr_id
             ]);
         }elseif($request->status === UserJobApplication::APPROVED){
             Mail::to($user_job->user->email)
@@ -282,7 +298,9 @@ class JobApplicationController extends Controller
             $user_job->update(['approved_at'=>now()]);
             $user_job->update(['job_offer_accepted_at'=>now()]);
             $user_job->update([
-                'approved_notes'=>$request->notes
+                'approved_notes'=>$request->notes,
+                'job_offer_approved_by'=>$request->hr_id
+
             ]);
 
         }
@@ -292,7 +310,8 @@ class JobApplicationController extends Controller
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - FOR REQUIREMENTS", $user_job);
             $user_job->update([
                 'job_offer_accepted_at'=>now(),
-                'accepted_job_offer_notes'=>$request->notes
+                'accepted_job_offer_notes'=>$request->notes,
+                'job_offer_accepted_by'=>$request->hr_id
             ]);
 
         }
@@ -300,21 +319,22 @@ class JobApplicationController extends Controller
         if($status == UserJobApplication::DEPLOYED){
             $status = UserJobApplication::DEPLOYED;
             $notes = $request->notes;
-
-            $request->replace(['status' => $status]);
+            $hr_id = $request->hr_id;
+            $request->request->replace(['status' => $status]);
             $message = "Greetings, $name\n\nYou are now deployed as $job->job_title.\n\nThank you,\nEntregoHR" ;
             $client->sendSMS($user_job->user->contact_number, $message);
             auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - DEPLOYED", $user_job);
-
             $user_job->update([
                 'deployed_at'=>now(),
-                'deployed_notes'=> $notes
+                'deployed_notes'=> $notes,
+                'deployed_by'=>$hr_id
+
             ]);
             $user_job->user->cancelJobApplications($id);
 
         }
 
-        $user_job->update($request->except('notes_type','notes'));
+        $user_job->update($request->except('notes_type','notes','hr_id'));
         
     }
 
@@ -329,10 +349,10 @@ class JobApplicationController extends Controller
         return $pdf->download("REPORT $id.pdf");
     }
 
-    public function generateList($request, $deployed = false)
+    public function generateList($request, $for_report = false)
     {
   
-        return UserJobApplication::with(['user','job.quiz.questions','userQuiz.quiz'=>function($q){
+        $q = UserJobApplication::with(['user','job.quiz.questions','userQuiz.quiz'=>function($q){
                 $q->orderBy('userQuiz.score','desc');
             }])
             ->when($request->q, function($q, $value){
@@ -344,17 +364,18 @@ class JobApplicationController extends Controller
             ->when($request->status,function($q, $value){
                 $q->where('status', $value);
             })
-            ->when($deployed, function($q, $value){
-                dd($value);
-            })
+
             ->when($request->department,function($q, $value){
                 $q
                 ->whereRelation('job','department', $value);
             })
             ->when($request->job_id, function($q, $value){
                 $q->where('man_power_id', $value);
-            })
-            ->get();
+            });
+        if($for_report){
+            return $q->get();
+        }
+            return $q->paginate(20)->withQueryString();
             
     }
 

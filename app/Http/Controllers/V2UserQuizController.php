@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use PDO;
 use App\Models\ManPower;
+use App\Models\UserQuiz;
 use Illuminate\Http\Request;
 use Termwind\Components\Raw;
+use App\Models\UserQuizAnswersV2;
 use App\Models\UserJobApplication;
 use Illuminate\Support\Facades\DB;
-use PDO;
+use Illuminate\Support\Facades\Session;
 
 class V2UserQuizController extends Controller
 {
@@ -29,7 +32,7 @@ class V2UserQuizController extends Controller
     public function store(Request $request)
     {
         DB::transaction(function () use($request) {
-
+            $now = now();
             $user_id = auth()->user()->id;
 
             $application = UserJobApplication::with('job.quiz')
@@ -64,66 +67,75 @@ class V2UserQuizController extends Controller
 
             });
 
+
+            
             $score = count($answers->filter(function($answer){
                 return $answer['is_correct'] == true;
             }));
             $max_score = $answers->count();
 
-            dd($score, $max_score);
-            // Save on DB
+            $score_percentage = ($score / $max_score) * 100;
+            $required_percentage = $application->job->quiz->has_passing_rate ? $application->job->quiz->passing_rate : 0 ;
+            $passed = $score_percentage >= $required_percentage;
 
+            $end_datetime = now();
+            $start_datetime = $end_datetime->copy()->subSeconds($request->time_elapsed);
+
+
+            // Save on DB - User Quiz Summary
+            $user_quiz = UserQuiz::create([
+                'application_id'=>$request->application_id,
+                'score'=>$score,
+                'percentage'=> ($score / $max_score) * 100,
+                'is_passed'=> $passed,
+                'start_datetime'=>$start_datetime,
+                'end_datetime'=>$end_datetime,
+            ]); 
+            $answer_insert = $answers->map(function($answer) use ($user_quiz, $now){
+                $data = [
+                    'user_quiz_id'=>$user_quiz->id,
+                    'question_data'=>json_encode($answer['question_data']),
+                    'question'=> $answer['question_data']['answer'],
+                    'answer'=> $answer['question'],
+                    'is_correct'=>$answer['is_correct'],
+                    'created_at'=>$now,
+                    'updated_at'=>$now,
+                    'quiz_questions_v2_id'=>$answer['id']
+                ];
+                return $data;
+            })->toArray();
+
+            
+            // SAve on DB - User Quiz Answers1
+            UserQuizAnswersV2::insert($answer_insert);
+
+
+            $status = $passed ? UserJobApplication::EXAM_PASSED : UserJobApplication::EXAM_FAILED ;
+            $application->update([
+                'status' => $status 
+            ]);
+
+            $job_name = $application->job->job_title;
+
+            auditLog($user_id, "Exam taken for job $job_name - result $status");
+
+
+            DB::commit();
+
+            Session::flash('redirect', route('user-quiz.view-result', $request->application_id));
         });
-            // $max_score = $application->job->quiz->questions->count();
-            // $inserts = [];
+        
+    }
 
-            //ready the inserts for quiz answers table
-            // $score = collect($request->answers)->filter(function($answer) use (&$inserts){
-            //     $inserts[] = [
-            //         'quiz_question_id'=>$answer['id'],
-            //         'answer'=>isset($answer['answer']) ? $answer['answer'] : 'NONE',
-            //         'is_correct'=>$answer['correct']
-            //     ];
-            //     return $answer['correct'];
-            // })->count();
+    public function view($application_id)
+    {
+        $application =  UserJobApplication::with('userQuiz.answersv2','job.quiz.questions')->findOrFail($application_id);
+        if(!$application->userQuiz){
+            return abort(404);
+        }
+        $quiz = $application->job->quiz;
+        $questions = $application->userQuiz->answersv2->load('quizQuestion');
+        return view('user-quiz.v2.view-result', compact('application','questions'));
 
-            // $score_percentage = ($score / $max_score) * 100;
-            // $required_percentage = $application->job->quiz->has_passing_rate ? $application->job->quiz->passing_rate : 0 ;
-            // $passed = $score_percentage >= $required_percentage;
-
-            // // create quiz
-            // $end_datetime = now();
-            // $start_datetime = $end_datetime->copy()->subSeconds($request->time_elapsed);
-            // $quiz = UserQuiz::create([
-            //     'application_id'=>$request->application_id,
-            //     'score'=>$score,
-            //     'percentage'=> ($score / $max_score) * 100,
-            //     'is_passed'=> $passed,
-            //     'start_datetime'=>$start_datetime,
-            //     'end_datetime'=>$end_datetime,
-            // ]);
-
-            // //add user_quiz id for each answers
-            // $inserts = collect($inserts)->map(function($insert) use ($quiz){
-            //     $insert['user_quiz_id'] = $quiz->id;
-            //     return $insert;
-            // })->toArray();
-
-            // //create UserQuizAnswers, not insert because it does not respect the DB::transaction
-            // foreach($inserts as $insert){
-            //     UserQuizAnswers::create($insert);
-            // }
-
-            // $status = $passed ? UserJobApplication::EXAM_PASSED : UserJobApplication::EXAM_FAILED ;
-            // $application->update([
-            //     'status' => $status 
-            // ]);
-            // $job_name = $application->job->job_title;
-            // auditLog($user_id, "Exam taken for job $job_name - result $status");
-
-
-            // DB::commit();
-
-            // Session::flash('redirect', route('user-quiz.view-result', $request->application_id));
-        // })
     }
 }

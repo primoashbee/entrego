@@ -42,7 +42,7 @@
                                     </div>
                                     <div class="col-7"></div>
                                     <div class="col-1">
-                                        <button class="btn btn-lg btn-success mt-3" type="submit" value="export" name="export"><i class="material-icons">print</i></button>
+                                        <button class="btn btn-lg btn-success mt-3" type="button" value="export" name="export"><i class="material-icons">print</i></button>
                                     </div>
 
                                 </div>
@@ -280,6 +280,7 @@
                                               @endforeach
                                           </tbody>
                                         </table>
+                                        {!! $applicants->links()!!}}
                                       </div>
                                 </div>
                                 <div class="table-responsive" id="tbl_deployed" style="display:none">
@@ -456,6 +457,13 @@
 
 @section('scripts')
 <script>
+    const raw_users = @json($staffs);
+    const users_model = {}
+    raw_users.forEach((user)=>{
+        users_model[user.id] = `${user.first_name} - ${user.last_name} [${user.role}]` 
+    })
+
+    console.log(users_model)
     function show(div){
         in_progress = document.getElementById('tbl_in_progress');
         deployed = document.getElementById('tbl_deployed');
@@ -467,11 +475,35 @@
     }
     async function promptEmail(id, status){
 
-        const { isConfirmed} = await Swal.fire({
+        let zoom_link;
+        const { value } = await Swal.fire({
+            title: 'Select HR Person',
+            input: 'select',
+            inputOptions: users_model,
+            inputPlaceholder: 'Please select',
+            showCancelButton: true
+            // inputValidator: (value) => {
+            //     return new Promise((resolve) => {
+            //     if (value === 'oranges') {
+            //         resolve()
+            //     } else {
+            //         resolve('You need to select oranges :)')
+            //     }
+            //     })
+            // }
+        })
+
+        if( value === undefined){
+            return;
+        }
+
+        const hr_id = value
+
+        const { isConfirmed, isDenied, isDismissed }  = await Swal.fire({
             title: 'Is this an onsite interview?',
             icon: 'warning',
             showDenyButton: true,
-            // showCancelButton: true,
+            showCancelButton: true,
             confirmButtonText: 'Yes',
             denyButtonText: 'No',
             customClass: {
@@ -481,17 +513,23 @@
                 denyButton: 'order-3',
             },
         })
-        console.log(isConfirmed)
-        const isOnsite = isConfirmed
-        const status_text = status.replace("_", " ")
-        const { value: url } = await Swal.fire({
-                                    input: 'url',
-                                    inputLabel: `Enter zoom URL (${status_text})`,
-                                    inputPlaceholder: `Enter zoom URL (${status_text})`
-                                })
-        if(!url){
+        if(isDismissed){
             return;
         }
+        const isOnsite = !isDenied
+        if(!isOnsite){
+            const status_text = status.replace("_", " ")
+            const { value: url } = await Swal.fire({
+                                        input: 'url',
+                                        inputLabel: `Enter zoom URL (${status_text})`,
+                                        inputPlaceholder: `Enter zoom URL (${status_text})`
+                                    })
+            if(!url){
+                return;
+            }
+            zoom_link = url
+        }
+
 
         const { value: notes } = await Swal.fire({
             title: "Notes",
@@ -523,11 +561,13 @@
                 return datepicked
             }
         })
+        
 
-        if (url && datetime) {
+
+        if (datetime) {
             const response = await Swal.fire({
                 title: 'Confirmation',
-                text: "Are you sure the zoom link is correct?",
+                text: "Are you sure details are correct",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -544,7 +584,7 @@
                     },
                 });
 
-                await sendInterview(id, url, datetime, status, notes, isOnsite)
+                await sendInterview(id, zoom_link, datetime, status, notes, isOnsite, hr_id)
                 alert.close()
 
                 await Swal.fire(
@@ -555,15 +595,18 @@
                 
             }
         }
+ 
+
 
     }
-    async function sendInterview(id, link,datetime, status, notes, isOnsite){
+    async function sendInterview(id, link,datetime, status, notes, isOnsite, hr_id){
         const payload = {
             link: link,
             datetime: datetime,
             status: status,
             notes: notes,
-            is_onsite: isOnsite
+            is_onsite: isOnsite,
+            hr_id: hr_id
         }
         const res = await fetch(`/job/send-interview/${id}`, {
             'method': 'POST',
@@ -607,6 +650,27 @@
 
         }
 
+        const { value } = await Swal.fire({
+            title: 'Select HR Person',
+            input: 'select',
+            inputOptions: users_model,
+            inputPlaceholder: 'Please select',
+            showCancelButton: true
+            // inputValidator: (value) => {
+            //     return new Promise((resolve) => {
+            //     if (value === 'oranges') {
+            //         resolve()
+            //     } else {
+            //         resolve('You need to select oranges :)')
+            //     }
+            //     })
+            // }
+        })
+
+        if( value === undefined){
+            return;
+        }
+        const hr_id = value
         const response = await Swal.fire({
                 title: title,
                 text: text,
@@ -638,7 +702,7 @@
 
         const res = await fetch(`/job/${id}`, {
           'method': 'PATCH',
-          'body': JSON.stringify({status:status, notes_type:notes_type, notes: notes}),
+          'body': JSON.stringify({status:status, notes_type:notes_type, notes: notes, hr_id: hr_id}),
           'headers': {
             "Content-Type": "application/json",
             "Accept": "application/json",

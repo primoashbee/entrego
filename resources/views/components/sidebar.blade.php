@@ -146,7 +146,7 @@ id="sidenav-main">
 
         <hr class="horizontal light mt-0 mb-2">
 
-
+        @if(auth()->user()->role !='APPLICANT')
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('settings.index')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -156,6 +156,7 @@ id="sidenav-main">
             </a>
         </li>
 
+        @endif
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('profile.edit')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">

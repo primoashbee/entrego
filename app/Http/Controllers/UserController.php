@@ -30,8 +30,14 @@ class UserController extends Controller
         // })
         ->where('is_archived', false)
         ->whereIn('role', [User::APPLICANT, User::SUB_HR])
-        ->get();
-        // ->paginate(15);
+        ->when($request->q, function($q, $value){
+                $q->where('email', 'LIKE' , "%$value%");
+                $q->orWhere('first_name', 'LIKE' , "%$value%");
+                $q->orWhere('last_name', 'LIKE' , "%$value%");
+        })
+        ->paginate(20)
+        ->withQueryString();
+        // ->get();
 
         
 
@@ -56,7 +62,7 @@ class UserController extends Controller
 
     public function editUser($id) : View
     {
-        $user = User::with(['requirements','archiveLogs'=>function($q){
+        $user = User::with(['requirements','archiveLogs.doneBy'=>function($q){
             return $q->orderBy('id','desc');
         }])->findOrFail($id);
 
@@ -208,10 +214,16 @@ class UserController extends Controller
             'role'=>$request->role,
             'password'=>Hash::make($request->password),
             'uuid'=>strtoupper(Str::uuid()),
-            'cv_name'=>''
+            'cv_name'=>'',
+            'first_name'=>$request->first_name,
+            'last_name'=>$request->last_name,
             // 'has_finished_profile'=> true,
         ]);
-        auditLog(auth()->user()->id, "Created a new user $request->email - $request->role", $user);
+        $role = $request->role;
+        if($request->role == User::SUB_HR){
+            $role = 'DEPARTMENT HEAD';
+        }
+        auditLog(auth()->user()->id, "Created a new user $request->email - $role", $user);
 
         return redirect()->back();
     }

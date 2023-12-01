@@ -36,7 +36,7 @@
                                             
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
-                                                    <input type="checkbox" name="has_sjt" id="has_sjt" onclick="hasSJTClicked()" value='chcked' >
+                                                    <input type="checkbox" name="has_sjt" id="has_sjt" onclick="hasSJTClicked()" >
                                                     <label class="pl-2" for="has_sjt"> &nbsp; Has SJT </label>
 
                                                 </div>

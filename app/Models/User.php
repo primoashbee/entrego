@@ -29,6 +29,7 @@ class User extends Authenticatable
     const APPLICANT = 'APPLICANT';
     const ADMINSTRATOR = 'ADMINISTRATOR';
     const SUB_HR = 'SUB_HR';
+    const HR = 'HR';
 
 
 
@@ -62,9 +63,16 @@ class User extends Authenticatable
         if($this->role == User::ADMINSTRATOR){
             return "ADMINISTRATOR";
         }
+        
+        if(in_array($this->role, [self::HR, self::SUB_HR])){
+            return "{$this->first_name} {$this->last_name}";
+        }
+
+
         if(!$this->has_finished_profile){
             return $this->email;
         }
+
         return "{$this->first_name} {$this->last_name}";
     }
 

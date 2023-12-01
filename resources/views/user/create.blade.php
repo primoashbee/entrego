@@ -40,6 +40,18 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="input-group input-group-static">
+                                                    <label class="">First Name</label>
+                                                    <input type="text" name="first_name" class="form-control" value="{{old('first_name')}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="input-group input-group-static">
+                                                    <label class="">Last Name</label>
+                                                    <input type="text" name="last_name" class="form-control" value="{{old('last_name')}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group input-group-static">
                                                     <label class="">Password</label>
                                                     <input type="password" name="password" class="form-control">
                                                 </div>

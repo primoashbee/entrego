@@ -18,11 +18,12 @@ class JobOfferMail extends Mailable
      */
     public $application;
     public $link;
-
+    public $is_onsite;
     public function __construct($application)
     {
         $this->application = $application;
         $this->link = $application->link;
+        $this->is_onsite = $application->job_offer_interview_onsite ? true : false;
 
     }
 
@@ -32,7 +33,7 @@ class JobOfferMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Job Offer Mail',
+            subject: 'Final Interview',
         );
     }
 

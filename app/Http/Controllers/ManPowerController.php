@@ -48,7 +48,12 @@ class ManPowerController extends Controller
 
     public function store(StoreManPowerRequest $request)
     {
-
+        if($request->has('has_sjt') && $request->has_sjt == 'on'){
+            $request->merge(['has_sjt'=>true]);
+        }else{
+            
+            $request->request->add(['has_sjt'=>false]);
+        }
         $id = ManPower::create([
             'requested_by'=> auth()->user()->id,
             'job_title'=> $request->job_title,
@@ -65,10 +70,10 @@ class ManPowerController extends Controller
             'required_experience'=> $request->required_experience,
             'department'=> $request->department,
             'quiz_id'=> $request->quiz_id,
-            'job_level'=>$request->job_level
+            'job_level'=>$request->job_level,
+            'has_sjt'=> $request->has_sjt
         ])->id;
 
-        dd($id);
 
         
 
@@ -118,6 +123,14 @@ class ManPowerController extends Controller
     public function update(UpdateManPowerRequest $request, $id)
     {
         $manpower = ManPower::findOrFail($id);
+
+        if($request->has('has_sjt') && $request->has_sjt == 'on'){
+            $request->merge(['has_sjt'=>true]);
+        }else{
+            
+            $request->request->add(['has_sjt'=>false]);
+        }
+
         $manpower->update(
             $request->all()
         );

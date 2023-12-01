@@ -32,13 +32,17 @@
             overflow: hidden;
             color: rgb(252, 103, 49);
             padding-left: 0px;
-            margin-top: 3vh
+            margin-top: 3vh;
+
+            margin: auto;
+            width: 80%;
+            padding: 10px;
         }
 
         #progressbar li {
             list-style-type: none;
             /* font-size: x-small; */
-            width: 10%;
+            width: 15%;
             float: left;
             position: relative;
             font-weight: 400;
@@ -75,7 +79,7 @@
             color: #fff;
             width: 5px;
             height: 5px;
-            margin-right: 32%
+            margin-right: 35%
         }
 
         #progressbar #step5:before {
@@ -224,7 +228,7 @@
                                         <div class="mx-auto">
 
                                             <div class="tracking">
-                                                <div class="title"> Job Tracking</div>
+                                                <div class="text-center title"> Job Tracking</div>
                                             </div>
                                             <div class="progress-track">
                                                 <ul id="progressbar">
@@ -233,7 +237,7 @@
                                                             <li class="step0 active" id="step1">{{ $step['label'] }}
                                                             </li>
                                                         @elseif($key == count($application->steps()) - 1)
-                                                            <li class="step0  {{ $step['class'] }}" id="step4">
+                                                            <li class="step0  {{ $step['class'] }}" id="step4" style="text-align: right !important">
                                                                 {{ $step['label'] }}</li>
                                                         @else
                                                             <li class="step0 {{ $step['class'] }}" id="step2">
@@ -265,11 +269,10 @@
                                             <figure class="px5">
                                                 <blockquote class="blockquote">
                                                     <h4 class="px-2"> {{ $step['label'] }} <h4>
-                                                            <p class="ps-2">{{ $step['data']['notes'] }}.</p>
+                                                    <p class="ps-2">{{ $step['data']['notes'] }}.</p>
                                                 </blockquote>
                                                 <figcaption class="blockquote-footer ps-3">
-                                                    Date <cite
-                                                        title="Source Title"><strong>{{ \Carbon\Carbon::parse($step['date'])->format('F d ,Y g:iA') }}</strong></cite>
+                                                    Processed By: <cite title="Source Title"><strong>{{$step['processor']?->full_name}} </strong> on <strong>{{ \Carbon\Carbon::parse($step['date'])->format('F d ,Y g:iA') }}</strong></cite>
                                                 </figcaption>
                                             </figure>
                                         @endif

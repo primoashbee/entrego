@@ -205,7 +205,8 @@ class UserJobApplication extends Model
                     'notes'=> 'Applied on job listing page'
                 ],
                 'class'=> '',
-                'finished'=>true
+                'finished'=>true,
+                'processor'=> $this->user
             ],
 
             [
@@ -217,7 +218,9 @@ class UserJobApplication extends Model
                     'notes'=>null
                 ],
                 'class'=> '',
-                'finished'=>false
+                'finished'=>false,
+                'processor'=> null
+
             ],
             [
                 'label'=>'Job Offer Sent',
@@ -228,7 +231,9 @@ class UserJobApplication extends Model
                     'notes'=>null
                 ],
                 'class'=> '',
-                'finished'=>false
+                'finished'=>false,
+                'processor'=> null
+
             ],
             [
                 'label'=>'Job Offer Accepted',
@@ -239,7 +244,9 @@ class UserJobApplication extends Model
                     'notes'=>null
                 ],
                 'class'=> '',
-                'finished'=>false
+                'finished'=>false,
+                'processor'=> null
+
             ],
             
             [
@@ -251,7 +258,9 @@ class UserJobApplication extends Model
                     'notes'=>null
                 ],
                 'class'=> '',
-                'finished'=>false
+                'finished'=>false,
+                'processor'=> null
+
             ],
             
 
@@ -267,7 +276,8 @@ class UserJobApplication extends Model
                     'notes'=>'Exam finished'
                 ],
                 'class'=>'active text-center',
-                'finished'=>true
+                'finished'=>true,
+                'processor' => $this->user
             ];
             $steps->splice(1, 0, [$exam]);
         }
@@ -284,7 +294,8 @@ class UserJobApplication extends Model
                             'notes'=> $this->send_interview_notes
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->interviewer
                     ];
                 }
                 return $step;
@@ -303,7 +314,9 @@ class UserJobApplication extends Model
                             'notes'=> $this->send_interview_notes
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->interviewer
+
                     ];
                 }
                 if($step['key'] == self::JOB_OFFER){
@@ -317,7 +330,9 @@ class UserJobApplication extends Model
 
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->offerer
+
                     ];
                 }
                 return $step;
@@ -338,7 +353,9 @@ class UserJobApplication extends Model
                             'notes'=> $this->send_interview_notes
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->interviewer
+
                     ];
                 }
                 if($step['key'] == self::JOB_OFFER){
@@ -352,7 +369,9 @@ class UserJobApplication extends Model
 
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->oferrer
+
                     ];
                 }
                 if($step['key'] == self::FOR_REQUIREMENTS){
@@ -365,7 +384,9 @@ class UserJobApplication extends Model
                             'notes'=> $this->accepted_job_offer_notes
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->jobOfferAcceptor
+
                     ];
                 }
                 return $step;
@@ -383,7 +404,9 @@ class UserJobApplication extends Model
                             'notes'=> $this->send_interview_notes
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->interviewer
+
                     ];
                 }
                 if($step['key'] == self::JOB_OFFER){
@@ -397,7 +420,9 @@ class UserJobApplication extends Model
 
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->jobOfferer
+
                     ];
                 }
                 if($step['key'] == self::FOR_REQUIREMENTS){
@@ -410,7 +435,9 @@ class UserJobApplication extends Model
                             'notes'=> $this->accepted_job_offer_notes
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->jobOfferAcceptor
+
                     ];
                 }
                 if($step['key'] == self::DEPLOYED){
@@ -423,13 +450,35 @@ class UserJobApplication extends Model
                             'notes'=> $this->deployed_notes
                         ],
                         'class'=>'active text-center',
-                        'finished'=>true
+                        'finished'=>true,
+                        'processor'=>$this->deployer
+
                     ];
                 }
                 return $step;
             });
         }
         return $steps;
+    }
+
+    public function interviewer()
+    {
+        return $this->belongsTo(User::class, 'interviewed_by','id');
+    }
+
+    public function deployer()
+    {
+        return $this->belongsTo(User::class, 'deployed_by','id');
+    }
+
+    public function jobOfferer()
+    {
+        return $this->belongsTo(User::class, 'job_offer_sent_by','id');
+    }
+
+    public function jobOfferAcceptor()
+    {
+        return $this->belongsTo(User::class, 'job_offer_accepted_by','id');
     }
 
 }

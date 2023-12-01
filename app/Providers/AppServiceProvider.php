@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,5 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // dd(auth()->user());
         // View::share('layouts.user', auth()->user());
+        Paginator::useBootstrapFive();
+
     }
 }

@@ -1,6 +1,20 @@
 <x-mail::message>
 # Greetings!
 
+@if($is_onsite)
+Subject: <b>Onsite Interview </b> <br>
+Dear <b>{{$application->user->fullname}}</b>,
+
+We're excited to present you the <b>JOB OFFER</b> for  <b>{{$application->job->job_title}}</b> role at Entrego.
+
+Your final interview and job offer is scheduled on 
+<b>{{\Carbon\Carbon::parse($application->interview_date)->toDayDateTimeString()}}</b> 
+located at 
+<b>{{$application->job->locationLink->value}} Office</b>
+
+
+
+@else
 Subject: Job Offer Zoom Link for <b>{{$application->user->fullname}}</b>
 
 Dear <b>{{$application->user->fullname}}</b>,
@@ -13,12 +27,10 @@ Your interview is scheduled on <b>{{\Carbon\Carbon::parse($application->intervie
 Please log in a few minutes early to ensure a smooth start. If you encounter any technical issues, don't hesitate to contact us.
 Looking forward to meeting you virtually!
 
-Best regards,
-
 <x-mail::button :url="$link">
 Zoom Link
 </x-mail::button>
-
+@endif
 Thanks,<br>
 {{ config('app.name') }}
 </x-mail::message>

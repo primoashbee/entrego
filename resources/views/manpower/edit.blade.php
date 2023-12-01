@@ -43,7 +43,7 @@
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <input type="checkbox" name="has_sjt" id="has_sjt" onclick="hasSJTClicked()" @if($manpower->has_sjt) checked @endif>
-                                                    <label class="pl-2" for="has_sjt"> &nbsp; Has SJT </label>
+                                                    <label class="pl-2" for="has_sjt"> &nbsp; Has SJT </label> 
 
                                                 </div>
                                             </div>
@@ -199,6 +199,9 @@
 
         quiz_id = document.getElementById('quiz_id')
         quiz_id.value = "{{$manpower->quiz_id}}"
+
+        job_level = document.getElementById('job_level')
+        job_level.value = "{{$manpower->job_level}}"
 
         @if(session()->has('success'))
             await Swal.fire(

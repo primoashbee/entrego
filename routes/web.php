@@ -31,6 +31,8 @@ use App\Http\Controllers\PersonalAssementController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Middleware\UserPacketDownloadMiddleware;
 use App\Http\Controllers\UserPersonalAssessmentController;
+use App\Mail\JobInterviewMail;
+use App\Mail\JobOfferMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,6 +150,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
+
 });
 
 // Route::get('/view-mail/{application_id}', function(Request $request, $application_id){
@@ -188,7 +191,7 @@ Route::get('/test', function(){
 });
 
 Route::get('/itest', function(){
-    $j = User::find(6);
-    return new PersonalAssessmentDueMail($j);
+    $j = UserJobApplication::find(8);
+    return new JobOfferMail($j);
 });
 require __DIR__.'/auth.php';

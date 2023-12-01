@@ -26,6 +26,23 @@
                             <a href="{{route('users.create')}}" class="btn btn-success" style="float: right; margin-bottom: 0%">Add New User</a>
                             <div class="float-right">&nbsp;</div><br>
                             @endif
+
+                            <form action="{{url()->current()}}" method="GET" id="frmFilter">
+
+                              <div class="row"> 
+                                  <div class="col-9"></div>
+                                  <div class="col-3">
+                                      <div class="input-group input-group-outline mb-3">
+                                          <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" id="q" value="{{request()->q}}">
+                                          <div class="input-group-append">
+                                              <button class="btn btn-primary" type="submit">Search</button>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  
+                              </div>
+
+                          </form>
                             <div class="card">
                                 <div class="nav-wrapper position-relative end-0">
                                   <ul class="nav nav-pills nav-fill p-1" role="tablist">
@@ -94,6 +111,7 @@
                                     @endforeach
                                     </tbody>
                                   </table>
+                                  {!! $active_users->links() !!}
                                 </div>
 
                                 <!-- Archived Table -->

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Quiz;
 use Illuminate\Support\Carbon;
+use App\Models\UserQuizAnswersV2;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,6 +17,10 @@ class UserQuiz extends Model
     public function answers()
     {
         return $this->hasMany(UserQuizAnswers::class);
+    }
+    public function answersv2()
+    {
+        return $this->hasMany(UserQuizAnswersV2::class);
     }
 
     public function getTimeElapsedAttribute()
@@ -32,4 +37,5 @@ class UserQuiz extends Model
     {
         return $this->belongsTo(Quiz::class);
     }
+    
 }

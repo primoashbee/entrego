@@ -18,10 +18,12 @@ class JobInterviewMail extends Mailable
      */
     public $applicant;
     public $link;
+    public $is_onsite;
     public function __construct($applicant)
     {
         $this->applicant = $applicant;
         $this->link = $applicant->link;
+        $this->is_onsite = $applicant->send_interview_onsite ? true : false;
       
     }
 
@@ -31,7 +33,7 @@ class JobInterviewMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Job Interview Mail',
+            subject: 'Job Interview',
         );
     }
 
