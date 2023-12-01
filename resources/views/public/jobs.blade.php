@@ -116,7 +116,6 @@
           <header class="section-header">
             <h3 class="section-title">Job Listing</h3>
           </header>
-          @dd($list);
           <div class="row">
             <div class="col-lg-12">
               <ul id="portfolio-flters">
