@@ -122,11 +122,14 @@ class JobApplicationController extends Controller
         if($user->role === User::APPLICANT){
             $applicants = UserJobApplication::with('user.requirements','job')
                             ->where('user_id', $user->id)
-                            ->orderBy('id','desc')->get();
+                            ->orderBy('id','desc')
+                            ->paginate(10);
             $deployed = UserJobApplication::with('user.requirements','job')
                             ->where('user_id', $user->id)
                             ->where('status', UserJobApplication::DEPLOYED)
-                            ->orderBy('id','desc')->get();
+                            ->orderBy('id','desc')
+                            ->paginate(10);
+
         }else{
             // $applicants = UserJobApplication::with('user','job')
             //                                 ->when($request->q, function($q, $value){
