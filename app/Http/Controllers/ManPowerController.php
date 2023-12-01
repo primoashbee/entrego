@@ -28,7 +28,7 @@ class ManPowerController extends Controller
             }])
             ->get();
         }
-        if($user->role == User::SUB_HR){
+        if($user->role == User::SUB_HR || $user->role == User::HR){
             $list = ManPower::withCount(['applications'=> function($q){
                 $q->whereStatus(UserJobApplication::DEPLOYED);
             }])
