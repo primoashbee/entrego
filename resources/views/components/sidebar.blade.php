@@ -84,7 +84,7 @@ id="sidenav-main">
         </li>
         @endif
 
-        @if($user->role == "ADMINISTRATOR")
+        @if($user->role == "ADMINISTRATOR" || $user->role =="HR")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('applicants.index')}}">
 
@@ -97,7 +97,7 @@ id="sidenav-main">
         </li>
         @endif
 
-        @if($user->role == "ADMINISTRATOR" || $user->role =="APPLICANT")
+        @if($user->role == "ADMINISTRATOR" || $user->role =="APPLICANT" || $user->role ="HR")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('user-job.index')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
