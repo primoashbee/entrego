@@ -94,7 +94,15 @@
                   </tr>
             </thead>
             <tbody>
+                <?php 
+                    $counter = 0;
+                    $total_success_rate = 0;
+                ?>
                 @foreach($list as $item)
+                <?php 
+                    $counter++;
+                    $total_success_rate+=$item->success_rate;
+                ?>
                 <tr>
                     <td class="">
                         {{$item->job_title}}
@@ -124,7 +132,18 @@
             @endforeach
 
             </tbody>
-
+            <tfoot>
+                <tr>
+                    <td colspan="6"></td>
+                    <td style="text-align: right">Average Success Rate:</td>
+                    <td style="text-align: left">{{ $total_success_rate / $counter }} %</td>
+                </tr>                
+                <tr>
+                    <td colspan="6"></td>
+                    <td style="text-align: right">Total:</td>
+                    <td style="text-align: left">{{ count($list) }} Manpowers</td>
+                </tr>
+            </tfoot>
 
         </table>
 
