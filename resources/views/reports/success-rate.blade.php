@@ -14,9 +14,50 @@
                                 </div>
                                 <h6 class="mt-3 mb-2 ms-3 ">{{ ucwords(str_replace("-"," ",request()->type))}} </h6>
                             </div>
-
+                            <form action="{{url()->current()}}" method="GET" id="frmFilter">
+                            <input type="hidden" name="export" value="export" id="hidden_export" disabled>
                             <div class="card-body">
                                 <div class="table-responsive">
+                                    <div class="row" id="div-filters"> 
+                                        <div class="col-2">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>From Date</label>
+                                                <input type="date" class="form-control form-filter" name="start_date" id="start_date"  >
+                                              </div>                                    
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>End Date</label>
+                                                <input type="date" class="form-control form-filter" name="end_date" id="end_date"  >
+                                              </div>                                    
+                                        </div>
+                                        <div class="col-7"></div>
+                                        <div class="col-1">
+                                            <button class="btn btn-lg btn-success mt-3" type="button" value="export" name="export" id="btnExport"><i class="material-icons">print</i></button>
+                                        </div>
+    
+                                    </div>
+                                    <div class="row"> 
+                                        <div class="col-2">
+                                 
+                                        </div>
+                                        <div class="col-3">
+                                   
+                                        </div>
+                                        <div class="col-3">
+                                   
+                                        </div>
+                                        <div class="col-1"></div>
+                                        <div class="col-3">
+                                            <div class="input-group input-group-outline mb-3">
+                                                <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" id="q" value="{{request()->q}}">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary" type="submit">Search</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
                                     <table class="table align-items-center mb-0">
                                       <thead>
                                         <tr>
@@ -78,6 +119,7 @@
                                     </table>
                                   </div>
                             </div>
+                            </form>
                         </div>
 
                 </div>
@@ -88,6 +130,36 @@
 
 
 @section('scripts')
-    <script>
+<script>
+    (function () {
 
+        document.getElementById('start_date').value = "{{request()->start_date == '' ? old('start_date') : request()->start_date }}"
+        document.getElementById('end_date').value = "{{request()->end_date == '' ? old('end_date') : request()->end_date}}"
+        document.getElementById('q').value = "{{request()->q == '' ? old('q') : request()->q}}"
+
+
+    })();
+    document.getElementById('frmFilter').addEventListener("submit", function(event){
+        Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
+            if(element.value == "" ){
+                element.disabled=true
+            }
+        });
+
+    })
+
+    document.getElementById('btnExport').addEventListener('click', function(event){
+        Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
+            if(element.value == "" ){
+                element.disabled=true
+            }
+        });
+        
+        // document.getElementById('div-filters').innerHTML = document.getElementById('div-filters').innerHTML + input
+        document.getElementById('hidden_export').disabled = false
+        document.getElementById('frmFilter').submit()
+        document.getElementById('hidden_export').disabled = true
+
+    })
+    </script>
 @endsection
