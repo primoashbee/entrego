@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StoreManPowerRequest;
 use App\Http\Requests\UpdateManPowerRequest;
 use App\Mail\ManPowerRequestChanged;
+use App\Mail\ManPowerRequestUpdated;
 use App\Models\Department;
 use App\Models\JobLevel;
 use App\Models\Location;
@@ -156,6 +157,11 @@ class ManPowerController extends Controller
 
             Session::flash("success", "Manpower has been updated.");
             $note = "Updated manpower request - $manpower->job_title. $fields";
+
+            Mail::to($manpower->requestor->email)
+            ->send(
+                new ManPowerRequestUpdated($manpower, $note)
+            );
             auditLog(auth()->user()->id, $note , $manpower);
             $manpower->notes()->create(['done_by'=>auth()->user()->id,'notes'=>$note]);
         }
