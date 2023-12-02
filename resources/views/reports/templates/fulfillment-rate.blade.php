@@ -41,7 +41,7 @@
     <div class="container-fluid">
         <img src="{{ asset('img/logo-ct.png') }}" class="center" width="150px">
 
-        <h1 class="text-center"> Job Applications Reports </h1>
+        <h1 class="text-center"> Manpower Fulfillment Rate </h1>
 
 
         <div class="row">
