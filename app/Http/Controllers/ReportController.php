@@ -123,12 +123,12 @@ class ReportController extends Controller
             case 'success-rate':
                 $list = $this->getSuccessRateData($request);
                 $pdf = $viewer->loadView('reports.templates.success-rate', compact('list', 'parameters'))->setPaper('legal', 'landscape');
-                return $pdf->download("REPORT $id.pdf");
+                return $pdf->download("Success Rate[$id].pdf");
                 break;
             case 'fulfillment-rate':
                 $list = $this->getFulfillmentRateData($request);
                 $pdf = $viewer->loadView('reports.templates.fulfillment-rate', compact('list','parameters'))->setPaper('legal', 'landscape');
-                return $pdf->download("REPORT $id.pdf");
+                return $pdf->download("FulFillment Rate[$id].pdf");
                 break;
 
         }
