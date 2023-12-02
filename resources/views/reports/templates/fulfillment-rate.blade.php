@@ -92,6 +92,10 @@
                   </tr>
             </thead>
             <tbody>
+                <?php 
+                    $total_avg_tth = 0;    
+                    $counter = 0;    
+                ?>
                 @foreach($list as $item)
                 <tr>
                     <td class="">
@@ -109,6 +113,10 @@
                     <td class="align-middle text-center">
                         @if($item->avg_tth)
                             {{$item->avg_tth}} days
+                            <?php 
+                                $total_avg_tth += $item->avg_tth;
+                                $counter++;
+                            ?>
                         @else
                          - 
                         @endif
@@ -120,8 +128,13 @@
             <tfoot>
                 <tr>
                     <td colspan="3"></td>
+                    <td style="text-align: right">Average Time To Hire:</td>
+                    <td style="text-align: left">{{ $total_avg_tth / $counter }} days</td>
+                </tr>                
+                <tr>
+                    <td colspan="3"></td>
                     <td style="text-align: right">Total:</td>
-                    <td style="text-align: left">{{ count($list) }}</td>
+                    <td style="text-align: left">{{ count($list) }} Manpowers</td>
                 </tr>
             </tfoot>
 
