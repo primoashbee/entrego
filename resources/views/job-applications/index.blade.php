@@ -184,8 +184,11 @@
                                                                 @else
                                                                 <span class="badge bg-gradient-danger"> Failed </span> <br> 
                                                                 @endif
+                                                                @if(is_null($applicant->userQuiz->is_passed))
+                                                                <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="text-xs font-weight-bold mb-0">Click to Review</a>
+                                                                @else
                                                                 <a href="{{route('user-quiz.view-result', $applicant->id)}}" class="text-xs font-weight-bold mb-0">Click to View</a>
-        
+                                                                @endif
         
         
                                                             {{-- </div> --}}

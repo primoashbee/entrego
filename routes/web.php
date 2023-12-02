@@ -28,6 +28,7 @@ use App\Http\Middleware\ApplicantTakenAssessment;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\UserRequirementController;
 use App\Http\Controllers\PersonalAssementController;
+use App\Http\Controllers\ReportController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Middleware\UserPacketDownloadMiddleware;
 use App\Http\Controllers\UserPersonalAssessmentController;
@@ -148,6 +149,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/result/{application_id}', [V2UserQuizController::class, 'view'])->name('v2.user-quiz.view-result');
     
     });
+
+    Route::get('/report/{type}', [ReportController::class,'index'])->name('report.index');
 
 
 

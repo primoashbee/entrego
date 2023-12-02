@@ -142,6 +142,30 @@ id="sidenav-main">
             </a>
         </li>
         @endif
+        @if(auth()->check() && auth()->user()->role != 'APPLICANT')
+        <li class="nav-item">
+            <a class="nav-link text-white " href="{{route('report.index','success-rate')}}">
+
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">clear_all</i>
+                </div>
+
+                <span class="nav-link-text ms-1">Success Rate</span>
+            </a>
+        </li>
+        @endif
+        @if(auth()->check() && auth()->user()->role != 'APPLICANT')
+        <li class="nav-item">
+            <a class="nav-link text-white " href="{{route('report.index','fulfillment-rate')}}">
+
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">format_list_bulleted</i>
+                </div>
+
+                <span class="nav-link-text ms-1">Fulfillment Rate</span>
+            </a>
+        </li>
+        @endif
 
 
         <hr class="horizontal light mt-0 mb-2">

@@ -55,6 +55,9 @@ class UserQuiz extends Model
         if($quiz->has_passing_rate){
            $is_passed = $percentage >= $quiz->passing_rate; 
         }
+        $this->application->update([
+            'status' => $is_passed ? UserJobApplication::EXAM_PASSED : UserJobApplication::EXAM_FAILED
+        ]);
         return $this->update([
             'score'=>$score,
             'percentage'=>$percentage,
