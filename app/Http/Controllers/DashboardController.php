@@ -30,16 +30,19 @@ class DashboardController extends Controller
             $applicant->total  = User::active()
                                 ->whereRole(User::APPLICANT)
                                 ->count();
-            $applicant->active = User::active()
-                                        ->applicant()
+            $applicant->active = User::where('is_archived', false)
+                                        ->where('role', User::APPLICANT)
+                                        ->where('has_finished_profile', true)
+                                        ->where('has_finished_assessment', true)
                                         // ->whereMonth('created_at', $now->format('m'))
-                                        ->finishedAssessment()
-                                        ->finishedProfile()
+                                        // ->finishedAssessment()
+                                        // ->finishedProfile()
                                         ->count();
-            $applicant->list = User::active()
-                                    ->applicant()
-                                    ->finishedAssessment()
-                                    ->finishedProfile()
+            // $applicant->list = User::active()
+            $applicant->list = User::where('is_archived', false)
+                                    ->where('role', User::APPLICANT)
+                                    ->where('has_finished_profile', true)
+                                    ->where('has_finished_assessment', true)
                                     ->get();
             $applicant->variation = User::variation($now);
     
