@@ -33,7 +33,7 @@ class DashboardController extends Controller
             $applicant->active = User::where('is_archived', false)
                                         ->where('role', User::APPLICANT)
                                         ->where('has_finished_profile', true)
-                                        ->where('has_finished_assessment', true)
+                                        ->where('has_finished_asessment', true)
                                         // ->whereMonth('created_at', $now->format('m'))
                                         // ->finishedAssessment()
                                         // ->finishedProfile()
@@ -42,7 +42,7 @@ class DashboardController extends Controller
             $applicant->list = User::where('is_archived', false)
                                     ->where('role', User::APPLICANT)
                                     ->where('has_finished_profile', true)
-                                    ->where('has_finished_assessment', true)
+                                    ->where('has_finished_asessment', true)
                                     ->get();
             $applicant->variation = User::variation($now);
     
