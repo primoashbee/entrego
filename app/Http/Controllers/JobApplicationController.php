@@ -118,7 +118,7 @@ class JobApplicationController extends Controller
         $departments = ManPower::DEPARTMENT;
         $jobs = ManPower::select('id','job_title')->get();
         
-        $staffs = User::select('id','first_name','last_name','email','role')->whereNotIn('role',[User::APPLICANT])->get();
+        $staffs = User::select('id','first_name','last_name','email','role')->whereNotIn('role',[User::APPLICANT, User::SUB_HR])->get();
 
         
         if($user->role === User::APPLICANT){

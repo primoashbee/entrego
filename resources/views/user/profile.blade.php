@@ -147,14 +147,14 @@
                                         <div class="col-md-6">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Company Name</label>
-                                                <input type="text" name="company_name[]" v-model="work.company_name"
+                                                <input type="text" :name="attributeName(work.id, key,'company_name')" v-model="work.company_name"
                                                     class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Job Title</label>
-                                                <input type="text" name="job_title[]" v-model="work.job_title"
+                                                <input type="text" :name="attributeName(work.id, key,'job_title')" v-model="work.job_title"
                                                     class="form-control">
                                             </div>
                                         </div>
@@ -165,7 +165,7 @@
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Start Date</label>
                                                 <input type="date" class="form-control" v-model="work.start_date"
-                                                    name="start_date[]" onfocus="focused(this)"
+                                                    :name="attributeName(work.id, key,'start_date')" onfocus="focused(this)"
                                                     onfocusout="defocused(this)">
                                             </div>
                                         </div>
@@ -173,14 +173,15 @@
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">End Date</label>
                                                 <input type="date" class="form-control" v-model="work.end_date"
-                                                    name="end_date[]" onfocus="focused(this)"
+                                                    :name="attributeName(work.id, key,'end_date')"
+                                                    onfocus="focused(this)"
                                                     onfocusout="defocused(this)">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="input-group input-group-static my-3">
                                                 <label class="">Accomplishments</label>
-                                                <textarea class="form-control" v-model="work.accomplishments" name="accomplishments[]">
+                                                <textarea class="form-control" v-model="work.accomplishments":name="attributeName(work.id, key,'accomplishments')">
                                                     </textarea>
                                             </div>
                                         </div>
@@ -314,8 +315,7 @@
                     <button class="btn text-right btn-primary" type="submit">Update Profile</button>
                 </div>
                 </form>
-                @if(auth()->user()->role != 'APPLICANT')
-
+                @if (auth()->user()->role != 'APPLICANT')
                     <div class="col-sm 12 col-lg-2">
                         <div class="row mt-4">
                             <div class="card mb-4">
@@ -328,57 +328,111 @@
 
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{route('profile.patch', $user->id)}}" method="POST">
+                                    <form action="{{ route('profile.patch', $user->id) }}" method="POST">
                                         @method('PATCH')
                                         @csrf
                                         <div class="col-md-12">
-                                            <div class="input-group input-group-static"><label class="">Status</label>
-                                                <select
-                                                    class="form-control" name="archive_status" id="archive_status" v-model="archive_status"
-                                                >
+                                            <div class="input-group input-group-static"><label
+                                                    class="">Status</label>
+                                                <select class="form-control" name="archive_status" id="archive_status"
+                                                    v-model="archive_status">
                                                     <option value="ACTIVE">Active</option>
                                                     <option value="ARCHIVED">Archived</option>
                                                 </select>
                                             </div>
                                             <div class="input-group input-group-static">
                                                 <label class="">Notes</label>
-                                                <textarea class="form-control" name="archive_notes" type="textarea" rows="5" > </textarea>
+                                                <textarea class="form-control" name="archive_notes" type="textarea" rows="5"> </textarea>
                                             </div>
 
-                                            <input type="submit" class="btn btn-primary text-right float-right" style="float: right;">
+                                            <input type="submit" class="btn btn-primary text-right float-right"
+                                                style="float: right;">
                                         </div>
                                     </form>
 
                                 </div>
                             </div>
 
-                            <div class="card">
-                                <div class="card-body">
-                                    @foreach($user->archiveLogs as $log)
-                                    <ul class="list-group list-group-flush">
-                                    <figure>
-                                        <p>                                                   
-                                            <small>Account was set to
-                                                @if($log->status_name =='Archived')
-                                                <span class="font-weight-bold text-danger">{{$log->status_name}}</span>
-                                                @else 
-                                                <span class="font-weight-bold text-success">{{$log->status_name}}</span>
-                                                @endif
-                                            </small> 
-                                        </p>
-                                        <blockquote class="blockquote">
-                                            
-                                        <p class="ps-2" ><small>
-                                                Notes: {{$log->notes}}
-                                                </small>
-                                            </p>
-                                        </blockquote>
-                                        <figcaption class="blockquote-footer ps-3">
-                                        {{$log->doneBy->fullname}} <cite title="Source Title">{{$log->created_at->diffForHumans()}}</cite>
-                                        </figcaption>
-                                    </figure>
-                                    </ul>
-                                @endforeach
+                            <div class="card" >
+                                <div class="d-flex">
+                                    <div
+                                        class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
+                                        <i class="material-icons opacity-10" aria-hidden="true">list</i></div>
+                                    <h6 class="mt-3 mb-2 ms-3">Logs</h6>
+                                </div>
+                                <div style="overflow:hidden;">
+                                <div class="card-body" style="max-height: 450px; min:-height:450x;overflow-y: scroll">
+
+                                    @foreach ($user->userLogs as $log)
+                                        <ul class="list-group list-group-flush">
+                                            <figure>
+                                                <p>
+
+                                                    @if ($log->status_name == 'Archived')
+                                                        <span
+                                                            class="font-weight-bold text-danger">{{ $log->status_name }}</span>
+                                                    @else
+                                                        <span
+                                                            class="font-weight-bold text-success">{{ $log->status_name }}</span>
+                                                    @endif
+                                                    </small>
+                                                </p>
+                                                <blockquote class="blockquote">
+
+                                                    <p class="ps-2"><small>
+                                                            Notes: {{ $log->notes }}
+                                                        </small>
+                                                    </p>
+                                                </blockquote>
+                                                <figcaption class="blockquote-footer ps-3">
+                                                    {{ $log->doneBy->fullname }} <cite
+                                                        title="Source Title">{{ $log->created_at->diffForHumans() }}</cite>
+                                                </figcaption>
+                                            </figure>
+                                        </ul>
+                                    @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-5" >
+                                <div class="d-flex">
+                                    <div
+                                        class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-xl mt-n3 ms-4">
+                                        <i class="material-icons opacity-10" aria-hidden="true">list</i></div>
+                                    <h6 class="mt-3 mb-2 ms-3">Archive Logs</h6>
+                                </div>
+                                <div style="overflow: hidden;">
+                                    <div class="card-body" style="max-height: 450px; min:-height:450x;overflow-y: scroll">
+
+                                        @foreach ($user->archiveLogs as $log)
+                                            <ul class="list-group list-group-flush">
+                                                <figure>
+                                                    <p>
+
+                                                        @if ($log->status_name == 'Archived')
+                                                            <span
+                                                                class="font-weight-bold text-danger">{{ $log->status_name }}</span>
+                                                        @else
+                                                            <span
+                                                                class="font-weight-bold text-success">{{ $log->status_name }}</span>
+                                                        @endif
+                                                        </small>
+                                                    </p>
+                                                    <blockquote class="blockquote">
+
+                                                        <p class="ps-2"><small>
+                                                                {{ $log->notes }}
+                                                            </small>
+                                                        </p>
+                                                    </blockquote>
+                                                    <figcaption class="blockquote-footer ps-3">
+                                                        {{ $log->doneBy->fullname }} <cite
+                                                            title="Source Title">{{ $log->created_at->diffForHumans() }}</cite>
+                                                    </figcaption>
+                                                </figure>
+                                            </ul>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -387,7 +441,7 @@
             </div>
             @include('components.footer')
         </div>
-        
+
     </div>
 
 
@@ -463,6 +517,11 @@
                 //         })
                 //     }
                 // }
+                function attributeName(id, key, attributeName)
+                {
+                    
+                    return id === undefined ? `${attributeName}[new-${key}]` : `${attributeName}[${id}]`
+                }
                 return {
                     profile,
                     works,
@@ -470,7 +529,8 @@
                     removeWork,
                     uploadFile,
                     requirements,
-                    archive_status
+                    archive_status,
+                    attributeName
                 }
             }
         }).mount('#app')

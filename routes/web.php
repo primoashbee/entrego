@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified', ApplicantHasFinishedProfile::class, Appli
 
     Route::group(['prefix'=>'users', 'middleware' => [IsAdminMiddleware::class]], function(){
         Route::get('/', [UserController::class, 'index'])->name('users.index');
+        Route::get('/{type}/', [UserController::class, 'indexType'])->name('users.index.type');
         Route::get('/create', [UserController::class, 'createUser'])->name('users.create');
         Route::post('/create', [UserController::class, 'storeUser'])->name('users.store');
         Route::get('/update/{id}', [UserController::class, 'editUser'])->name('users.edit');

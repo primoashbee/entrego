@@ -305,4 +305,9 @@ class User extends Authenticatable
     {
         return $this->is_archived ? 'ARCHIVED' : 'ACTIVE';
     }
+
+    public function userLogs()
+    {
+        return $this->hasMany(UserLog::class);
+    }
 }

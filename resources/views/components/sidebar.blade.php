@@ -58,6 +58,9 @@ id="sidenav-main">
         </li>
         @endif
 
+
+        
+
         @if($user->role == "ADMINISTRATOR")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{ route('personal-assessments.index') }}">
@@ -72,6 +75,35 @@ id="sidenav-main">
         @endif
 
         @if($user->role == "ADMINISTRATOR")
+        <li class="nav-item mb-2 mt-0">
+            <a data-bs-toggle="collapse" href="#ProfileNav" class="nav-link text-white collapsed" aria-controls="ProfileNav"
+                role="button" aria-expanded="false">
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">people</i>
+                </div>
+                <span class="nav-link-text ms-2 ps-1">Users</span>
+            </a>
+            <div class="collapse" id="ProfileNav" style="">
+                <ul class="nav ">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{route('users.index.type', 'active')}}">
+                            {{-- <span class="sidenav-mini-icon"> A </span> --}}
+                            <span class="sidenav-normal  ms-3  ps-1"> Active </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{route('users.index.type', 'archived')}}">
+                            {{-- <span class="sidenav-mini-icon"> S </span> --}}
+                            <span class="sidenav-normal  ms-3  ps-1"> Archived</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        @endif
+        
+
+        {{-- @if($user->role == "ADMINISTRATOR")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{ route('users.index') }}">
 
@@ -82,9 +114,9 @@ id="sidenav-main">
                 <span class="nav-link-text ms-1">Users</span>
             </a>
         </li>
-        @endif
+        @endif --}}
 
-        @if($user->role == "ADMINISTRATOR" || $user->role =="HR")
+        {{-- @if($user->role == "ADMINISTRATOR" || $user->role =="HR")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('applicants.index')}}">
 
@@ -94,6 +126,34 @@ id="sidenav-main">
 
                 <span class="nav-link-text ms-1">Applicants</span>
             </a>
+        </li>
+        @endif --}}
+
+        @if($user->role == "ADMINISTRATOR" || $user->role =="HR")
+        <li class="nav-item mb-2 mt-0">
+            <a data-bs-toggle="collapse" href="#ApplicantNav" class="nav-link text-white collapsed" aria-controls="ApplicantNav"
+                role="button" aria-expanded="false">
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">people</i>
+                </div>
+                <span class="nav-link-text ms-2 ps-1">Applicants</span>
+            </a>
+            <div class="collapse" id="ApplicantNav" style="">
+                <ul class="nav ">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{route('users.index.type', 'active-applicant')}}">
+                            {{-- <span class="sidenav-mini-icon"> A </span> --}}
+                            <span class="sidenav-normal  ms-3  ps-1"> Active </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{route('users.index.type', 'archived-applicant')}}">
+                            {{-- <span class="sidenav-mini-icon"> S </span> --}}
+                            <span class="sidenav-normal  ms-3  ps-1"> Archived</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
         @endif
 

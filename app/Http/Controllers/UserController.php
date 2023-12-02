@@ -53,6 +53,66 @@ class UserController extends Controller
         return view('user.index', compact('active_users','archived_users'));
     }
 
+    public function indexType(Request $request, $type)
+    {
+        switch($type){
+            case 'active':
+                $list = User::query()
+                // ->when(request('query', false), function($q, $query){    
+                //     dd($query);
+                // })
+                ->where('is_archived', false)
+                ->whereIn('role', [User::APPLICANT, User::SUB_HR, User::HR])
+                ->when($request->q, function($q, $value){
+                        $q->where('email', 'LIKE' , "%$value%");
+                        $q->orWhere('first_name', 'LIKE' , "%$value%");
+                        $q->orWhere('last_name', 'LIKE' , "%$value%");
+                })
+                ->paginate(20)
+                ->withQueryString();
+
+                break;
+            case 'archived':
+                $list = User::query()
+                ->when($request->q, function($q, $value){
+                        $q->where('email', 'LIKE' , "%$value%");
+                        $q->orWhere('first_name', 'LIKE' , "%$value%");
+                        $q->orWhere('last_name', 'LIKE' , "%$value%");
+                })
+                ->where('is_archived', true)
+                ->where('role', User::APPLICANT)
+                ->paginate(20)
+                ->withQueryString();
+                break;
+            case 'active-applicant':
+                $list = User::query()
+                ->when($request->q, function($q, $value){
+                        $q->where('email', 'LIKE' , "%$value%");
+                        $q->orWhere('first_name', 'LIKE' , "%$value%");
+                        $q->orWhere('last_name', 'LIKE' , "%$value%");
+                })
+                ->where('is_archived', false)
+                ->where('role', User::APPLICANT)
+                ->paginate(20)
+                ->withQueryString();
+                break;
+            case 'archived-applicant':
+                $list = User::query()
+                ->when($request->q, function($q, $value){
+                        $q->where('email', 'LIKE' , "%$value%");
+                        $q->orWhere('first_name', 'LIKE' , "%$value%");
+                        $q->orWhere('last_name', 'LIKE' , "%$value%");
+                })
+                ->where('is_archived', true)
+                ->where('role', User::APPLICANT)
+                ->paginate(20)
+                ->withQueryString();
+                break;
+
+        }
+        return view('user.index-type', compact('list'));
+
+    }
     public function edit() : View
     {
         $user = auth()->user()->load('workHistory');
@@ -62,9 +122,16 @@ class UserController extends Controller
 
     public function editUser($id) : View
     {
-        $user = User::with(['requirements','archiveLogs.doneBy'=>function($q){
-            return $q->orderBy('id','desc');
-        }])->findOrFail($id);
+        $user = User::with([
+            'requirements',
+            'archiveLogs'=>function($q){
+                return $q->orderBy('id','desc');
+            },
+            'userLogs'=> function($q){
+                return $q->orderBy('id','desc');
+            }
+            
+            ])->findOrFail($id);
 
         $requirements = $user->requirements;
         // dd($user);
@@ -163,7 +230,6 @@ class UserController extends Controller
     public function updateUser(UpdateProfileRequest $request, $id)
     {
     
-        
         $fields = [
             'first_name'=>$request->first_name,
             'middle_name'=>$request->middle_name,
@@ -189,15 +255,77 @@ class UserController extends Controller
         $user = User::findOrFail($id); 
         $name = $user->fullname;
         $user->update($fields);
+        $changes = collect($user->getChanges())->except(['has_finished_profile','updated_at']);
+
 
         auditLog(auth()->user()->id, "Updated Profile for $name", $user);
-
-        if($request->has('password') && !isNull($request->password)){
-            dump($request->password);
+        $done_by =auth()->user();
+        if($request->has('password') && !is_null($request->password)){
             $user->update([
                 'password'=>Hash::make($request->password)
             ]);
+            
+            
+            $user->userLogs()->create([
+                'notes'=>"Password updated by " . $done_by->full_name,
+                'done_by'=>$done_by->id
+            ]);
             auditLog(auth()->user()->id, "Updated Password for $name", $user);
+        }
+        // dd($user->workHistory->pluck('id')->toArray());
+        $current_work_ids = $user->workHistory->pluck('id')->toArray();
+        $incoming_ids = collect($request->company_name)->keys()->toArray();
+        $delete_ids = array_diff($incoming_ids, $current_work_ids);
+        $delete_ids = array_diff($current_work_ids, $incoming_ids);
+        $user->workHistory()->whereIn('id', $delete_ids)->delete();
+        if($request->has('company_name')){
+            // $user->workHistory()->delete(); 
+            foreach($request->company_name as $index=>$value){
+
+                if(str_contains($index, 'new')){
+                    $user->workHistory()->create([
+                        'company_name'=>$request->company_name[$index] ?? '',
+                        'job_title'=>$request->job_title[$index] ?? '',
+                        'start_date'=>$request->start_date[$index] ?? '',
+                        'end_date'=>$request->end_date[$index] ?? '' ,
+                        'accomplishments'=>$request->accomplishments[$index] ?? '',
+                        'employment_type'=>'',
+                    ]);
+                    $user->userLogs()->create([
+                        'notes'=>"Work History Added" . $request->company_name[$index],
+                        'done_by'=>$done_by->id
+                    ]);
+                }else{
+                    $item = $user->workHistory()->find($index); 
+                    $item->update([
+                            'company_name'=>$request->company_name[$index] ?? '',
+                            'job_title'=>$request->job_title[$index] ?? '',
+                            'start_date'=>$request->start_date[$index] ?? '',
+                            'end_date'=>$request->end_date[$index] ?? '' ,
+                            'accomplishments'=>$request->accomplishments[$index] ?? '',
+                            'employment_type'=>'',
+                        ]);
+                    $item->getChanges();
+                    $changes = collect($item->getChanges())->except(['updated_at']);
+                    $str = "Changes ";
+                    $changes->each(function($item, $key) use (&$str){
+                        $str.=" $key = $item, ";
+                    });
+                    $str = rtrim($str, ",") . ".";
+                    $user->userLogs()->create([
+                        'notes'=>"Work History updated. " . $request->company_name[$index]. ". $str",
+                        'done_by'=>$done_by->id
+                    ]);
+                }
+
+
+            }
+            // $user->userLogs()->create([
+            //     'notes'=>"Work history updated by " . $done_by->full_name,
+            //     'done_by'=>$done_by->id
+            // ]);
+            auditLog($user->id, 'Updated work history');
+
         }
         return redirect()->route('users.index');
     }
