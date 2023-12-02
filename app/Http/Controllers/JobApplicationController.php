@@ -109,6 +109,7 @@ class JobApplicationController extends Controller
         // dd($request->all());
         if($for_report){
             // return $this->showReport(compact('applicants', 'statuses','departments'));
+            //Goes to $this->viewReport
             return redirect()->route('user-job.report', $request->query());
         }
 
@@ -147,8 +148,9 @@ class JobApplicationController extends Controller
             //                                     ->whereRelation('job','department', $value);
             //                                 })
             //                                 ->orderBy('id','desc')->get();
-            $applicants = $this->generateList($request, $for_report);
-            $deployed = $this->deployedList($request, $for_report);
+            $is_dept_head = $user->role == User::SUB_HR;
+            $applicants = $this->generateList($request, $for_report, $is_dept_head, $user->id);
+            $deployed = $this->deployedList($request, $for_report, $is_dept_head,$user->id);
         }
 
 
@@ -346,14 +348,17 @@ class JobApplicationController extends Controller
     public function viewReport(Request $request)
     {
         $viewer = App::make('dompdf.wrapper'); 
-        $applicants = $this->generateList($request);
+        $user = auth()->user();
+        $is_dept_head = $user->role == User::SUB_HR;
+
+        $applicants = $this->generateList($request, $is_dept_head= $is_dept_head, $user_id = $user->id);
         // return view('job-applications.report', compact('applicants'));
         $id = Str::uuid();
         $pdf = $viewer->loadView('job-applications.report', compact('applicants'))->setPaper('legal', 'landscape');
         return $pdf->download("REPORT $id.pdf");
     }
 
-    public function generateList($request, $for_report = false)
+    public function generateList($request, $for_report = false, $is_dept_head = false, $user_id= null)
     {
   
         $q = UserJobApplication::with(['user','job.quiz.questions','userQuiz.quiz'=>function($q){
@@ -372,6 +377,9 @@ class JobApplicationController extends Controller
             ->when($request->department,function($q, $value){
                 $q
                 ->whereRelation('job','department', $value);
+            })
+            ->when($is_dept_head, function($q, $value) use ($user_id){
+                $q->whereRelation('job','requested_by', $user_id);
             })
             ->when($request->job_id, function($q, $value){
                 $q->where('man_power_id', $value);

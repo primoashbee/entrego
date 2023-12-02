@@ -208,6 +208,13 @@
                                         <div class="col-sm-12 col-lg-3">
                                             <p> Email: <strong>{{ $application->user->email }}</strong></p>
                                         </div>
+                                        <div class="col-sm-12 col-lg-3">
+                                        </div>
+                                        @if(auth()->user()->role == 'ADMINISTRATOR')
+                                        <div class="col-sm-12 col-lg-3">
+                                            <p> Requested By: <strong>{{ $application->job->requestor->full_name }}</strong></p>
+                                        </div>
+                                        @endif
                                     </div>
 
                                 </div>
