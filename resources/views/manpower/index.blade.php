@@ -57,7 +57,7 @@
                                           </p>
                                         </td>
                                         <td>
-                                          <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->department_name }}</p>
+                                          <p class=" text-center text-xs font-weight-bold mb-0">{{ $item->departmentLink->value }}</p>
                                         </td>
                                         <td class="">
                                           @if(auth()->user()->role == 'ADMINISTRATOR')

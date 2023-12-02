@@ -141,7 +141,7 @@
                 <tr>
                     <td colspan="6"></td>
                     <td style="text-align: right">Total:</td>
-                    <td style="text-align: left">{{ count($list) }} Manpowers</td>
+                    <td style="text-align: left">{{ count($list) }} Manpower/s</td>
                 </tr>
             </tfoot>
 
