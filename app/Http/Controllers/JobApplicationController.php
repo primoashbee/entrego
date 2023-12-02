@@ -350,8 +350,7 @@ class JobApplicationController extends Controller
         $viewer = App::make('dompdf.wrapper'); 
         $user = auth()->user();
         $is_dept_head = $user->role == User::SUB_HR;
-
-        $applicants = $this->generateList($request, $is_dept_head= $is_dept_head, $user_id = $user->id);
+        $applicants = $this->generateList($request, true, $is_dept_head= $is_dept_head, $user_id = $user->id);
         // return view('job-applications.report', compact('applicants'));
         $id = Str::uuid();
         $pdf = $viewer->loadView('job-applications.report', compact('applicants'))->setPaper('legal', 'landscape');
@@ -378,8 +377,10 @@ class JobApplicationController extends Controller
                 $q
                 ->whereRelation('job','department', $value);
             })
-            ->when($is_dept_head, function($q, $value) use ($user_id){
-                $q->whereRelation('job','requested_by', $user_id);
+            ->when($is_dept_head, function($q, $value) use ($user_id, $is_dept_head){
+                if($value){
+                   $q->whereRelation('job','requested_by', $user_id);
+                }
             })
             ->when($request->job_id, function($q, $value){
                 $q->where('man_power_id', $value);
