@@ -174,6 +174,10 @@
                 "value":"identification",
                 "label":"Identification"
             },
+            {
+                "value": "essay",
+                "label": "Essay"
+            }
         ])
         
         const schema = {
@@ -254,6 +258,10 @@
                     question_data = {
                                         "answer"  : null
                                     }
+                case 'essay':
+                    question_data = {
+                                        "answer"  : null
+                                    }
                     break;
             }
 
@@ -328,6 +336,13 @@
                 const has_answer = question.question_data.answer != null &&  question.question_data.answer != ""
                 const question_filled_up = question.question != ""
                 if(has_answer && question_filled_up){
+                    return true
+                }
+                return false
+            }
+            if(question.question_type === 'essay'){
+                const question_filled_up = question.question != ""
+                if(question_filled_up){
                     return true
                 }
                 return false

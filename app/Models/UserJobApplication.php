@@ -25,6 +25,7 @@ class UserJobApplication extends Model
     const APPROVED = "APPROVED";
 
     const FOR_REQUIREMENTS = "FOR_REQUIREMENTS";
+    const EXAM_REVIEWING = "EXAM_REVIEWING";
     
     const HIRED = "HIRED";
     const DEPLOYED = "DEPLOYED";
@@ -75,6 +76,10 @@ class UserJobApplication extends Model
             "value"=> self::CANCELLED,
             "label"=> "CANCELLED"
         ],
+        [
+            "value"=> self::EXAM_REVIEWING,
+            "label"=> "EXAM REVIEWING"
+        ]
     ];
     
     public function user()

@@ -9,7 +9,7 @@ class UserQuizAnswersV2 extends Model
 {
     use HasFactory;
     protected $table ='user_quiz_answers_v2';
-
+    protected $guarded =[];
     public function getQuestionDataAttribute()
     {
         return json_decode($this->getRawOriginal('question_data'));

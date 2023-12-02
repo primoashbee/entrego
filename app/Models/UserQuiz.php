@@ -37,5 +37,31 @@ class UserQuiz extends Model
     {
         return $this->belongsTo(Quiz::class);
     }
+
+    public function application()
+    {
+        return $this->belongsTo(UserJobApplication::class);
+    }
+
+    public function quizReviewed($checked_by)
+    {
+        $q_answers = $this->answersv2();
+        $total = $q_answers->count();
+        $score = $q_answers->where('is_correct', true)->count();
+        $percentage = ($score / $total) * 100;
+
+        $is_passed = true;
+        $quiz = $this->application->job->quiz;
+        if($quiz->has_passing_rate){
+           $is_passed = $percentage >= $quiz->passing_rate; 
+        }
+        return $this->update([
+            'score'=>$score,
+            'percentage'=>$percentage,
+            'checked_by'=> $checked_by,
+            'checked_at'=> now(),
+            'is_passed'=> $is_passed
+        ]);
+    }
     
 }

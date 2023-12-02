@@ -113,6 +113,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user-quiz/take/{application_id}', [UserQuizController::class, 'create'])->name('user-quiz.take');
     Route::post('/user-quiz/take', [UserQuizController::class, 'store'])->name('user-quiz.submit');
     Route::get('/user-quiz/result/{application_id}', [UserQuizController::class, 'view'])->name('user-quiz.view-result');
+    Route::patch('/user-quiz/result/{application_id}', [UserQuizController::class, 'patch'])->name('user-quiz.view-result.patch');
 
     Route::get('/download/{user_id}', [UserController::class, 'downloadCV'])->name('download.cv');
     Route::get('/download/requirement/{user_id}', [UserRequirementController::class, 'download'])->name('requirement.download');

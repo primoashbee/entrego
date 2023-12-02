@@ -53,15 +53,19 @@ class V2UserQuizController extends Controller
                     $item['is_correct'] = false;
                     if(!is_null($user_answer) && $user_answer == $answer){
                         $item['is_correct'] = true;
+
                     }
                 }
                 if($item['question_type'] == 'identification'){
                     $user_answer = $item['question_data']['user_answer'];
-                    $answer = $item['question_data']['answer'];
-                    $item['is_correct'] = false;
-                    if(!is_null($user_answer) && $user_answer == $answer){
-                        $item['is_correct'] = true;
-                    }
+                    $answer = null;
+                    $item['is_correct'] = null;
+
+                }
+                if($item['question_type'] == 'essay'){
+                    $user_answer = $item['question_data']['user_answer'];
+                    $answer = null;
+                    $item['is_correct'] = null;
                 }
                 return $item;
 
@@ -69,15 +73,17 @@ class V2UserQuizController extends Controller
 
 
             
-            $score = count($answers->filter(function($answer){
-                return $answer['is_correct'] == true;
-            }));
+            // $score = count($answers->filter(function($answer){
+            //     return $answer['is_correct'] == true;
+            // }));
+            $score = null;
             $max_score = $answers->count();
 
-            $score_percentage = ($score / $max_score) * 100;
+            // $score_percentage = ($score / $max_score) * 100;
+            $score_percentage = null;
             $required_percentage = $application->job->quiz->has_passing_rate ? $application->job->quiz->passing_rate : 0 ;
-            $passed = $score_percentage >= $required_percentage;
-
+            // $passed = $score_percentage >= $required_percentage;
+            $passed = null;
             $end_datetime = now();
             $start_datetime = $end_datetime->copy()->subSeconds($request->time_elapsed);
 
@@ -92,15 +98,16 @@ class V2UserQuizController extends Controller
                 'end_datetime'=>$end_datetime,
             ]); 
             $answer_insert = $answers->map(function($answer) use ($user_quiz, $now){
+                // dd($answer);
                 $data = [
                     'user_quiz_id'=>$user_quiz->id,
                     'question_data'=>json_encode($answer['question_data']),
-                    'question'=> $answer['question_data']['answer'],
-                    'answer'=> $answer['question'],
+                    'question'=>$answer['question'],
+                    'answer'=> $answer['question_data']['user_answer'],
                     'is_correct'=>$answer['is_correct'],
                     'created_at'=>$now,
                     'updated_at'=>$now,
-                    'quiz_questions_v2_id'=>$answer['id']
+                    'quiz_questions_v2_id'=>$answer['id'],
                 ];
                 return $data;
             })->toArray();
@@ -110,9 +117,11 @@ class V2UserQuizController extends Controller
             UserQuizAnswersV2::insert($answer_insert);
 
 
-            $status = $passed ? UserJobApplication::EXAM_PASSED : UserJobApplication::EXAM_FAILED ;
+
+            // $status = $passed ? UserJobApplication::EXAM_PASSED : UserJobApplication::EXAM_FAILED ;
+            $status = UserJobApplication::EXAM_REVIEWING ;
             $application->update([
-                'status' => $status 
+                'status' => $status
             ]);
 
             $job_name = $application->job->job_title;

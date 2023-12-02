@@ -55,6 +55,12 @@
                                                     <input type="text" class="form-control px-2" v-model="questions[index].question_data.user_answer" >
                                                 </div>
                                             </template>
+                                            <template v-if="questions[index].question_type ==='essay'">
+                                                <div class="input-group input-group-static">
+                                                    <label class=>Answer</label>
+                                                    <textarea class="form-control px-2" v-model="questions[index].question_data.user_answer" rows="5"> </textarea>
+                                                </div>
+                                            </template>
                                             
                                         </div>
                                         <div class="div" style="float: right;">
@@ -147,35 +153,35 @@
                 return;
 
             }
-            // const accept = await Swal.fire({
-            //     title: 'Information?',
-            //     text: "This is a timed quiz. Start quiz now?",
-            //     icon: 'info',
-            //     showCancelButton: true,
-            //     confirmButtonColor: '#3085d6',
-            //     cancelButtonColor: '#d33',
-            //     confirmButtonText: 'Yes'
-            // })
+            const accept = await Swal.fire({
+                title: 'Information?',
+                text: "This is a timed quiz. Start quiz now?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            })
 
-            // if(!accept.isConfirmed){
-            //     location.reload();
-            //     return;
-            // };
+            if(!accept.isConfirmed){
+                location.reload();
+                return;
+            };
             
 
-            // timer = startTimer()
+            timer = startTimer()
 
-            // window.onbeforeunload = function(evt) {
-            // var message = 'Leaving this site will make you quiz fail';
-            // if (typeof evt == 'undefined') {
-                // evt = window.event;
-            // }
-            // if (evt) {
-                // evt.returnValue = message;
-            // }
+            window.onbeforeunload = function(evt) {
+                var message = 'Leaving this site will make you quiz fail';
+                if (typeof evt == 'undefined') {
+                    evt = window.event;
+                }
+                if (evt) {
+                    evt.returnValue = message;
+                }
 
-            // return message;
-        // }
+                return message;
+            }
         })
 
         
@@ -215,6 +221,7 @@
             })
             const el = document.getElementById('time-left-span')
             return setInterval(() => {
+                console.log('hey');
                 el.innerHTML = timerFormatted.value
                 time_left.value = time_left.value - 1
             }, 1000);
@@ -230,7 +237,7 @@
         })
 
         watch(time_left, async (newVal, oldVal)=>{
-            console.log(time_elapsed.value)
+            console.log(time_left.value)
             time_elapsed.value = time_in_seconds.value - time_left.value
             if(time_left.value == 0){
                 await submit(true)
