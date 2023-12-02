@@ -106,12 +106,13 @@
                     <th scope="col">Name</th>
                     <th scope="col">E-mail</th>
                     <th scope="col">Job Applied</th>
-                    <th scope="col">Status</th>
                     <th scope="col">Applied</th>
                     <th scope="col">Interview Date</th>
                     <th scope="col">Offer Sent</th>
                     <th scope="col">Offer Accepted</th>
                     <th scope="col">Deployed</th>
+                    <th scope="col">Status</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -121,12 +122,13 @@
                         <td> {{ $applicant->user->full_name }}</td>
                         <td> {{ $applicant->user->email }}</td>
                         <td> {{ $applicant->job->job_title }}</td>
-                        <td> {{ $applicant->status_name }}</td>
                         <td> {{ $applicant->created_at }}</td>
                         <td> {{ $applicant->interview_date }}</td>
                         <td> {{ $applicant->job_offered_at }}</td>
                         <td> {{ $applicant->job_offer_accepted_at }}</td>
                         <td> {{ $applicant->deployed_at }}</td>
+                        <td> {{ $applicant->status_name }}</td>
+
                     </tr>
                 @endforeach
 
