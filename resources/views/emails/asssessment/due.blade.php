@@ -1,10 +1,11 @@
 <x-mail::message>
 # Greetings!
 
-Subject: Personal Assessment</b>
+Subject: Personality Assessment Expired</b>
 
 Dear <b>{{$user->fullname}}</b>,
-Your account has been tagged as {{$user->archiveStatus()}}
+
+Kindly retake your Personality Assessment to continue your application process here at Entrego.
 
 Thanks,<br>
 {{ config('app.name') }}
