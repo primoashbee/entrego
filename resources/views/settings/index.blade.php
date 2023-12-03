@@ -52,6 +52,24 @@
                                                     Job Levels
                                                 </a>
                                             </li>
+                                            <li class="nav-item" onclick="show('job_natures')">
+                                                <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" role="tab"
+                                                    aria-controls="code" aria-selected="false">
+                                                    <span class="material-icons align-middle mb-1">
+                                                        show_chart
+                                                    </span>
+                                                    Job Natures
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" onclick="show('experiences')">
+                                                <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" role="tab"
+                                                    aria-controls="code" aria-selected="false">
+                                                    <span class="material-icons align-middle mb-1">
+                                                        streetview
+                                                    </span>
+                                                    Experiences
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
 
@@ -168,6 +186,82 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <!-- Job Natures Table -->
+                                    <div class="table-responsive" id="tbl_job_natures" style="display: none;">
+                                        <h4 class="mx-3" style="float:left"> Job Natures </h4>
+                                        <a href="{{ route('settings.create', 'job_nature') }}" class="btn btn-success"
+                                            style="float: right; margin-bottom: 0%">Add New Job Nature</a>
+
+                                        <table class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th
+                                                        class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                        Name</th>
+                                                    {{-- <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Role</th> --}}
+                                                    {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">E-mail</th> --}}
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                        Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($job_natures as $item)
+                                                    <tr>
+                                                        <td>{{ $item->value }}</td>
+                                                        <td class="text-center">
+                                                            <a
+                                                                href="{{ route('settings.edit', ['type' => 'job_nature', 'id' => $item->id]) }}">
+                                                                Edit </a> |
+
+                                                            <a href="javascript:void(0)"
+                                                                onclick="deleteSetting('{{ route('settings.delete', ['type' => 'job_nature', 'id' => $item->id]) }}')"
+                                                                url="{{ route('settings.delete', ['type' => 'job_nature', 'id' => $item->id]) }}">
+                                                                Delete </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- Job Experiences Table -->
+                                    <div class="table-responsive" id="tbl_experiences" style="display: none;">
+                                        <h4 class="mx-3" style="float:left"> Experiences </h4>
+                                        <a href="{{ route('settings.create', 'experience') }}" class="btn btn-success"
+                                            style="float: right; margin-bottom: 0%">Add New Experience</a>
+
+                                        <table class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th
+                                                        class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                        Name</th>
+                                                    {{-- <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Role</th> --}}
+                                                    {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">E-mail</th> --}}
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                        Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($experiences as $item)
+                                                    <tr>
+                                                        <td>{{ $item->value }}</td>
+                                                        <td class="text-center">
+                                                            <a
+                                                                href="{{ route('settings.edit', ['type' => 'experience', 'id' => $item->id]) }}">
+                                                                Edit </a> |
+
+                                                            <a href="javascript:void(0)"
+                                                                onclick="deleteSetting('{{ route('settings.delete', ['type' => 'experience', 'id' => $item->id]) }}')"
+                                                                url="{{ route('settings.delete', ['type' => 'experience', 'id' => $item->id]) }}">
+                                                                Delete </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -186,9 +280,14 @@
             locations = document.getElementById('tbl_locations');
             departments = document.getElementById('tbl_departments');
             job_levels = document.getElementById('tbl_job_levels');
+            job_natures = document.getElementById('tbl_job_natures');
+            experiences = document.getElementById('tbl_experiences');
+
             locations.style.display = 'none'
             departments.style.display = 'none'
             job_levels.style.display = 'none'
+            job_natures.style.display = 'none'
+            experiences.style.display = 'none'
 
             document.getElementById(`tbl_${div}`).style.display = null
         }

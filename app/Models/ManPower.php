@@ -131,7 +131,7 @@ class ManPower extends Model
 
     public function getRequiredExperienceNameAttribute()
     {
-        return collect(self::EXPERIENCES)->where('value', $this->required_experience)->first()['label'];
+        return $this->jobExperienceLink?->key;
     }
 
     public function getExpiresAtNameAttribute()
@@ -258,5 +258,21 @@ class ManPower extends Model
     public function notes()
     {
         return $this->hasMany(ManPowerNotes::class);
+    }
+
+
+    public function jobNatureLink()
+    {
+        return $this->belongsTo(JobNature::class ,'job_nature','key');
+    }
+
+    public function jobLevelLink()
+    {
+        return $this->belongsTo(JobLevel::class ,'job_level','key');
+    }
+
+    public function experienceLink()
+    {
+        return $this->belongsTo(JobExperience::class ,'required_experience','key');
     }
 }

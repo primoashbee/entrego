@@ -22,7 +22,7 @@
                                 </div>
                                 <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-12 mb-3">
+                                            {{-- <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Job Group</label>
                                                     <select name="job_group" id="job_group" class="form-control">
@@ -32,8 +32,19 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
+                                            </div> --}}
+                                            <div class="col-md-12 mb-3">
+                                                <div class="input-group input-group-static">
+                                                    <label class=""> Department</label>
+                                                    <select name="department" id="department" class="form-control">
+                                                        <option value=""> Please Select</option>
+                                                        @foreach($departments as $department)
+                                                        <option value="{{$department->key}}"> {{ $department->value }}</option>
+                                                        @endforeach
+
+                                                    </select>
+                                                </div>
                                             </div>
-                                            
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <input type="checkbox" name="has_sjt" id="has_sjt" onclick="hasSJTClicked()" >
@@ -100,10 +111,9 @@
                                                     <label class="">Job Nature</label>
                                                     <select name="job_nature" id="job_nature" class="form-control">
                                                         <option value=""> Please Select</option>
-                                                        <option value="FULL_TIME"> Full Time</option>
-                                                        <option value="PART_TIME"> Part Time</option>
-                                                        <option value="CONTRACT"> Contract </option>
-                                                        <option value="PROJECT_BASED"> Project Based </option>
+                                                        @foreach($job_natures as $key=>$value)
+                                                        <option value="{{$value->value}}"> {{$value->value}} </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -142,24 +152,13 @@
                                                     <label class="">Required Experience</label>
                                                     <select name="required_experience"  id="required_experience" class="form-control">
                                                         <option value=""> Please Select</option>
-                                                        @foreach($experiences as $experience)
-                                                        <option value="{{$experience['value']}}"> {{ $experience['label'] }}</option>
+                                                        @foreach($experiences as $key=>$value)
+                                                        <option value="{{$value->value}}"> {{$value->value}} </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12 mb-3">
-                                                <div class="input-group input-group-static">
-                                                    <label class=""> Department</label>
-                                                    <select name="department" id="department" class="form-control">
-                                                        <option value=""> Please Select</option>
-                                                        @foreach($departments as $department)
-                                                        <option value="{{$department->key}}"> {{ $department->value }}</option>
-                                                        @endforeach
 
-                                                    </select>
-                                                </div>
-                                            </div>
 
 
 

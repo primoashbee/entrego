@@ -48,15 +48,17 @@
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
-                                                    <label class="">Job Group</label>
-                                                    <select name="job_group" id="job_group" class="form-control">
+                                                    <label class=""> Department</label>
+                                                    <select name="department" id="department" class="form-control">
                                                         <option value=""> Please Select</option>
-                                                        @foreach($job_group as $job)
-                                                        <option value="{{$job['value']}}"> {{ $job['label'] }} </option>
+                                                        @foreach($departments as $department)
+                                                        <option value="{{$department->key}}"> {{ $department->value }}</option>
                                                         @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-12 mb-3">
                                                 <div class="input-group input-group-static">
                                                     <label class="">Job Title</label>
@@ -121,12 +123,9 @@
                                                 <div class="input-group input-group-static">
                                                     <label class="">Job Nature</label>
                                                     <select name="job_nature" id="job_nature" class="form-control">
-                                                        <option value=""> Please Select</option>
-                                                        <option value="FULL_TIME"> Full Time</option>
-                                                        <option value="PART_TIME"> Part Time</option>
-                                                        <option value="CONTRACT"> Contract </option>
-                                                        <option value="PROJECT_BASED"> Project Based </option>
-
+                                                        @foreach($job_natures as $key=>$value)
+                                                        <option value="{{$value->key}}"> {{$value->value}} </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -165,21 +164,9 @@
                                                     <label class="">Required Experience</label>
                                                     <select name="required_experience"  id="required_experience" class="form-control">
                                                         <option value=""> Please Select</option>
-                                                        @foreach($experiences as $experience)
-                                                        <option value="{{$experience['value']}}"> {{ $experience['label'] }}</option>
+                                                        @foreach($experiences as $key=>$value)
+                                                        <option value="{{$value->value}}"> {{$value->value}} </option>
                                                         @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 mb-3">
-                                                <div class="input-group input-group-static">
-                                                    <label class=""> Department</label>
-                                                    <select name="department" id="department" class="form-control">
-                                                        <option value=""> Please Select</option>
-                                                        @foreach($departments as $department)
-                                                        <option value="{{$department->key}}"> {{ $department->value }}</option>
-                                                        @endforeach
-
                                                     </select>
                                                 </div>
                                             </div>
@@ -202,8 +189,7 @@
 @section('scripts')
 <script>
     (async function(){
-        job_group = document.getElementById('job_group')
-        job_group.value = "{{$manpower->job_group}}"
+
 
         vacancies = document.getElementById('vacancies')
         vacancies.value = "{{$manpower->vacancies}}"
@@ -225,6 +211,12 @@
 
         job_level = document.getElementById('job_level')
         job_level.value = "{{$manpower->job_level}}"
+
+        job_nature = document.getElementById('job_nature')
+        job_nature.value = "{{$manpower->job_nature}}"
+
+        required_experience = document.getElementById('required_experience')
+        required_experience.value = "{{$manpower->required_experience}}"
 
         @if(session()->has('success'))
             await Swal.fire(

@@ -203,7 +203,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12 col-lg-3">
-                                            <p> Applicant Name: <strong>{{ $application->user->full_name }}</strong></p>
+                                            <p> Applicant Name: <strong><a href="{{route('users.edit',$application->user_id)}}" target="_blank">{{ $application->user->full_name }}</a></strong></p>
                                         </div>
                                         <div class="col-sm-12 col-lg-3">
                                             <p> Email: <strong>{{ $application->user->email }}</strong></p>

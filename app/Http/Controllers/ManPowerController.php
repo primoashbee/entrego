@@ -12,7 +12,9 @@ use App\Http\Requests\UpdateManPowerRequest;
 use App\Mail\ManPowerRequestChanged;
 use App\Mail\ManPowerRequestUpdated;
 use App\Models\Department;
+use App\Models\JobExperience;
 use App\Models\JobLevel;
+use App\Models\JobNature;
 use App\Models\Location;
 use App\Models\UserJobApplication;
 use Illuminate\Support\Facades\Mail;
@@ -45,7 +47,6 @@ class ManPowerController extends Controller
     public function create()
     {   
         $job_group = ManPower::JOB_GROUP;
-        $experiences = ManPower::EXPERIENCES;
         $vacancies = ManPower::VACANCIES;
 
         // $departments = ManPower::DEPARTMENT;
@@ -53,7 +54,9 @@ class ManPowerController extends Controller
         $locations = Location::select('key','value')->orderBy('value','desc')->get();
         $levels = JobLevel::select('key','value')->orderBy('value','desc')->get();
         $quizzes = Quiz::select('id','name')->orderBy('id','desc')->get();
-        return view('manpower.create', compact('job_group', 'experiences', 'departments','vacancies', 'quizzes','locations','levels'));
+        $job_natures = JobNature::select('key','value')->orderBy('id','desc')->get();
+        $experiences = JobExperience::select('key','value')->orderBy('id','desc')->get();
+        return view('manpower.create', compact('job_group', 'experiences', 'departments','vacancies', 'quizzes','locations','levels','job_natures','experiences'));
     }
 
     public function store(StoreManPowerRequest $request)
@@ -119,7 +122,6 @@ class ManPowerController extends Controller
     public function edit($id)
     {
         $job_group = ManPower::JOB_GROUP;
-        $experiences = ManPower::EXPERIENCES;
         $vacancies = ManPower::VACANCIES;
         $manpower = ManPower::with(['notes'=>function($q){ $q->orderBy('id','desc');}])->findOrFail($id);
 
@@ -127,8 +129,11 @@ class ManPowerController extends Controller
         $locations = Location::select('key','value')->orderBy('value','desc')->get();
         $levels = JobLevel::select('key','value')->orderBy('value','desc')->get();
         $quizzes = Quiz::select('id','name')->orderBy('id','desc')->get();
+        $job_natures = JobNature::select('key','value')->orderBy('id','desc')->get();
+        $experiences = JobExperience::select('key','value')->orderBy('id','desc')->get();
+        // dd($manpower->job_nature);
+        return view('manpower.edit', compact('manpower','job_group', 'experiences', 'departments','vacancies', 'quizzes','locations','levels','job_natures','experiences'));
 
-        return view('manpower.edit', compact('manpower','job_group', 'experiences', 'departments','vacancies','quizzes','locations','levels'));
     }
 
     public function update(UpdateManPowerRequest $request, $id)

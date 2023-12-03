@@ -26,7 +26,6 @@ class StoreManPowerRequest extends FormRequest
 
         return [
             'job_title'=>'required',
-            'job_group'=>['required', Rule::in(collect(ManPower::JOB_GROUP)->pluck('value')->toArray())],
             'description'=>'required',
             'responsibilities'=>'required',
             'has_sjt'=>'nullable',

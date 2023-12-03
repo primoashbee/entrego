@@ -95,8 +95,16 @@
                 <?php 
                     $total_avg_tth = 0;    
                     $counter = 0;    
+                    $requested = 0;
+                    $deployed= 0;
+                    $total_fulfillment_rate= 0;
                 ?>
                 @foreach($list as $item)
+                <?php 
+                    $requested+=$item->requested;
+                    $deployed+=$item->deployed;
+                    $deployed+=$item->deployed;
+                ?>
                 <tr>
                     <td class="">
                         {{$item->job_title}}
@@ -127,9 +135,18 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3"></td>
-                    <td style="text-align: right">Average Time To Hire:</td>
-                    <td style="text-align: left">{{ $total_avg_tth / $counter }} days</td>
+                    <td style="text-align: right">Total:</td>
+                    <td style="text-align: center">{{$requested}}</td>
+                    <td style="text-align: center">{{$deployed}}</td>
+                    <td style="text-align: center">{{$deployed}} / {{$requested}}</td>
+                    <td style="text-align: center">{{$total_avg_tth}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: right">Average:</td>
+                    <td style="text-align: center">{{ round($requested / count($list), 1)}}</td>
+                    <td style="text-align: center">{{ round($deployed / count($list) ,1)}}</td>
+                    <td style="text-align: center">{{ round((($deployed / $requested)/count($list) * 100), 2)}} %</td>
+                    <td style="text-align: center">{{ round($total_avg_tth / count($list), 1) }} days</td>
                 </tr>                
                 <tr>
                     <td colspan="3"></td>

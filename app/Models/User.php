@@ -293,7 +293,16 @@ class User extends Authenticatable
 
     public function cancelJobApplications($except_application_id)
     {
-        return $this->jobApplications()->whereNot('id', $except_application_id)->update(['status'=> UserJobApplication::CANCELLED]);
+        $this->jobApplications()->whereNot('id', $except_application_id)->each(function($application){
+            $application->update([
+                'status'=> UserJobApplication::CANCELLED,
+                'cancelled_notes'=> 'Cancelled because another application is deployed.',
+                'cancelled_by'=>1,
+                'cancelled_at'=> now()
+            ]);
+        });
+
+        return true;
     }
     
     public function archiveLogs()

@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\ApplicantsRequest;
+use App\Mail\JobApplicationTagged;
+use App\Mail\JobCancelledMail;
 
 class JobApplicationController extends Controller
 {
@@ -118,7 +120,27 @@ class JobApplicationController extends Controller
         $departments = ManPower::DEPARTMENT;
         $jobs = ManPower::select('id','job_title')->get();
         
-        $staffs = User::select('id','first_name','last_name','email','role')->whereNotIn('role',[User::APPLICANT, User::SUB_HR])->get();
+        if($user->role == User::ADMINSTRATOR){
+            $staffs = User::select('id','first_name','last_name','email','role')->whereNotIn('role',[User::APPLICANT, User::SUB_HR])->get();
+        }
+
+        if($user->role == User::SUB_HR){
+            $staffs = User::select('id','first_name','last_name','email','role')
+                ->where('role',User::HR)
+                ->orWhere('id', $user->id)
+                ->get();
+        }
+
+        if($user->role == User::HR){
+            $staffs =  User::where('id', $user->id)
+            ->get();
+        }
+
+        
+        if($user->role == User::APPLICANT){
+            $staffs =  User::where('id', $user->id)
+            ->get();
+        }
 
         
         if($user->role === User::APPLICANT){
@@ -166,6 +188,7 @@ class JobApplicationController extends Controller
             'link'=>$request->link,
             'interview_date'=>Carbon::parse($request->datetime),
         ];
+        $tagged_id = $request->hr_id;
         if($request->status == 'SEND_INTERVIEW'){
             $fields['status'] = UserJobApplication::INTERVIEW_SENT;
             $fields['interview_sent_at'] = now();
@@ -195,10 +218,12 @@ class JobApplicationController extends Controller
                     $applicant
                 )
             );
+
             $name = $applicant->user->fullname; 
             $position = $applicant->job->job_title; 
             $link = $request->link; 
             $interview_date = Carbon::parse($applicant->interview_date)->toDayDateTimeString();
+
             if($request->is_onsite){
                 $location = $applicant->job->locationLink->value;
                 $message = "Greetings, $name.\n\nYou're scheduled for an interview: \nDate: $interview_date\nPosition: $position.\n\nLocated at $location office.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
@@ -206,16 +231,7 @@ class JobApplicationController extends Controller
             }else{
                 $message = "Greetings, $name.\n\nYou're scheduled for an interview: \nDate: $interview_date\nPosition: $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
             }
-            dd($message);
-            // $sid = config('services.twilio.account_sid');
-            // $token = config('services.twilio.auth_token');
-            // $twilio_number = config('services.twilio.twilio_number');
-            // $client = new Client($sid, $token);
-            // $client->messages->create('+639685794313',
-            //     [
-            //         'From'=> $twilio_number,
-            //         'body'=> $message
-            //     ]);
+;
             if(env('APP_ENV') != 'local'){
                 $client = new Semaphore(config('services.semaphore.api_key'));
                 $res = $client->sendSMS($applicant->user->contact_number, $message);
@@ -224,6 +240,11 @@ class JobApplicationController extends Controller
 
 
             auditLog($applicant->user->id, "E-mail sent for Interview Link");
+            Mail::to(User::find($tagged_id)->email)
+                ->send(
+                    new JobApplicationTagged($applicant, 'SEND_INTERVIEW', $tagged_id)
+                );
+
         }
 
         if($request->status =='JOB_OFFER'){
@@ -263,6 +284,10 @@ class JobApplicationController extends Controller
 
 
             auditLog($applicant->user->id, "E-mail sent for Job Offer Link");
+            Mail::to(User::find($tagged_id)->email)
+            ->send(
+                new JobApplicationTagged($applicant, 'JOB_OFFER', $tagged_id)
+            );
         }
        
 
@@ -275,10 +300,31 @@ class JobApplicationController extends Controller
         $status = $request->status;
         $name = $user_job->user->fullname;
         $job = $user_job->job;
-        
+        $tagged_id = $request->hr_id;
         
         $client = new Semaphore(config('services.semaphore.api_key'));
 
+        if($status === UserJobApplication::CANCELLED){
+
+            Mail::to($user_job->user->email)
+                ->send(
+                    new JobCancelledMail($user_job)
+                );
+
+            $user_job->update([
+                'cancelled_at'=>now(),
+                'cancelled_by'=>$tagged_id,
+                'cancelled_notes'=> $request->notes
+            ]);
+
+            auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - CANCELLED", $user_job);
+            
+            Mail::to(User::find($tagged_id)->email)
+            ->send(
+                new JobApplicationTagged($user_job, UserJobApplication::CANCELLED, $tagged_id)
+            );
+
+        }
         if($request->status === UserJobApplication::REJECTED){
             Mail::to($user_job->user->email)
                 ->send(
@@ -293,6 +339,10 @@ class JobApplicationController extends Controller
                 'rejected_notes'=>$request->notes,
                 'rejected_by'=>$request->hr_id
             ]);
+            Mail::to(User::find($tagged_id)->email)
+            ->send(
+                new JobApplicationTagged($user_job, UserJobApplication::REJECTED, $tagged_id)
+            );
         }elseif($request->status === UserJobApplication::APPROVED){
             Mail::to($user_job->user->email)
             ->send(
@@ -308,6 +358,10 @@ class JobApplicationController extends Controller
                 'job_offer_approved_by'=>$request->hr_id
 
             ]);
+            Mail::to(User::find($tagged_id)->email)
+            ->send(
+                new JobApplicationTagged($user_job, UserJobApplication::APPROVED, $tagged_id)
+            );
 
         }
 
@@ -319,6 +373,10 @@ class JobApplicationController extends Controller
                 'accepted_job_offer_notes'=>$request->notes,
                 'job_offer_accepted_by'=>$request->hr_id
             ]);
+            Mail::to(User::find($tagged_id)->email)
+            ->send(
+                new JobApplicationTagged($user_job, UserJobApplication::FOR_REQUIREMENTS, $tagged_id)
+            );
 
         }
 
@@ -337,6 +395,10 @@ class JobApplicationController extends Controller
 
             ]);
             $user_job->user->cancelJobApplications($id);
+            Mail::to(User::find($tagged_id)->email)
+            ->send(
+                new JobApplicationTagged($user_job, UserJobApplication::DEPLOYED, $tagged_id)
+            );
 
         }
 

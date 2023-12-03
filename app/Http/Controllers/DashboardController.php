@@ -27,13 +27,15 @@ class DashboardController extends Controller
             $manpower->list = ManPower::orderBy('id', 'desc')->get();
     
             $applicant = new stdClass;
-            $applicant->total  = User::active()
+            $applicant->total  = User::where('is_archived', false)
                                 ->whereRole(User::APPLICANT)
                                 ->count();
-            $applicant->active = User::where('is_archived', false)
-                                        ->where('role', User::APPLICANT)
-                                        ->where('has_finished_profile', true)
-                                        ->where('has_finished_asessment', true)
+
+            $applicant->active = User::whereHas('jobApplications')
+                                        // ->where('is_archived', false)
+                                        // ->where('role', User::APPLICANT)
+                                        // ->where('has_finished_profile', true)
+                                        // ->where('has_finished_asessment', true)
                                         // ->whereMonth('created_at', $now->format('m'))
                                         // ->finishedAssessment()
                                         // ->finishedProfile()

@@ -32,6 +32,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Middleware\ApplicantHasFinishedProfile;
 use App\Http\Middleware\UserPacketDownloadMiddleware;
 use App\Http\Controllers\UserPersonalAssessmentController;
+use App\Mail\JobApplicationTagged;
 use App\Mail\JobInterviewMail;
 use App\Mail\JobOfferMail;
 
@@ -196,7 +197,7 @@ Route::get('/test', function(){
 });
 
 Route::get('/itest', function(){
-    $j = UserJobApplication::find(8);
-    return new JobOfferMail($j);
+    $j = UserJobApplication::find(9);
+    return new JobApplicationTagged($j, 'APPROVED', 5);
 });
 require __DIR__.'/auth.php';

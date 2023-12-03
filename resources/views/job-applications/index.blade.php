@@ -247,16 +247,19 @@
                                                             <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'REJECTED')" class="font-weight-normal text-xs text-danger" data-toggle="tooltip" data-original-title="Edit item">
                                                                 <i class="material-icons">cancel</i>
                                                             </a>
-        
+
+
                                                             <!-- Step 2 Job Offer -->
                                                             <a href="javascript:void(0)" onclick="promptEmail({{$applicant->id}}, 'JOB_OFFER')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
                                                                 <i class="material-icons">event_available</i>
                                                             </a>
         
                                                             <!-- Step 3 Job Offer Approved - Applicant will now be FOR Requirements -->
+                                                            @if(!is_null($applicant->job_offered_at))
                                                             <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'APPROVED')" class="font-weight-normal text-xs text-success" data-toggle="tooltip" data-original-title="Edit item">
                                                                 <i class="material-icons">check_circle</i>
                                                             </a>
+                                                            @endif
         
                                                             @if($applicant->user->canBeZipped() && $applicant->user->requirementsFullfilled() && $applicant->status == \app\Models\UserJobApplication::FOR_REQUIREMENTS )
                                                             <!-- Deployment -->
@@ -276,7 +279,12 @@
                                                             </a>
                                                             @endif
                                                         @endif
-        
+
+                                                        <!-- Step X Cancel Application  Can be done everytime -->
+                                                        <a href="javascript:void(0)" onclick="promptStatus({{$applicant->id}}, 'CANCELLED')" class="font-weight-normal text-xs text-primary" data-toggle="tooltip" data-original-title="Edit item">
+                                                            <i class="material-icons">stop</i>
+                                                        </a>
+                                                                
                                                         @if($applicant->user->canBeZipped())
                                                         <a href="javascript:void(0)" onclick="promptDownloadUserReport({{$applicant->user_id}})"  data-toggle="tooltip"  class="font-weight-normal text-xs text-success">
                                                         <i class="material-icons">file_download</i>
@@ -830,6 +838,11 @@
             title ='Reject Application'
             text = `Do you want to tag this applicant as REJECTED?`
             notes_type ='rejected_notes'
+        }
+        if(status=='CANCELLED'){
+            title ='CANCEL Application'
+            text = `Do you want to tag this applicant as CANCELLED?`
+            notes_type ='cancelled_notes'
 
         }
 
