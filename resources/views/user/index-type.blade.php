@@ -28,7 +28,18 @@
                             <form action="{{url()->current()}}" method="GET" id="frmFilter">
 
                               <div class="row"> 
-                                  <div class="col-9"></div>
+                                  <div class="col-2">
+                                      <div class="input-group input-group-outline mb-3">
+                                        
+                                          <select name="role" id="role" class="form-control form-filter" placeholder="Status">
+                                              <option value="">Select Role</option>
+                                              @foreach($roles as $role)
+                                                  <option value="{{$role['value']}}">{{$role['label']}}</option>
+                                              @endforeach
+                                          </select>
+                                      </div>                                        
+                                  </div>
+                                  <div class="col-7"></div>
                                   <div class="col-3">
                                       <div class="input-group input-group-outline mb-3">
                                           <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" id="q" value="{{request()->q}}">
@@ -116,6 +127,24 @@ function show(div){
   document.getElementById(`tbl_${div}`).style.display = null
 
 
+
 }
+
+(function(){
+    q = document.getElementById('q');
+    q.value = '{{request()->q}}'
+
+    role = document.getElementById('role');
+    role.value = '{{request()->role}}'
+
+    document.getElementById('frmFilter').addEventListener("submit", function(event){
+        Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
+            if(element.value == "" ){
+                element.disabled=true
+            }
+        });
+
+    })
+  })()
 </script>
 @endsection

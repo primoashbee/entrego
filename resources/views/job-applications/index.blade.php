@@ -947,14 +947,7 @@
     })();
 
    
-    document.getElementById('frmFilter').addEventListener("submit", function(event){
-        Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
-            if(element.value == "" ){
-                element.disabled=true
-            }
-        });
 
-    })
 
     document.getElementById('btnExport').addEventListener('click', function(event){
         Array.from(document.getElementsByClassName('form-filter')).forEach(element => {

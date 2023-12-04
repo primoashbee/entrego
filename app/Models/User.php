@@ -54,6 +54,21 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    const ROLES = [
+        [
+            'value'=>self::ADMINSTRATOR,
+            'label'=>'ADMINISTRATOR',
+        ],
+        [
+            'value'=>self::SUB_HR,
+            'label'=>'DEPARTMENT HEAD',
+        ],
+        [
+            'value'=>self::HR,
+            'label'=>self::HR,
+        ]
+        
+    ];
     public static function admin()
     {
         return self::where('role', self::ADMINSTRATOR)->first();

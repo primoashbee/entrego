@@ -55,6 +55,7 @@ class UserController extends Controller
 
     public function indexType(Request $request, $type)
     {
+        $roles = User::ROLES;
         switch($type){
             case 'active':
                 $list = User::query()
@@ -62,11 +63,14 @@ class UserController extends Controller
                 //     dd($query);
                 // })
                 ->where('is_archived', false)
-                ->whereIn('role', [User::APPLICANT, User::SUB_HR, User::HR])
+                // ->whereIn('role', [User::APPLICANT, User::SUB_HR, User::HR])
                 ->when($request->q, function($q, $value){
                         $q->where('email', 'LIKE' , "%$value%");
                         $q->orWhere('first_name', 'LIKE' , "%$value%");
                         $q->orWhere('last_name', 'LIKE' , "%$value%");
+                })
+                ->when($request->role, function($q, $value){
+                        $q->where('role', $value);
                 })
                 ->paginate(20)
                 ->withQueryString();
@@ -80,7 +84,10 @@ class UserController extends Controller
                         $q->orWhere('last_name', 'LIKE' , "%$value%");
                 })
                 ->where('is_archived', true)
-                ->where('role', User::APPLICANT)
+                // ->where('role', User::APPLICANT)
+                ->when($request->role, function($q, $value){
+                        $q->where('role', $value);
+                })
                 ->paginate(20)
                 ->withQueryString();
                 break;
@@ -92,7 +99,10 @@ class UserController extends Controller
                         $q->orWhere('last_name', 'LIKE' , "%$value%");
                 })
                 ->where('is_archived', false)
-                ->where('role', User::APPLICANT)
+                // ->where('role', User::APPLICANT)
+                ->when($request->role, function($q, $value){
+                        $q->where('role', $value);
+                })
                 ->paginate(20)
                 ->withQueryString();
                 break;
@@ -104,13 +114,16 @@ class UserController extends Controller
                         $q->orWhere('last_name', 'LIKE' , "%$value%");
                 })
                 ->where('is_archived', true)
-                ->where('role', User::APPLICANT)
+                // ->where('role', User::APPLICANT)
+                ->when($request->role, function($q, $value){
+                        $q->where('role', $value);
+                })
                 ->paginate(20)
                 ->withQueryString();
                 break;
 
         }
-        return view('user.index-type', compact('list'));
+        return view('user.index-type', compact('list','roles'));
 
     }
     public function edit() : View
