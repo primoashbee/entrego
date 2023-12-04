@@ -18,6 +18,21 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-l2">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="card  mb-2">
+                                <div class="card-header p-3 pt-2">
+                                    <div
+                                        class="icon icon-lg icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-xl mt-n4 position-absolute">
+                                        <i class="material-icons opacity-10">show_chart</i>
+                                    </div>
+                                    <div class="text-end pt-1">
+                                        <canvas id="line-chart" style="width: 100%" height="400px"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6 col-sm-6">
                         <div class="card  mb-2">
                             <div class="card-header p-3 pt-2">
@@ -270,8 +285,10 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
+
 <script>
-      (function(){
+(function(){
     const switches = document.querySelectorAll(".form-check-input");
     switches.forEach(function(toggle) {
       toggle.addEventListener("change", async function() {
@@ -309,6 +326,50 @@
         }
       });
     });
+
+
+    const DATA_COUNT = 7;
+    const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
+
+    // const labels = Utils.months({count: 7});
+    const labels = @json($graph->labels);
+    const data = {
+        labels: labels,
+        datasets: [
+                {
+                label: 'Requests',
+                data: @json($graph->requested),
+                borderColor: '#ff6384',
+                backgroundColor: '#ffb1c1',
+                },
+                {
+                label: 'Deployed',
+                data : @json($graph->deployed),
+                borderColor: '#36a2eb',
+                backgroundColor: '#8fcbf4',
+                }
+            ]
+    };
+
+    const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Manpower Trend'
+                }
+                }
+            },
+    };
+    const ctx = document.getElementById('line-chart')
+    const myChart = new Chart(ctx, config);
+
   })()
 </script>
 @endsection

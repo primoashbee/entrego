@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ManPower;
 use App\Models\User;
 use App\Models\UserJobApplication;
+use Illuminate\Database\Capsule\Manager;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -64,7 +65,8 @@ class DashboardController extends Controller
                                         ->orderBy('id','desc')
                                         ->get();
 
-            return view('user.dashboard', compact('manpower', 'applicant','processing', 'deployed'));
+            $graph = ManPower::graphDetails(now()->subYear(), now());
+            return view('user.dashboard', compact('manpower', 'applicant','processing', 'deployed', 'graph'));
 
         }
    

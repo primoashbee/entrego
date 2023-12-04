@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use stdClass;
 use App\Models\Location;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -275,4 +277,52 @@ class ManPower extends Model
     {
         return $this->belongsTo(JobExperience::class ,'required_experience','key');
     }
+    
+
+    public static function graphDetails($start, $end)
+    {
+
+        // $deployed = UserJobApplication::whereBetween('created_at', [$start, $end])
+        //         ->where('status', UserJobApplication::DEPLOYED)
+        //         ->count();
+        //         // ->get();
+
+
+        // $requested = ManPower::whereBetween('created_at', [$start, $end])
+        // ->where('active', true)
+        // ->sum('vacancies');
+        // // ->get();
+
+        $period =  CarbonPeriod::create(now()->subMonths(11),'1 month', now());
+
+        $dates = [];
+        $request_stmt = "";
+        $deployed_stmt = "";
+        foreach($period as $date){
+            $month_name = strtoupper($date->format("M"));
+            $month = $date->month;
+            $dates[] = $month_name;
+            $request_stmt.= "CASE WHEN TRUE THEN (SELECT IFNULL(SUM(vacancies), 0 ) FROM man_powers WHERE MONTH(created_at) = $month) ELSE 0 END AS  '$month_name',";
+            $deployed_stmt.= "CASE WHEN TRUE THEN (SELECT IFNULL(COUNT(*), 0 ) FROM user_job_applications WHERE MONTH(created_at) = $month and status = 'DEPLOYED' and deployed_at IS NOT NULL) ELSE 0 END AS  '$month_name',";
+        }
+
+        $request_stmt = rtrim($request_stmt, ",");
+        $deployed_stmt = rtrim($deployed_stmt, ",");
+
+        $requested_data = DB::table('man_powers')
+            ->selectRaw(
+                $request_stmt
+            )->first();
+        
+        $deployed_data = DB::table('user_job_applications')
+            ->selectRaw(
+                $deployed_stmt
+            )->first();
+        
+        $data = new stdClass;
+        $data->labels = $dates;
+        $data->requested = collect($requested_data)->values()->toArray();
+        $data->deployed = collect($deployed_data)->values()->map(function($item){ return (string) $item;})->values()->ToArray();
+        return $data;
+    } 
 }
