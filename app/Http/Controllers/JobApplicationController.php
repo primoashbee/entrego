@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Requests\ApplicantsRequest;
 use App\Mail\JobApplicationTagged;
 use App\Mail\JobCancelledMail;
+use App\Models\Department;
 
 class JobApplicationController extends Controller
 {
@@ -117,7 +118,7 @@ class JobApplicationController extends Controller
 
         $user = auth()->user();
         $statuses = UserJobApplication::STATUSES;
-        $departments = ManPower::DEPARTMENT;
+        $departments = Department::select('key','value')->orderBy('id','desc')->get();
         $jobs = ManPower::select('id','job_title')->get();
         
         if($user->role == User::ADMINSTRATOR){

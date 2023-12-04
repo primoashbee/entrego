@@ -160,6 +160,10 @@ class UserJobApplication extends Model
         if($diff > 1){
             $days = 'days';
         }
+        if($diff  == 0 || $diff == 1){
+           return "1 day Time to Hire";
+        }
+
         return  "$diff $days Time to Hire";
     }
 

@@ -24,7 +24,6 @@
                                     <thead>
                                       <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Job Group </th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> # of Questions </th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Has passing </th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Passing Rate </th>
@@ -40,9 +39,7 @@
                                           <span class="text-xs font-weight-bold mb-0 mt-2"> {{ $quiz->name }}</span>
 
                                         </td>
-                                        <td class="align-middle text-center">
-                                          <span class="text-xs font-weight-bold mb-0 mt-2"> {{ $quiz->job_group }}</span>
-                                        </td>
+
                                         <td class="align-middle text-center">
                                           <span class="text-xs font-weight-bold mb-0 mt-2"> {{ $quiz->questions_count }}</span>
                                         </td>

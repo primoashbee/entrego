@@ -51,7 +51,7 @@ class ReportController extends Controller
         CONCAT(CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND deployed_at IS NOT NULL) ELSE 0 END, '/' , vacancies) AS fulfillment_rate,
 
         CASE WHEN TRUE THEN (
-            SELECT ROUND(AVG(ABS(DATEDIFF(applied_at, deployed_at))), 0) AS avg_tth 
+            SELECT IF( ROUND(AVG(ABS(DATEDIFF(applied_at, deployed_at))), 0) > 0, ROUND(AVG(ABS(DATEDIFF(applied_at, deployed_at))), 0), 1) AS avg_tth 
             FROM 
                 user_job_applications 
             WHERE deployed_at IS NOT NULL 
@@ -88,8 +88,8 @@ class ReportController extends Controller
                 FROM man_powers AS mp
                 LEFT JOIN 
                     (
-                    SELECT ROUND((sq.deployed / sq.applied)  * 100,2) AS success_rate, sq.man_power_id AS man_power_id FROM (SELECT 
-                        CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND applied_at IS NOT NULL) ELSE 0 END AS applied,
+                    SELECT ROUND(IF((sq.deployed / sq.interviewed) IS NULL, 0, (sq.deployed / sq.interviewed)) * 100,2) AS success_rate, sq.man_power_id AS man_power_id FROM (SELECT 
+                        CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND interview_date IS NOT NULL) ELSE 0 END AS interviewed,
                         CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND deployed_at IS NOT NULL) ELSE 0 END AS deployed,
                         mp.id AS man_power_id
                         FROM man_powers AS mp

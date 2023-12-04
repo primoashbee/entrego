@@ -26,7 +26,6 @@ class V2QuizController extends Controller
                 $quiz = Quiz::create([
                     'name'=>$request->name,
                     'description'=>$request->description,
-                    'job_group'=>$request->job_group,
                     'has_passing_rate'=>$request->has_passing == 'true' ? true : false,
                     'passing_rate'=>$request->passing_rate,
                     'created_by'=>auth()->user()->id,

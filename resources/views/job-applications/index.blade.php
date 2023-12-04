@@ -63,7 +63,7 @@
                                             <select name="department" id="department" class="form-control form-filter" placeholder="department">
                                                 <option value="">Select Department</option>
                                                 @foreach($departments as $dept)
-                                                    <option value="{{$dept['value']}}">{{$dept['label']}}</option>
+                                                    <option value="{{$dept->key}}">{{$dept->value}}</option>
                                                 @endforeach
                                             </select>
                                         </div>                                        
@@ -149,7 +149,7 @@
                                                         <div class="d-flex px-2 py-1">
                                                             <div class="d-flex flex-column justify-content-center">
                                                             <h6 class="mb-0 text-xs">{{ $applicant->job->job_title }}</h6>
-                                                            <p class="text-xs text-secondary mb-0"> {{$applicant->job->job_group}} | {{$applicant->job->department_name}}</p>
+                                                            <p class="text-xs text-secondary mb-0">  {{$applicant->job->department_name}}</p>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -329,7 +329,7 @@
                                                         <div class="d-flex px-2 py-1">
                                                             <div class="d-flex flex-column justify-content-center">
                                                             <h6 class="mb-0 text-xs">{{ $applicant->job->job_title }}</h6>
-                                                            <p class="text-xs text-secondary mb-0"> {{$applicant->job->job_group}} | {{$applicant->job->department_name}}</p>
+                                                            <p class="text-xs text-secondary mb-0">  {{$applicant->job->department_name}}</p>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -492,7 +492,7 @@
                                                         <div class="d-flex px-2 py-1">
                                                             <div class="d-flex flex-column justify-content-center">
                                                             <h6 class="mb-0 text-xs">{{ $applicant->job->job_title }}</h6>
-                                                            <p class="text-xs text-secondary mb-0"> {{$applicant->job->job_group}} | {{$applicant->job->department_name}}</p>
+                                                            <p class="text-xs text-secondary mb-0">  {{$applicant->job->department_name}}</p>
                                                             </div>
                                                         </div>
                                                     </td>

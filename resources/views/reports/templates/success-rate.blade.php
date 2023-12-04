@@ -41,7 +41,7 @@
     <div class="container-fluid">
         <img src="{{ asset('img/logo-ct.png') }}" class="center" width="150px">
 
-        <h1 class="text-center"> Manpower Success Rate </h1>
+        <h1 class="text-center"> Job Success Rate </h1>
 
         <div class="row">
             @if ($parameters->has('start_date'))
@@ -136,7 +136,7 @@
                 <tr>
                     <td colspan="6"></td>
                     <td style="text-align: right">Average Success Rate:</td>
-                    <td style="text-align: left">{{ $total_success_rate / $counter }} %</td>
+                    <td style="text-align: left">{{ round($total_success_rate / $counter,2) }} %</td>
                 </tr>                
                 <tr>
                     <td colspan="6"></td>

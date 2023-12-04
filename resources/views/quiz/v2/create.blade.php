@@ -27,7 +27,7 @@
                                                 <input type="text" name="name" id="name" class="form-control" v-model="name">
                                             </div>
                                         </div>
-                                        <div class=" mb-3">
+                                        {{-- <div class=" mb-3">
                                             <div class="input-group input-group-static">
                                                 <label class="">Job Group</label>
                                                 <select id="job_group" name="job_group" class="form-control" v-model="job_group">
@@ -36,7 +36,7 @@
                                                 @endforeach
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="row">
                                             <div class="col-6 mb-3">
                                                 <div class="input-group input-group-static">
@@ -188,7 +188,7 @@
         const questions = ref([])
         const name = ref('')
         const job_type = ref('')
-        const job_group = ref('')
+        // const job_group = ref('')
         const description = ref('')
         const has_passing = ref('false')
         const passing_rate = ref(0)
@@ -352,7 +352,8 @@
         })
 
         const quizFormValid = computed(()=>{
-            if(name.value == '' || job_group.value == '' || description.value == '' || has_passing.value =='' ){
+            // if(name.value == '' || job_group.value == '' || description.value == '' || has_passing.value =='' ){
+            if(name.value == '' || description.value == '' || has_passing.value =='' ){
                 return false
             }
             if(has_passing.value =='true'){
@@ -390,7 +391,7 @@
             const payload =  {
                 name: name.value,
                 job_type: job_type.value,
-                job_group: job_group.value,
+                // job_group: job_group.value,
                 description: description.value,
                 questions: questions.value,
                 has_passing: has_passing.value,
@@ -442,7 +443,8 @@
         })
 
         const submitDisabled = computed(()=>{
-            if(name.value == '' || job_group.value == '' || description.value == '' || addRowDisabled.value || has_passing.value =='' ){
+            // if(name.value == '' || job_group.value == '' || description.value == '' || addRowDisabled.value || has_passing.value =='' ){
+            if(name.value == ''  || description.value == '' || addRowDisabled.value || has_passing.value =='' ){
                 return true
             }
             if(has_passing.value =='true'){
@@ -463,7 +465,6 @@ x
           checked,
           name,
           job_type,
-          job_group,
           description,
           addRowDisabled,
           submitDisabled,
