@@ -233,54 +233,54 @@ class UserJobApplication extends Model
             [
                 'label'=>'Interview Sent',
                 'key'=> self::INTERVIEW_SENT,
-                'date'=> null,
+                'date'=> $this->interview_sent_at,
                 'data'=> [
-                    'application'=> null,
-                    'notes'=>null
+                    'application'=> $this,
+                    'notes'=>$this->send_interview_notes
                 ],
-                'class'=> '',
-                'finished'=>false,
-                'processor'=> null
+                'class'=> isset($this->interview_sent_at) ? 'active' : '',
+                'finished'=> isset($this->interview_sent_at) ? true : false,
+                'processor'=> $this->interviewer
 
             ],
             [
                 'label'=>'Job Offer Sent',
                 'key'=> self::JOB_OFFER,
-                'date'=> null,
+                'date'=> $this->offered_at,
                 'data'=> [
-                    'application'=> null,
-                    'notes'=>null
+                    'application'=> $this,
+                    'notes'=>$this->job_offer_notes
                 ],
-                'class'=> '',
-                'finished'=>false,
-                'processor'=> null
+                'class'=> isset($this->offered_at) ? 'active' : '',
+                'finished'=>isset($this->offered_at) ? true : false ,
+                'processor'=> $this->jobOfferer
 
             ],
             [
                 'label'=>'Job Offer Accepted',
                 'key'=> self::FOR_REQUIREMENTS,
-                'date'=> null,
+                'date'=> $this->job_offer_accepted_at,
                 'data'=> [
-                    'application'=> null,
-                    'notes'=>null
+                    'application'=> $this,
+                    'notes'=> $this->accepted_job_offer_notes
                 ],
-                'class'=> '',
-                'finished'=>false,
-                'processor'=> null
+                'class'=> isset($this->job_offer_accepted_at) ? 'active' : '',
+                'finished'=>isset($this->job_offer_accepted_at) ? true : false ,
+                'processor'=> $this->jobOfferAcceptor
 
             ],
             
             [
                 'label'=>'Deployed',
                 'key'=> self::DEPLOYED,
-                'date'=> null,
+                'date'=> $this->deployed_at,
                 'data'=> [
-                    'application'=> null,
-                    'notes'=>null
+                    'application'=> $this,
+                    'notes'=>$this->deployed_notes
                 ],
-                'class'=> '',
-                'finished'=>false,
-                'processor'=> null
+                'class'=> isset($this->deployed_at) ? 'active' : '',
+                'finished'=>isset($this->deployed_at) ? true : false ,
+                'processor'=> $this->deployer
 
             ],
             
@@ -300,7 +300,6 @@ class UserJobApplication extends Model
 
         $last_activity = $this->lastActivity();
         $last_step = $last_activity['status'];
-        // dd($this->only('applied_at','interview_date','accepted_at','deployed_at','job_offered_at', 'job_offer_accepted_at'));
         if($this->job->has_sjt){
             $exam =  [
                 'label'=>'Exam Taken',
@@ -339,9 +338,9 @@ class UserJobApplication extends Model
                 return $step;
             });
 
-            if($last_step == self::INTERVIEW_SENT){
-                dd('hey');
-            }
+            // if($last_step == self::INTERVIEW_SENT){
+            //     dd('hey');
+            // }
         }
 
         if($this->status ==  self::JOB_OFFER){
@@ -547,41 +546,48 @@ class UserJobApplication extends Model
             [
                 'key'=> 'applied_at',
                 'status'=> self::APPLIED,
-                'value'=> Carbon::parse($this->applied_at)
+                'value'=> is_null($this->applied_at) ?  null : Carbon::parse($this->applied_at) 
             ],
             [
                 'key'=> 'accepted_at',
                 'status'=> self::APPROVED,
-                'value'=> Carbon::parse($this->accepted_at)
+                'value'=> is_null($this->accepted_at) ?  null : Carbon::parse($this->accepted_at) 
             ],
             [
                 'key'=> 'interview_sent_ant',
                 'status'=> self::INTERVIEW_SENT,
-                'value'=> Carbon::parse($this->interview_date)
+                'value'=> is_null($this->interview_date) ?  null : Carbon::parse($this->interview_date) 
             ],
             [
                 'key'=> 'deployed_at',
                 'status'=> self::DEPLOYED,
-
-                'value'=> Carbon::parse($this->deployed_at)
+                'value'=> is_null($this->deployed_at) ?  null : Carbon::parse($this->deployed_at) 
             ],
             [
                 'key'=> 'job_offered_at',
                 'status'=> self::JOB_OFFER,
-
-                'value'=> Carbon::parse($this->job_offered_at)
+                'value'=> is_null($this->job_offered_at) ?  null : Carbon::parse($this->job_offered_at) 
             ],
             [
                 'key'=> 'job_offer_accepted_at',
                 'status'=> self::FOR_REQUIREMENTS,
-                'value'=> Carbon::parse($this->job_offer_accepted_at)
+                'value'=> is_null($this->job_offer_accepted_at) ?  null : Carbon::parse($this->job_offer_accepted_at) 
             ]
             ]);
 
-        return $dates->reduce(function ($carry, $item) {
+        return  $dates->reduce(function ($carry, $item) {
                 // Compare the 'value' of the current item with the 'value' of the carry
-                return $carry['value'] > $item['value'] ? $carry : $item;
-            }, ['value' => Carbon::create(0)]);
+                // if(!is_null($item['value'])){
+                    $new =  $carry['value'] > $item['value'] ? $carry : $item;
+                    return $new;
+                // }
+            },[
+                'key'=> 'applied_at',
+                'status'=> self::APPLIED,
+                'value'=> is_null($this->applied_at) ?  null : Carbon::parse($this->applied_at) 
+            ]);
+
+      
     
 
         

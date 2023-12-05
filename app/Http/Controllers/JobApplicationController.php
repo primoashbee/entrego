@@ -410,6 +410,7 @@ class JobApplicationController extends Controller
 
         }
         if($request->status === UserJobApplication::REJECTED){
+            
             Mail::to($user_job->user->email)
                 ->send(
                     new JobRejectedMail($user_job)

@@ -105,6 +105,13 @@
             height: 5px;
             margin-right: 0px !important
         }
+        #progressbar #step4end:before {
+            content: "";
+            color: #fff;
+            width: 5px;
+            height: 5px;
+            /* margin-right: 2px !important */
+        }
 
         #progressbar li:before {
             line-height: 29px;
@@ -166,6 +173,7 @@
 $steps = $application->steps();
 $last_activity = $application->lastActivity();
 $last_activity_name = $last_activity['status'];
+
 if($application->status === 'CANCELLED'){
     $key = $steps->search(function($item) use ($last_activity_name){
         return $item['key'] == $last_activity_name;
@@ -182,7 +190,13 @@ if($application->status === 'CANCELLED'){
                     'id' => 'step4',
                     'processor'=>$application->cancellor
                 ];
-    $steps->splice($key, 0, [$cancelled]);
+    if($key == 0 ){
+        $steps->splice($key+1, 0, [$cancelled]);
+
+    }else{
+        $steps->splice($key+1, 0, [$cancelled]);
+
+    }
 }   
 if($application->status === 'REJECTED'){
     $key = $steps->search(function($item) use ($last_activity_name){
@@ -200,7 +214,13 @@ if($application->status === 'REJECTED'){
                     'id' => 'step4',
                     'processor'=>$application->cancellor
                 ];
-    $steps->splice($key, 0, [$cancelled]);
+    // if($key == 0 ){
+        $steps->splice($key+1, 0, [$cancelled]);
+
+    // }else{
+        // $steps->splice($key+2, 0, [$cancelled]);
+
+    // }
 }   
 ?>
     <div class="container-fluid py-4" id="div-view">
@@ -279,22 +299,23 @@ if($application->status === 'REJECTED'){
                                                 <div class="text-center title"> Job Tracking</div>
                                             </div>
                                             <div class="progress-track">
-
+                                                
                                                 <ul id="progressbar">
                                                     @foreach ($steps as $key => $step)
-                                                    
                                                         @if ($key == 0)
-                                                            @if($step['key'] == 'CANCELLED' || $step['key'] == 'REJECTED')
-                                                                <li class="step0 active" id="step4">{{ $step['label'] }}</li>
-                                                            @else
                                                                 <li class="step0 active" id="step1">{{ $step['label'] }}</li>
+                                                        @elseif($key == count($steps) -1 )
+                                                            @if($step['label']=='Deployed')
+                                                                <li class="step0  {{ $step['class'] }}" id="step4" style="text-align: right !important">
+                                                                    {{ $step['label'] }}</li>
+                                                            @else
+                                                                <li class="step0  {{ $step['class'] }}" id="step4" style="text-align: right !important">
+                                                                    {{ $step['label'] }}</li>
                                                             @endif
-                                                        @elseif($key == count($application->steps()) - 1)
-                                                            <li class="step0  {{ $step['class'] }}" id="step4" style="text-align: right !important">
-                                                                {{ $step['label'] }}</li>
                                                         @else
                                                             @if($step['key'] == 'CANCELLED'  || $step['key'] == 'REJECTED')
-                                                                <li class="step0 {{ $step['class'] }}" id="step4">{{ $step['label'] }}</li>
+                                                                <li class="step0 {{ $step['class'] }}" id="step4end">{{ $step['label'] }}</li>
+                                                                {{-- @break --}}
                                                             @else
                                                                 <li class="step0 {{ $step['class'] }}" id="step2">{{ $step['label'] }}</li>
                                                             @endif
@@ -328,7 +349,7 @@ if($application->status === 'REJECTED'){
                                                     <p class="ps-2">{{ $step['data']['notes'] }}.</p>
                                                 </blockquote>
                                                 <figcaption class="blockquote-footer ps-3">
-                                                    Processed By: <cite title="Source Title"><strong>[{{$step['processor']->role_name}}] - {{$step['processor']?->full_name}} </strong> on <strong>{{ \Carbon\Carbon::parse($step['date'])->format('F d ,Y g:iA') }}</strong></cite>
+                                                    Processed By: <cite title="Source Title"><strong>[{{$step['processor']?->role_name}}] - {{$step['processor']?->full_name}} </strong> on <strong>{{ \Carbon\Carbon::parse($step['date'])->format('F d ,Y g:iA') }}</strong></cite>
                                                 </figcaption>
                                             </figure>
                                         @endif

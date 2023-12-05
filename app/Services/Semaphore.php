@@ -20,13 +20,16 @@ class Semaphore {
 
     public function sendSMS($number, $message, $sender = 'SEMAPHORE')
     {
-        return Http::post(self::API_HOST['MESSAGING'],
-        [
-            'apikey'=>$this->api_key,
-            'number'=>$number,
-            'message'=>$message,
-            'sendername'=>$sender
-        ]);
-
+        if(env('APP_ENV') != 'local'){
+            return Http::post(self::API_HOST['MESSAGING'],
+                [
+                    'apikey'=>$this->api_key,
+                    'number'=>$number,
+                    'message'=>$message,
+                    'sendername'=>$sender
+                ]
+            );
+        }
+        return true;
     }
 }
