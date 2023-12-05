@@ -23,8 +23,8 @@ class ApplicantsRequest extends FormRequest
     {
         if($this->has('start_date') || $this->has('end_date')){
             return [
-                'start_date' => 'required|',
-                'end_date' => 'required|after:start_date',
+                'start_date' => 'nullable',
+                'end_date' => 'nullable|after:start_date',
             ];
         }
         return [];

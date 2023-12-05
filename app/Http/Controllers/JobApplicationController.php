@@ -180,6 +180,89 @@ class JobApplicationController extends Controller
         return view('job-applications.index',compact('applicants', 'statuses','departments','deployed','jobs','staffs'));
     }
 
+    public function viewAplicantsByType(ApplicantsRequest $request, $type)
+    {
+
+        $for_report = $request->has('export');
+        // dd($request->all());
+        if($for_report){
+            // return $this->showReport(compact('applicants', 'statuses','departments'));
+            //Goes to $this->viewReport
+            // dd($request->query());
+           
+            $params = $request->query();
+            $params['type'] = $type;
+            return redirect()->route('user-job.report-type', $params);
+        }
+
+        $user = auth()->user();
+        $statuses = UserJobApplication::STATUSES;
+        $departments = Department::select('key','value')->orderBy('id','desc')->get();
+        $jobs = ManPower::select('id','job_title')->get();
+        
+        if($user->role == User::ADMINSTRATOR){
+            $staffs = User::select('id','first_name','last_name','email','role')->whereNotIn('role',[User::APPLICANT, User::SUB_HR])->get();
+        }
+
+        if($user->role == User::SUB_HR){
+            $staffs = User::select('id','first_name','last_name','email','role')
+                ->where('role',User::HR)
+                ->orWhere('id', $user->id)
+                ->get();
+        }
+
+        if($user->role == User::HR){
+            $staffs =  User::where('id', $user->id)
+            ->get();
+        }
+
+        
+        if($user->role == User::APPLICANT){
+            $staffs =  User::where('id', $user->id)
+            ->get();
+        }
+
+        
+        if($user->role === User::APPLICANT){
+            $applicants = UserJobApplication::with('user.requirements','job')
+                            ->where('user_id', $user->id)
+                            ->when($type, function($q, $value){
+                                return $q->whereIn('status', UserJobApplication::IN_PROGRESS);
+                            })
+                            ->orderBy('id','desc')
+                            ->paginate(10);
+            $deployed = UserJobApplication::with('user.requirements','job')
+                            ->where('user_id', $user->id)
+                            ->when($type, function($q, $value){
+                                return $q->whereIn('status', [UserJobApplication::DEPLOYED]);
+                            })
+                            // ->where('status', UserJobApplication::DEPLOYED)
+                            ->orderBy('id','desc')
+                            ->paginate(10);
+
+        }else{
+            // $applicants = UserJobApplication::with('user','job')
+            //                                 ->when($request->q, function($q, $value){
+            //                                     $q
+            //                                         ->whereRelation('user','email', 'LIKE' , "%$value%")
+            //                                         ->orWhereRelation('user','first_name', 'LIKE' , "%$value%")
+            //                                         ->orWhereRelation('user','last_name', 'LIKE' , "%$value%");
+            //                                 })
+            //                                 ->when($request->status,function($q, $value){
+            //                                     $q->where('status', $value);
+            //                                 })
+            //                                 ->when($request->department,function($q, $value){
+            //                                     $q
+            //                                     ->whereRelation('job','department', $value);
+            //                                 })
+            //                                 ->orderBy('id','desc')->get();
+            $is_dept_head = $user->role == User::SUB_HR;
+            $applicants = $this->generateList($request, $for_report, $is_dept_head, $user->id, $type);
+            $deployed = $this->deployedList($request, $for_report, $is_dept_head,$user->id, $type);
+        }
+        return view('job-applications.index-type',compact('applicants', 'statuses','departments','deployed','jobs','staffs'));
+    }
+
     public function sendInterview(Request $request, $id)
     {
     
@@ -419,8 +502,19 @@ class JobApplicationController extends Controller
         $pdf = $viewer->loadView('job-applications.report', compact('applicants'))->setPaper('legal', 'landscape');
         return $pdf->download("REPORT $id.pdf");
     }
+    public function viewReportType(Request $request, $type)
+    {
+        $viewer = App::make('dompdf.wrapper'); 
+        $user = auth()->user();
+        $is_dept_head = $user->role == User::SUB_HR;
+        $applicants = $this->generateList($request, true, $is_dept_head= $is_dept_head, $user_id = $user->id, $type);
+        // return view('job-applications.report', compact('applicants'));
+        $id = Str::uuid();
+        $pdf = $viewer->loadView('job-applications.report', compact('applicants'))->setPaper('legal', 'landscape');
+        return $pdf->download("REPORT $id.pdf");
+    }
 
-    public function generateList($request, $for_report = false, $is_dept_head = false, $user_id= null)
+    public function generateList($request, $for_report = false, $is_dept_head = false, $user_id= null, $type=null)
     {
   
         $q = UserJobApplication::with(['user','job.quiz.questions','userQuiz.quiz'=>function($q){
@@ -447,6 +541,21 @@ class JobApplicationController extends Controller
             })
             ->when($request->job_id, function($q, $value){
                 $q->where('man_power_id', $value);
+            })
+            ->when($type, function($q, $value){
+                if($value === 'in_progress'){
+                    return $q->whereIn('status', UserJobApplication::IN_PROGRESS);
+                }
+                if($value === 'deployed'){
+                    return $q->whereIn('status', [UserJobApplication::DEPLOYED]);
+                }
+                if($value === 'rejected'){
+                    return $q->whereIn('status', [UserJobApplication::REJECTED]);
+                }
+
+                if($value === 'cancelled'){
+                    return $q->whereIn('status', [UserJobApplication::CANCELLED]);
+                }
             });
         if($for_report){
             return $q->get();

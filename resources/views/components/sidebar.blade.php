@@ -157,7 +157,7 @@ id="sidenav-main">
         </li>
         @endif
 
-        @if($user->role == "ADMINISTRATOR" || $user->role =="APPLICANT" || $user->role ="HR")
+        {{-- @if($user->role == "ADMINISTRATOR" || $user->role =="APPLICANT" || $user->role ="HR")
         <li class="nav-item">
             <a class="nav-link text-white " href="{{route('user-job.index')}}">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -165,6 +165,45 @@ id="sidenav-main">
                 </div>
                 <span class="nav-link-text ms-1">Job Applications</span>
             </a>
+        </li>
+        @endif --}}
+        @if($user->role == "ADMINISTRATOR" || $user->role =="APPLICANT" || $user->role ="HR")
+        <li class="nav-item mb-2 mt-0">
+            <a data-bs-toggle="collapse" href="#JobsNav" class="nav-link text-white collapsed" aria-controls="JobsNav"
+                role="button" aria-expanded="false">
+                <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons opacity-10">work</i>
+                </div>
+                <span class="nav-link-text ms-2 ps-1">Job Applications</span>
+            </a>
+            <div class="collapse" id="JobsNav" style="">
+                <ul class="nav ">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{route('user-job.index-type', 'in-progress')}}">
+                            {{-- <span class="sidenav-mini-icon"> A </span> --}}
+                            <span class="sidenav-normal  ms-3  ps-1"> In Progress </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{route('user-job.index-type', 'deployed')}}">
+                            {{-- <span class="sidenav-mini-icon"> S </span> --}}
+                            <span class="sidenav-normal  ms-3  ps-1"> Deployed</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white"  href="{{route('user-job.index-type', 'cancelled')}}">
+                            {{-- <span class="sidenav-mini-icon"> S </span> --}}
+                            <span class="sidenav-normal  ms-3  ps-1"> Cancelled</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white"  href="{{route('user-job.index-type', 'rejected')}}">
+                            {{-- <span class="sidenav-mini-icon"> S </span> --}}
+                            <span class="sidenav-normal  ms-3  ps-1"> Rejected</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
         @endif
 

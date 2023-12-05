@@ -107,8 +107,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
 
     Route::get('/jobs', [JobApplicationController::class, 'viewApplicants'])->name('user-job.index');
+    Route::get('/jobs-list/{type}', [JobApplicationController::class, 'viewAplicantsByType'])->name('user-job.index-type');
     Route::get('/job/{id}', [JobApplicationController::class, 'show'])->name('user-job.show');
     Route::get('/jobs/report', [JobApplicationController::class, 'viewReport'])->name('user-job.report');
+    Route::get('/jobs/report/{type}', [JobApplicationController::class, 'viewReportType'])->name('user-job.report-type');
 
     Route::post('/job/send-interview/{id}', [JobApplicationController::class, 'sendInterview'])->name('user-job.send-interview');
     Route::patch('/job/{id}', [JobApplicationController::class, 'patch'])->name('user-job.patch'); // set status

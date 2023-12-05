@@ -82,6 +82,18 @@ class UserJobApplication extends Model
         ]
     ];
     
+    const IN_PROGRESS = [
+            self::WAITING_FOR_EXAM_RESULT, 
+            self::WAITING_FOR_EXAM_RESULT, 
+            self::EXAM_PASSED, 
+            self::EXAM_FAILED,
+            self::FOR_SENDING_INTERVIEW,
+            self::INTERVIEW_SENT,
+            self::FOR_REQUIREMENTS,
+            self::EXAM_REVIEWING,
+    ];
+
+    
     public function user()
     {
         return $this->belongsTo(User::class);
