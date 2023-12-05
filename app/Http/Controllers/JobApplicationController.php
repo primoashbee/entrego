@@ -543,7 +543,7 @@ class JobApplicationController extends Controller
                 $q->where('man_power_id', $value);
             })
             ->when($type, function($q, $value){
-                if($value === 'in_progress'){
+                if($value === 'in-progress'){
                     return $q->whereIn('status', UserJobApplication::IN_PROGRESS);
                 }
                 if($value === 'deployed'){

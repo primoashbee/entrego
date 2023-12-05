@@ -90,7 +90,7 @@ class UserJobApplication extends Model
             self::FOR_SENDING_INTERVIEW,
             self::INTERVIEW_SENT,
             self::FOR_REQUIREMENTS,
-            self::EXAM_REVIEWING,
+            self::EXAM_REVIEWING
     ];
 
     
