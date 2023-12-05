@@ -80,6 +80,7 @@ class ReportController extends Controller
                     mp.id, mp.job_title,
                     CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND applied_at IS NOT NULL) ELSE 0 END AS applied,
                     CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND interview_date IS NOT NULL) ELSE 0 END AS interviewed,
+                    CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND status = 'CANCELLED') ELSE 0 END AS cancelled,
                     CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND rejected_at IS NOT NULL) ELSE 0 END AS rejected,
                     CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND job_offer_accepted_at IS NOT NULL) ELSE 0 END AS approved,
                     CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND job_offered_at IS NOT NULL) ELSE 0 END AS job_offer,
@@ -90,7 +91,7 @@ class ReportController extends Controller
                     (
                     SELECT ROUND(IF((sq.deployed / sq.interviewed) IS NULL, 0, (sq.deployed / sq.interviewed)) * 100,2) AS success_rate, sq.man_power_id AS man_power_id FROM (SELECT 
                         CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND interview_date IS NOT NULL) ELSE 0 END AS interviewed,
-                        CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND deployed_at IS NOT NULL) ELSE 0 END AS deployed,
+                        CASE WHEN TRUE THEN (SELECT COUNT(*) FROM user_job_applications WHERE man_power_id = mp.id AND deployed_at IS NOT NULL AND status ='DEPLOYED') ELSE 0 END AS deployed,
                         mp.id AS man_power_id
                         FROM man_powers AS mp
                         ) AS sq
@@ -110,7 +111,7 @@ class ReportController extends Controller
         }else{
             $list = DB::select($stmt,['now'=>now()]);    
         }
-
+        
         return $list;
     }
     private function export($request, $type )

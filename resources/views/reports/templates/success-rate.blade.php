@@ -86,6 +86,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Applied</th>
 
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Interviewed</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Cancelled</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Rejected</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Approved</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Job Offer</th>
@@ -114,6 +115,9 @@
                         {{$item->interviewed}}
                     </td>
                     <td class="align-middle text-center">
+                        {{$item->cancelled}}
+                    </td>
+                    <td class="align-middle text-center">
                         {{$item->rejected}}
                     </td>
                     <td class="align-middle text-center">
@@ -134,12 +138,12 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="6"></td>
+                    <td colspan="7"></td>
                     <td style="text-align: right">Average Success Rate:</td>
                     <td style="text-align: left">{{ round($total_success_rate / $counter,2) }} %</td>
                 </tr>                
                 <tr>
-                    <td colspan="6"></td>
+                    <td colspan="7"></td>
                     <td style="text-align: right">Total:</td>
                     <td style="text-align: left">{{ count($list) }} Manpower/s</td>
                 </tr>

@@ -275,6 +275,20 @@ class UserJobApplication extends Model
 
         ]);
 
+        $cancelled = [
+            'label'=>'Cancelled',
+            'key'=>self::CANCELLED,
+            'date'=>$this->cancelled_at,
+            'data'=> [
+                'notes'=> $this->cancelled_notes
+            ],
+            'class'=> 'active text-center',
+            'finished'=>true
+        ];
+
+        $last_activity = $this->lastActivity();
+        $last_step = $last_activity['status'];
+        // dd($this->only('applied_at','interview_date','accepted_at','deployed_at','job_offered_at', 'job_offer_accepted_at'));
         if($this->job->has_sjt){
             $exam =  [
                 'label'=>'Exam Taken',
@@ -289,7 +303,9 @@ class UserJobApplication extends Model
                 'processor' => $this->user
             ];
             $steps->splice(1, 0, [$exam]);
+
         }
+
 
         if($this->status ==  self::INTERVIEW_SENT){
             $steps = $steps->map(function($step){
@@ -307,8 +323,13 @@ class UserJobApplication extends Model
                         'processor'=>$this->interviewer
                     ];
                 }
+
                 return $step;
             });
+
+            if($last_step == self::INTERVIEW_SENT){
+                dd('hey');
+            }
         }
 
         if($this->status ==  self::JOB_OFFER){
@@ -490,4 +511,69 @@ class UserJobApplication extends Model
         return $this->belongsTo(User::class, 'job_offer_accepted_by','id');
     }
 
+    public function cancellor()
+    {
+        return $this->belongsTo(User::class, 'cancelled_by','id');
+    }
+
+    public function rejector()
+    {
+        return $this->belongsTo(User::class, 'rejected_by','id');
+    }
+
+    public function lastActivity()
+    {
+        $applied_at =  $this->applied_at;
+        $accepted_at =  $this->accepted_at;
+        $interview_date =  $this->interview_sent_at;
+        $deployed_at =  $this->deployed_at;
+        $job_offered_at =  $this->job_offered_at;
+        $job_offer_accepted_at =  $this->job_offer_accepted_at;
+
+        // if($this->status == "CANCELLED")
+        $dates = collect([
+            [
+                'key'=> 'applied_at',
+                'status'=> self::APPLIED,
+                'value'=> Carbon::parse($this->applied_at)
+            ],
+            [
+                'key'=> 'accepted_at',
+                'status'=> self::APPROVED,
+                'value'=> Carbon::parse($this->accepted_at)
+            ],
+            [
+                'key'=> 'interview_sent_ant',
+                'status'=> self::INTERVIEW_SENT,
+                'value'=> Carbon::parse($this->interview_date)
+            ],
+            [
+                'key'=> 'deployed_at',
+                'status'=> self::DEPLOYED,
+
+                'value'=> Carbon::parse($this->deployed_at)
+            ],
+            [
+                'key'=> 'job_offered_at',
+                'status'=> self::JOB_OFFER,
+
+                'value'=> Carbon::parse($this->job_offered_at)
+            ],
+            [
+                'key'=> 'job_offer_accepted_at',
+                'status'=> self::FOR_REQUIREMENTS,
+                'value'=> Carbon::parse($this->job_offer_accepted_at)
+            ]
+            ]);
+
+        return $dates->reduce(function ($carry, $item) {
+                // Compare the 'value' of the current item with the 'value' of the carry
+                return $carry['value'] > $item['value'] ? $carry : $item;
+            }, ['value' => Carbon::create(0)]);
+    
+
+        
+    }
+
+    
 }

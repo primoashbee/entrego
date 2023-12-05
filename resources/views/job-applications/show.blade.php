@@ -162,6 +162,47 @@
     </style>
 @endsection
 @section('content')
+<?php 
+$steps = $application->steps();
+$last_activity = $application->lastActivity();
+$last_activity_name = $last_activity['status'];
+if($application->status === 'CANCELLED'){
+    $key = $steps->search(function($item) use ($last_activity_name){
+        return $item['key'] == $last_activity_name;
+    });
+    $cancelled = [
+                    'label'=>'Cancelled',
+                    'key'=>'CANCELLED',
+                    'date'=>$application->cancelled_at,
+                    'data'=> [
+                        'notes'=> $application->cancelled_notes
+                    ],
+                    'class'=> 'active text-center',
+                    'finished'=>true,
+                    'id' => 'step4',
+                    'processor'=>$application->cancellor
+                ];
+    $steps->splice($key, 0, [$cancelled]);
+}   
+if($application->status === 'REJECTED'){
+    $key = $steps->search(function($item) use ($last_activity_name){
+        return $item['key'] == $last_activity_name;
+    });
+    $cancelled = [
+                    'label'=>'Rejected',
+                    'key'=>'REJECTED',
+                    'date'=>$application->rejected_at,
+                    'data'=> [
+                        'notes'=> $application->rejected_notes
+                    ],
+                    'class'=> 'active text-center',
+                    'finished'=>true,
+                    'id' => 'step4',
+                    'processor'=>$application->cancellor
+                ];
+    $steps->splice($key, 0, [$cancelled]);
+}   
+?>
     <div class="container-fluid py-4" id="div-view">
         @include('components.errors')
         <div class="col-lg-12">
@@ -238,17 +279,25 @@
                                                 <div class="text-center title"> Job Tracking</div>
                                             </div>
                                             <div class="progress-track">
+
                                                 <ul id="progressbar">
-                                                    @foreach ($application->steps() as $key => $step)
+                                                    @foreach ($steps as $key => $step)
+                                                    
                                                         @if ($key == 0)
-                                                            <li class="step0 active" id="step1">{{ $step['label'] }}
-                                                            </li>
+                                                            @if($step['key'] == 'CANCELLED' || $step['key'] == 'REJECTED')
+                                                                <li class="step0 active" id="step4">{{ $step['label'] }}</li>
+                                                            @else
+                                                                <li class="step0 active" id="step1">{{ $step['label'] }}</li>
+                                                            @endif
                                                         @elseif($key == count($application->steps()) - 1)
                                                             <li class="step0  {{ $step['class'] }}" id="step4" style="text-align: right !important">
                                                                 {{ $step['label'] }}</li>
                                                         @else
-                                                            <li class="step0 {{ $step['class'] }}" id="step2">
-                                                                {{ $step['label'] }}</li>
+                                                            @if($step['key'] == 'CANCELLED'  || $step['key'] == 'REJECTED')
+                                                                <li class="step0 {{ $step['class'] }}" id="step4">{{ $step['label'] }}</li>
+                                                            @else
+                                                                <li class="step0 {{ $step['class'] }}" id="step2">{{ $step['label'] }}</li>
+                                                            @endif
                                                         @endif
                                                     @endforeach
                                                 </ul>
@@ -271,7 +320,7 @@
                                     {{-- <h6 class="mt-3 mb-2 ms-3 "> {{$application->job->job_title}} </h6> --}}
                                 </div>
                                 <div class="card-body">
-                                    @foreach ($application->steps() as $step)
+                                    @foreach (collect($steps)->sortByDesc('date') as $step)
                                         @if ($step['finished'])
                                             <figure class="px5">
                                                 <blockquote class="blockquote">

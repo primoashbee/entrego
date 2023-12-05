@@ -65,6 +65,7 @@
                                           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Applied</th>
   
                                           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Interviewed</th>
+                                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Cancelled</th>
                                           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Rejected</th>
                                           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Approved</th>
                                           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Job Offer</th>
@@ -83,6 +84,9 @@
                                             </td>
                                             <td class="align-middle text-center">
                                                 {{$item->interviewed}}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                {{$item->cancelled}}
                                             </td>
                                             <td class="align-middle text-center">
                                                 {{$item->rejected}}

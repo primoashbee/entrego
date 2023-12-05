@@ -138,14 +138,16 @@
                     <td style="text-align: right">Total:</td>
                     <td style="text-align: center">{{$requested}}</td>
                     <td style="text-align: center">{{$deployed}}</td>
-                    <td style="text-align: center">{{$deployed}} / {{$requested}}</td>
-                    <td style="text-align: center">{{$total_avg_tth}}</td>
+                    <td style="text-align: center">{{round(($deployed /$requested) * 100,2) }} %</td>
+                    {{-- <td style="text-align: center">{{$total_avg_tth}}</td> --}}
+                    <td style="text-align: center"> - </td>
                 </tr>
                 <tr>
                     <td style="text-align: right">Average:</td>
                     <td style="text-align: center">{{ round($requested / count($list), 1)}}</td>
                     <td style="text-align: center">{{ round($deployed / count($list) ,1)}}</td>
-                    <td style="text-align: center">{{ round((($deployed / $requested)/count($list) * 100), 2)}} %</td>
+                    {{-- <td style="text-align: center">{{ round((($deployed / $requested)/count($list) * 100), 2)}} %</td> --}}
+                    <td style="text-align: center"> - </td>
                     <td style="text-align: center">{{ round($total_avg_tth / count($list), 1) }} days</td>
                 </tr>                
                 <tr>
