@@ -21,27 +21,53 @@ use Illuminate\Support\Facades\Mail;
 
 class ManPowerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
-
+        $departments = Department::select('key','value')->orderBy('id','desc')->get();
+        $job_natures = JobNature::select('key','value')->orderBy('id','desc')->get();
+        $locations = Location::select('key','value')->orderBy('id','desc')->get();
         if($user->role == User::ADMINSTRATOR){
             $list = ManPower::withCount(['applications'=> function($q){
                 $q->whereStatus(UserJobApplication::DEPLOYED);
             }])
-            ->get();
+            ->when($request->department, function($q, $value){
+                $q->where('department', $value);
+            })
+            ->when($request->q, function($q, $value){
+                $q->where('job_title', 'LIKE' , "%$value%");
+            })
+            ->when($request->job_nature, function($q, $value){
+                $q->where('job_nature', 'LIKE' , "%$value%");
+            })
+            ->when($request->location, function($q, $value){
+                $q->where('location', 'LIKE' , "%$value%");
+            })
+            ->paginate(20);
         }
         if($user->role == User::SUB_HR || $user->role == User::HR){
             $list = ManPower::withCount(['applications'=> function($q){
                 $q->whereStatus(UserJobApplication::DEPLOYED);
             }])
+            ->when($request->department, function($q, $value){
+                $q->where('department', $value);
+            })
+            ->when($request->q, function($q, $value){
+                $q->where('job_title', 'LIKE' , "%$value%");
+            })
+            ->when($request->job_nature, function($q, $value){
+                $q->where('job_nature', 'LIKE' , "%$value%");
+            })
+            ->when($request->location, function($q, $value){
+                $q->where('location', 'LIKE' , "%$value%");
+            })
             ->where('requested_by', $user->id)
-            ->get();
+            ->paginate(20);
         }
 
         // ->paginate(15);
 
-        return view('manpower.index', compact('list'));
+        return view('manpower.index', compact('list','departments','job_natures','locations'));
     }
 
     public function create()

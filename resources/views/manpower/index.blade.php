@@ -24,6 +24,76 @@
                         <div class="card-body">
                             <a href="{{route('manpower.create')}}" class="btn btn-success" style="float: right; margin-bottom: 0%">Add New Request</a>
                             <div class="float-right">&nbsp;</div><br>
+                            <form action="{{url()->current()}}" method="GET" id="frmFilter">
+                              <input type="hidden" name="export" value="export" id="hidden_export" disabled>
+                              {{-- <div class="row" id="div-filters"> 
+                                  <div class="col-2">
+                                      <div class="input-group input-group-static mb-4">
+                                          <label>From Date</label>
+                                          <input type="date" class="form-control form-filter" name="start_date" id="start_date"  >
+                                        </div>                                    
+                                  </div>
+                                  <div class="col-2">
+                                      <div class="input-group input-group-static mb-4">
+                                          <label>End Date</label>
+                                          <input type="date" class="form-control form-filter" name="end_date" id="end_date"  >
+                                        </div>                                    
+                                  </div>
+                                  <div class="col-7"></div>
+                                  <div class="col-1">
+                                      <button class="btn btn-lg btn-success mt-3" type="button" value="export" name="export" id="btnExport"><i class="material-icons">print</i></button>
+                                  </div>
+
+                              </div> --}}
+                              <div class="row"> 
+
+                                  <div class="col-4">
+                                      <div class="input-group input-group-outline mb-3">
+                                          <select name="department" id="department" class="form-control form-filter" placeholder="department">
+                                              <option value="">Select Department</option>
+                                              @foreach($departments as $dept)
+                                                  <option value="{{$dept->key}}">{{$dept->value}}</option>
+                                              @endforeach
+                                          </select>
+                                      </div>                                        
+                                  </div>
+
+                                  <div class="col-2">
+                                      <div class="input-group input-group-outline mb-3">
+                                          <select name="job_nature" id="job_nature" class="form-control form-filter" placeholder="department">
+                                              <option value="">Select Job Nature</option>
+                                              @foreach($job_natures as $dept)
+                                                  <option value="{{$dept->key}}">{{$dept->value}}</option>
+                                              @endforeach
+                                          </select>
+                                      </div>                                        
+                                  
+                                  </div>
+
+                                  <div class="col-2">
+                                      <div class="input-group input-group-outline mb-3">
+                                          <select name="location" id="location" class="form-control form-filter" placeholder="department">
+                                              <option value="">Select Location</option>
+                                              @foreach($locations as $dept)
+                                                  <option value="{{$dept->key}}">{{$dept->value}}</option>
+                                              @endforeach
+                                          </select>
+                                      </div>                                        
+                                  
+                                  </div>
+                                  <div class="col-1"></div>
+                                  <div class="col-3">
+                                      <div class="input-group input-group-outline mb-3">
+                                          <input type="text" class="form-control form-filter" style="height:42px" placeholder="Search"  name="q" id="q" value="{{request()->q}}">
+                                          <div class="input-group-append">
+                                              <button class="btn btn-primary" type="submit">Search</button>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  
+                              </div>
+
+                          </form>
                             <div class="card">
                                 <div class="table-responsive">
                                   <table class="table align-items-center mb-0">
@@ -98,6 +168,7 @@
                                     @endforeach
                                     </tbody>
                                   </table>
+                                  {!!$list->links()!!}
                                 </div>
                               </div>
                         </div>
@@ -295,6 +366,25 @@
 
 
   }
+  document.getElementById('frmFilter').addEventListener("submit", function(event){
+        Array.from(document.getElementsByClassName('form-filter')).forEach(element => {
+            if(element.value == "" ){
+                element.disabled=true
+            }
+        });
+
+    });
+
+    (function(){
+
+
+    document.getElementById('q').value = '{{request()->q}}';
+    document.getElementById('location').value = '{{request()->location}}';
+    document.getElementById('department').value = '{{request()->department}}';
+    document.getElementById('job_nature').value = '{{request()->job_nature}}';
+
+
+    })()
 
 </script>
 @endsection
