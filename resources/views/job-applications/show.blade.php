@@ -328,7 +328,7 @@ if($application->status === 'REJECTED'){
                                                     <p class="ps-2">{{ $step['data']['notes'] }}.</p>
                                                 </blockquote>
                                                 <figcaption class="blockquote-footer ps-3">
-                                                    Processed By: <cite title="Source Title"><strong>{{$step['processor']?->full_name}} </strong> on <strong>{{ \Carbon\Carbon::parse($step['date'])->format('F d ,Y g:iA') }}</strong></cite>
+                                                    Processed By: <cite title="Source Title"><strong>[{{$step['processor']->role_name}}] - {{$step['processor']?->full_name}} </strong> on <strong>{{ \Carbon\Carbon::parse($step['date'])->format('F d ,Y g:iA') }}</strong></cite>
                                                 </figcaption>
                                             </figure>
                                         @endif

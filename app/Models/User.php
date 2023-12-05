@@ -157,6 +157,15 @@ class User extends Authenticatable
                 $total_requirements;
     }
 
+    public function getRoleNameAttribute()
+    {
+        if($this->role === self::SUB_HR){
+            return self::SUB_HR;
+        }
+
+        return $this->role;
+    }
+
     public function requirementsFullfilled()
     {
         $requirements = Requirement::where('required', true)->get();

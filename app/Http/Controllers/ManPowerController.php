@@ -149,7 +149,7 @@ class ManPowerController extends Controller
     {
         $job_group = ManPower::JOB_GROUP;
         $vacancies = ManPower::VACANCIES;
-        $manpower = ManPower::with(['notes'=>function($q){ $q->orderBy('id','desc');}])->findOrFail($id);
+        $manpower = ManPower::with(['notes'=>function($q){ $q->orderBy('created_at','desc');}])->findOrFail($id);
 
         $departments = Department::select('key','value')->orderBy('value','desc')->get();
         $locations = Location::select('key','value')->orderBy('value','desc')->get();
