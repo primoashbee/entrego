@@ -63,9 +63,9 @@
           <li class="menu-has-children">
           <a href="#">Entrego</a>
             <ul>
-              <li><a href="https://entrego.com.ph/about">About Entrego</a></li>
-              <li><a href="https://entrego.com.ph/blog">Blog</a></li>
-              <li><a href="https://entrego.com.ph/contact">Contact Us</a></li>
+              <li><a href="https://entrego.com.ph/our-company/about">About Entrego</a></li>
+              <li><a href="https://entrego.com.ph/our-company/blogs">Blog</a></li>
+              <li><li><a href="https://entrego.com.ph/support/contact-us">Contact Us</a></li></li>
             </ul>
           </li>
           @if(auth()->check())
@@ -243,8 +243,8 @@
           <div class="col-lg-6 col-md-6 footer-links">
             <h4>Useful Links</h4>
             <ul>
-              <li><i class="ion-ios-arrow-right"></i> <a href="https://entrego.com.ph/blog">Blog</a></li>
-              <li><i class="ion-ios-arrow-right"></i> <a href="https://entrego.com.ph/about">About us</a></li>
+              <li><i class="ion-ios-arrow-right"></i> <a href="https://entrego.com.ph/our-company/blogs">Blog</a></li>
+              <li><i class="ion-ios-arrow-right"></i> <a href="https://entrego.com.ph/our-company/about">About us</a></li>
               <li><i class="ion-ios-arrow-right"></i> <a href="https://entrego.com.ph/contact">Contact</a></li>
               <li><i class="ion-ios-arrow-right"></i> <a href="https://entrego.com.ph/faqs">FAQs</a></li>
               <li><i class="ion-ios-arrow-right"></i> <a href="https://entrego.com.ph/terms-and-conditions">Terms of service</a></li>
