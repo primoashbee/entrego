@@ -121,7 +121,7 @@
               <ul id="portfolio-flters">
                 <li data-filter="*" class="filter-active">All</li>
                 @foreach($list as $item)
-                  <li data-filter=".filter-{{ $item['value'] }}">{{ $item['label'] }}</li>
+                  <li data-filter=".filter-{{ $item->key }}">{{ $item->value }}</li>
                 @endforeach
               </ul>
             </div>
@@ -193,7 +193,7 @@
                       <i class="ion-android-folder-open"></i> {{$job->vacant_available}} position(s) available
                     </li>
                     <li>
-                      <i class="ion-ios-clock-outline"></i> {{$job->required_experience_name}}
+                      <i class="ion-ios-clock-outline"></i> {{$job->required_experienceLink}}
                     </li>
                     <li>
                       <i class="ion-arrow-graph-up-right"></i> {{$job->department_name}}

@@ -28,7 +28,7 @@ class JobApplicationController extends Controller
     public function index()
     {
         // return ManPower::all();
-        $list = ManPower::JOB_GROUP;
+        $list = Department::select('key','value')->orderBy('value','asc')->get();
         $jobs = ManPower::active()->where('expires_at', '>' ,now())->orderBy('id','desc')->get();
         return view('public.jobs',compact('jobs','list'));
     }
