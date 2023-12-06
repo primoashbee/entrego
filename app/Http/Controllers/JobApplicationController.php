@@ -226,8 +226,21 @@ class JobApplicationController extends Controller
         if($user->role === User::APPLICANT){
             $applicants = UserJobApplication::with('user.requirements','job')
                             ->where('user_id', $user->id)
-                            ->when($type, function($q, $value){
-                                return $q->whereIn('status', UserJobApplication::IN_PROGRESS);
+                            ->when($type, function($q, $value) use ($type){
+                                if($value === 'in-progress'){
+                                    return $q->whereIn('status', UserJobApplication::IN_PROGRESS);
+                                }
+                                if($value === 'deployed'){
+                                    return $q->whereIn('status', [UserJobApplication::DEPLOYED]);
+                                }
+                                if($value === 'rejected'){
+                                    return $q->whereIn('status', [UserJobApplication::REJECTED]);
+                                }
+                
+                                if($value === 'cancelled'){
+                                    return $q->whereIn('status', [UserJobApplication::CANCELLED]);
+                                }                                
+                                // return $q->whereIn('status', UserJobApplication::IN_PROGRESS);
                             })
                             ->orderBy('id','desc')
                             ->paginate(10);

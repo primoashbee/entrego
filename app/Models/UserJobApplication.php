@@ -301,16 +301,24 @@ class UserJobApplication extends Model
         $last_activity = $this->lastActivity();
         $last_step = $last_activity['status'];
         if($this->job->has_sjt){
+            $notes = 'Pending Exam';
+            $quiz = $this->userQuiz;
+            if($quiz && $quiz->is_passed){
+                $score = $quiz->score;
+                $questions = $quiz->answersv2()->count();
+                $notes = "Examination Passed. Score: $score/$questions";
+            }
             $exam =  [
-                'label'=>'Exam Taken',
-                'key'=> self::WAITING_FOR_EXAM_RESULT,
-                'date'=>$this->userQuiz?->created_at,
+                'label'=>'Exam Result',
+                // 'key'=> self::WAITING_FOR_EXAM_RESULT,
+                'key'=> 'Exam Result',
+                'date'=>$quiz ? $quiz->created_at : null,
                 'data'=> [
-                    'quiz'=>$this->userQuiz,
-                    'notes'=>'Exam finished'
+                    'quiz'=>$quiz,
+                    'notes'=> $notes
                 ],
-                'class'=>'active text-center',
-                'finished'=>true,
+                'class'=>$quiz ? 'active text-center' : '',
+                'finished'=>$quiz ? true : false,
                 'processor' => $this->user
             ];
             $steps->splice(1, 0, [$exam]);
