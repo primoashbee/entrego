@@ -417,13 +417,16 @@ class JobApplicationController extends Controller
                 );
             $message = "Hi, $name\n\nWe regret to inform you that we have chosen to move forward with another candidate for the position you applied for. We appreciate your interest in our company and wish you the best in your job search.\n\nThank you,\nEntregoHR";
             $client->sendSMS($user_job->user->contact_number, $message);
-            $user_job->update(['rejected_at'=>now()]);
-
-            auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - REJECTED", $user_job);
             $user_job->update([
+                'rejected_at'=>now(),
                 'rejected_notes'=>$request->notes,
                 'rejected_by'=>$request->hr_id
             ]);
+
+            auditLog($user_job->user->id, "Job Application Changed Status[$job->job_title] - REJECTED", $user_job);
+            // $user_job->update([
+
+            // ]);
             Mail::to(User::find($tagged_id)->email)
             ->send(
                 new JobApplicationTagged($user_job, UserJobApplication::REJECTED, $tagged_id)

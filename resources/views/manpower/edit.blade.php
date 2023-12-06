@@ -165,7 +165,7 @@
                                                     <select name="required_experience"  id="required_experience" class="form-control">
                                                         <option value=""> Please Select</option>
                                                         @foreach($experiences as $key=>$value)
-                                                        <option value="{{$value->value}}"> {{$value->value}} </option>
+                                                        <option value="{{$value->key}}"> {{$value->value}} </option>
                                                         @endforeach
                                                     </select>
                                                 </div>

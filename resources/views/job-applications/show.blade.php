@@ -212,7 +212,7 @@ if($application->status === 'REJECTED'){
                     'class'=> 'active text-center',
                     'finished'=>true,
                     'id' => 'step4',
-                    'processor'=>$application->cancellor
+                    'processor'=>$application->rejector
                 ];
     // if($key == 0 ){
         $steps->splice($key+1, 0, [$cancelled]);
