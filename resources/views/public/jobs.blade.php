@@ -175,7 +175,7 @@
             </div> --}}
 
             @foreach($jobs as $job)
-            <div class="col-lg-4 col-md-6 portfolio-item filter-{{$job->job_group}} wow fadeInUp">
+            <div class="col-lg-4 col-md-6 portfolio-item filter-{{$job->department}} wow fadeInUp">
               <div class="portfolio-wrap" style="">
                 {{-- <figure>
                   <img src="img/portfolio/app1.jpg" class="img-fluid" alt="">
@@ -193,7 +193,7 @@
                       <i class="ion-android-folder-open"></i> {{$job->vacant_available}} position(s) available
                     </li>
                     <li>
-                      <i class="ion-ios-clock-outline"></i> {{$job->required_experienceLink}}
+                      <i class="ion-ios-clock-outline"></i> {{$job->experienceLink?->value}} 
                     </li>
                     <li>
                       <i class="ion-arrow-graph-up-right"></i> {{$job->department_name}}

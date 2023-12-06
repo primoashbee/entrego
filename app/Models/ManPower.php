@@ -5,6 +5,7 @@ namespace App\Models;
 use stdClass;
 use App\Models\Location;
 use Carbon\CarbonPeriod;
+use App\Models\JobExperience;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
