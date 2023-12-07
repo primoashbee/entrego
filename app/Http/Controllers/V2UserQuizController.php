@@ -148,4 +148,36 @@ class V2UserQuizController extends Controller
         return view('user-quiz.v2.view-result', compact('application','questions'));
 
     }
+
+    public function patch(Request $request, $application_id)
+    {
+        $user = auth()->user();
+
+        $application = UserJobApplication::with('job.quiz','user')
+            ->find($request->application_id);
+        
+        DB::transaction(function () use($request, $application_id, $user, $application) {
+            $types = ['essay','identification'];
+            $updates = collect($request->questions)->map(function($answer) use($types){
+                if(in_array($answer['quiz_question']['question_type'], $types)){
+                    $data['user_quiz_v2_id'] = $answer['id'];
+                    $data['is_correct'] = $answer['is_correct'];
+                    return $data;
+                }
+            })->filter(function($answer){
+                return !is_null($answer);
+            });
+            $updates->each(function($data){
+                UserQuizAnswersV2::find($data['user_quiz_v2_id'])->update(['is_correct'=>$data['is_correct']]);
+            });
+
+            UserQuiz::where('application_id',$application_id)->first()->quizReviewed($user->id);
+            $name = $user->full_name;
+            $applicant_name = $application->user->full_name;
+            $job_name = $application->job->job_title;
+            $log = "$name reviewed the SJT/CSA of $applicant_name for job $job_name";
+            auditLog($user->id, $log);
+            DB::commit();
+        }); 
+    }
 }

@@ -202,7 +202,8 @@
 
         }
         function startTimer(){
-            const Toast = Swal.mixin({
+            if(has_timer.value){
+                const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
@@ -220,8 +221,9 @@
                 html: `<span id="time-left-span">${timerFormatted.value}</span>`
             })
             const el = document.getElementById('time-left-span')
+            }
+
             return setInterval(() => {
-                console.log('hey');
                 el.innerHTML = timerFormatted.value
                 time_left.value = time_left.value - 1
             }, 1000);

@@ -43,13 +43,15 @@
                                             </h6>
     
                                             <h6>Required: {{$application->job->quiz->passing_rate}} %</h6>
+                                            @if($application->job->quiz->has)_timer
                                             <h6>Time Elapsed: {{$application->userQuiz->time_elapsed}}</h6>
+                                            @endif
                                             <div class="row">
                                                 <div class="col-4">
                                                     <h6> My Result:</h6>
                                                 </div>
                                                 @if(is_null($application->userQuiz->is_passed))
-                                                 -
+                                                 Pending
                                                 @else
                                                 <div class="col-8" style="margin-left:-30px">
                                                     <div class="progress">
@@ -221,7 +223,8 @@
             if(!isConfirmed){
                 return;
             }
-            const url = `/user-quiz/result/31`
+            const application_id = @json(request()->application_id);
+            const url = `/v2/user-quiz/result/${application_id}`;
             const payload = {
                 questions : questions.value
             }

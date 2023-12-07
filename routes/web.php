@@ -151,6 +151,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/take/{application_id}', [V2UserQuizController::class, 'create'])->name('v2.user-quiz.take');
         Route::post('/take', [V2UserQuizController::class, 'store'])->name('v2.user-quiz.submit');
         Route::get('/result/{application_id}', [V2UserQuizController::class, 'view'])->name('v2.user-quiz.view-result');
+        Route::patch('/result/{application_id}', [V2UserQuizController::class, 'patch'])->name('v2.user-quiz.view-result.patch');
     
     });
 
