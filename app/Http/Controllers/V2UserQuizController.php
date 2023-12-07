@@ -63,6 +63,7 @@ class V2UserQuizController extends Controller
 
                 }
                 if($item['question_type'] == 'essay'){
+                    // dd($item['question_data']);
                     $user_answer = $item['question_data']['user_answer'];
                     $answer = null;
                     $item['is_correct'] = null;

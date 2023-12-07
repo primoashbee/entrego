@@ -187,7 +187,8 @@
             'question_type': null
         }
         
-        const questions = ref(@json($quiz->questionsv2))
+        const questions = ref(@json($quiz->questionsv2));
+
         const job_type = ref(@json($quiz->job_type))
         const name = ref(@json($quiz->name))
         // const job_group = ref(@json($quiz->job_group))
@@ -260,6 +261,11 @@
                                         "answer"  : null
                                     }
                     break;
+                case 'essay':
+                    question_data = {
+                                        "answer"  : null
+                                    }
+                    break;
             }
 
             questions.value[index].question_data = question_data
@@ -269,7 +275,7 @@
             const data = {
                 "question_type": null,
                 "question_data" : {
-
+                    "answer" : null
                 }
             }
             questions.value.push(data)

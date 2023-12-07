@@ -126,6 +126,12 @@
                                                     <input type="text" class="form-control px-2" v-model="questions[index].question_data.answer" >
                                                 </div>
                                             </template>
+                                            {{-- <template v-if="questions[index].question_type ==='essay'">
+                                                <div class="input-group input-group-static">
+                                                    <label class=>Answer</label>
+                                                    <input type="text" class="form-control px-2" v-model="questions[index].question_data.answer" >
+                                                </div>
+                                            </template> --}}
                                             {{-- <div class="answers px-2 mt-2" v-for="(choices, choice_index) in question.choices" :key="choice_index">
                                                 <div class="input-group input-group-dynamic mb-4 is-filled">
                                                     <input type="radio" :name="`questions.${index}`" @change="checked(index,choice_index)">
@@ -262,7 +268,7 @@
                     question_data = {
                                         "answer"  : null
                                     }
-                    break;
+                break;
             }
 
             questions.value[index].question_data = question_data
@@ -272,7 +278,6 @@
             const data = {
                 "question_type": null,
                 "question_data" : {
-
                 }
             }
             questions.value.push(data)
