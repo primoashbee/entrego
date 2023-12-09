@@ -327,6 +327,7 @@
       });
     });
 
+    @if(auth()->user()->role == 'ADMINISTRATOR')
 
     const DATA_COUNT = 7;
     const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
@@ -369,7 +370,7 @@
     };
     const ctx = document.getElementById('line-chart')
     const myChart = new Chart(ctx, config);
-
+    @endif
   })()
 </script>
 @endsection
