@@ -298,13 +298,13 @@ class JobApplicationController extends Controller
             $fields['job_offered_at'] = now();
             $fields['job_offer_interview_onsite'] = $request->is_onsite;
             $fields['job_offer_sent_by'] = $request->hr_id;
+            $fields['job_offer_notes'] = $request->notes;
         }
         
     
  
 
         $applicant->update($fields);
-
         tap($applicant);
         $email = $applicant->user->email;
         if($request->status == 'SEND_INTERVIEW'){
@@ -328,7 +328,7 @@ class JobApplicationController extends Controller
             }else{
                 $message = "Greetings, $name.\n\nYou're scheduled for an interview: \nDate: $interview_date\nPosition: $position.\n\nPlease use this link as reference for the interview link: $link.\n\nYou may also check you're registered email ($email) for more information.\nThank you.\EntregoHR";
             }
-;
+
             if(env('APP_ENV') != 'local'){
                 $client = new Semaphore(config('services.semaphore.api_key'));
                 $res = $client->sendSMS($applicant->user->contact_number, $message);
@@ -543,9 +543,9 @@ class JobApplicationController extends Controller
                     ->orWhereRelation('user','first_name', 'LIKE' , "%$value%")
                     ->orWhereRelation('user','last_name', 'LIKE' , "%$value%");
             })
-            ->when($request->status,function($q, $value){
-                $q->where('status', $value);
-            })
+            // ->when($request->status,function($q, $value){
+            //     $q->where('status', $value);
+            // })
 
             ->when($request->department,function($q, $value){
                 $q
@@ -559,19 +559,23 @@ class JobApplicationController extends Controller
             ->when($request->job_id, function($q, $value){
                 $q->where('man_power_id', $value);
             })
-            ->when($type, function($q, $value){
-                if($value === 'in-progress'){
-                    return $q->whereIn('status', UserJobApplication::IN_PROGRESS);
-                }
-                if($value === 'deployed'){
-                    return $q->whereIn('status', [UserJobApplication::DEPLOYED]);
-                }
-                if($value === 'rejected'){
-                    return $q->whereIn('status', [UserJobApplication::REJECTED]);
-                }
+            ->when($type, function($q, $value) use ($request){
+                if($request->has('status')){
+                    return $q->where('status', $request->status);
+                }else{
+                    if($value === 'in-progress'){
+                        return $q->whereIn('status', UserJobApplication::IN_PROGRESS);
+                    }
+                    if($value === 'deployed'){
+                        return $q->whereIn('status', [UserJobApplication::DEPLOYED]);
+                    }
+                    if($value === 'rejected'){
+                        return $q->whereIn('status', [UserJobApplication::REJECTED]);
+                    }
 
-                if($value === 'cancelled'){
-                    return $q->whereIn('status', [UserJobApplication::CANCELLED]);
+                    if($value === 'cancelled'){
+                        return $q->whereIn('status', [UserJobApplication::CANCELLED]);
+                    }
                 }
             });
         if($for_report){

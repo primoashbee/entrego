@@ -171,6 +171,7 @@
 @section('content')
 <?php 
 $steps = $application->steps();
+
 $last_activity = $application->lastActivity();
 $last_activity_name = $last_activity['status'];
 
@@ -248,7 +249,7 @@ if($application->status === 'REJECTED'){
                                         </div>
                                         <div class="col-sm-12 col-lg-3">
                                             <p> Required Experience:
-                                                <strong>{{ $application->job->required_experience_name }}</strong>
+                                                <strong>{{ $application->job->experienceLink->value }}</strong>
                                             </p>
                                         </div>
                                         <div class="col-sm-12 col-lg-3">
